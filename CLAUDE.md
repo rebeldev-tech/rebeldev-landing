@@ -117,6 +117,7 @@ Dos fuentes: la captura de LinkedIn y el mock `referencias/rebeldev-mock.html`. 
 | Ash dim | `#7C757F` | Texto terciario, notas |
 
 - El rojo se usa con disciplina: para marcar, no para rellenar.
+- **Modo claro (24 oct 2026, a pedido del usuario):** la paleta invertida. Fondo crema `#F4F0E8`, bloques `#ECE6DB` y `#E4DDD0`, texto `#0B0A0E` (17,4:1), gris `#4F4954` (7,7:1), notas `#5B5560` (6,3:1) y rojo para texto `#C40F1B` (5,4:1). El rojo de marca `#E4121F` no cambia. **El tema oscuro sigue siendo el principal y el que sale por defecto.** El teléfono de RebelBot es oscuro en los dos temas.
 - El fondo del mock lleva un brillo rojo y ámbar muy suave arriba, con degradados radiales.
 - Los colores de LinkedIn (muestreados de la captura: negro `#080808`, crema `#F4F0E7`, rojo `#F43042`) son casi los mismos. Si hay duda, se usa el mock.
 
@@ -162,7 +163,7 @@ Directa, segura y sin jerga innecesaria. «Rebelde en la actitud, premium en la 
 
 ### Pendiente
 
-- **Landing, primera versión (23 oct 2026):** pantalla de carga con el `</>` que se deshace en partículas y arma un `</>` grande en el hero (reacciona al ratón y se desarma al bajar); RebelBot con un teléfono fijo cuyo chat avanza por pasos; por qué es distinto; cómo se prueba cada cambio; servicios; proceso; Fredy; preguntas; contacto. Las fuentes se sirven desde el sitio (API de fuentes de Astro). Pendientes de esa versión: foto de Fredy (no hay), URL de LinkedIn, «rebeldes.» en rojo o no (va sin rojo), y el logo definitivo.
+- **Landing, primera versión (23 oct 2026):** pantalla de carga con el `</>` que se deshace en partículas y arma un `</>` grande en el hero (reacciona al ratón y se desarma al bajar). **Partículas al estilo Philos (24 oct 2026, a pedido del usuario, que no quería las de canvas 2D):** el `</>` en 3D cubierto de miles de puntos redondos y brillantes, con luz, que respiran, se inclinan hacia el ratón, se apartan con un remolino y al bajar se hacen polvo que gira; RebelBot con un teléfono fijo cuyo chat avanza por pasos; por qué es distinto; cómo se prueba cada cambio; servicios; proceso; Fredy; preguntas; contacto. Las fuentes se sirven desde el sitio (API de fuentes de Astro). Tiene modo claro con un botón en la barra (24 oct 2026): se guarda en el navegador (`rd-theme`) y el cambio entra con un barrido en diagonal con borde difuminado (View Transitions, idea del efecto «polygon-gradient» de theme-toggle.rdsx.dev; código propio porque ese repositorio no tiene licencia). Sin soporte o con «menos movimiento», cambia al instante. Pendientes de esa versión: foto de Fredy (no hay), URL de LinkedIn, «rebeldes.» en rojo o no (va sin rojo), y el logo definitivo.
 - **Mejorar la marca, empezando por el logo:** el plan, los problemas detectados y las preguntas abiertas están en `referencias/mapeo-mejoras-marca.md`. Las propuestas de logo ya están hechas (`referencias/propuestas-logo.html`); falta elegir. Mientras tanto se puede usar una versión provisional basada en la captura y el mock.
 - **Dominio y hosting.**
 - **Idioma:** solo español o también inglés.
@@ -199,6 +200,7 @@ Directa, segura y sin jerga innecesaria. «Rebelde en la actitud, premium en la 
 | **Tailwind CSS** | 4.3 | Entra por el plugin de Vite en `astro.config.mjs`. No hay `tailwind.config.js`: colores y fuentes de la marca se definen en `src/styles/global.css` con `@theme`. |
 | **GSAP** | 3.15 | Gratis con todos sus plugins (licencia propia de GSAP, no MIT; vale para uso comercial). |
 | **Lenis** | 1.3 | Scroll suave, sincronizado con ScrollTrigger. |
+| **Three.js** | 0.186 | Solo para las partículas del hero (24 oct 2026). Se carga aparte con `import()` para no frenar la página (~134 KB comprimido). |
 | **Bun** | 1.3 | Gestor de paquetes. Usar `bun`/`bunx`, no `npm`/`npx`. |
 
 ### Comandos (dentro de `rebeldev-landing/`)
@@ -223,9 +225,9 @@ Directa, segura y sin jerga innecesaria. «Rebelde en la actitud, premium en la 
 | `src/components/` | Una sección por archivo: `Nav`, `Hero` (pantalla de carga + partículas), `RebelBot` (teléfono fijo con el chat), `Diferencial`, `Ingenieria`, `Servicios`, `Proceso`, `Fundador`, `Preguntas`, `Cierre` (llamada final y pie). `Logo.astro` es el logo **provisional** (sistema S-2): al decidir el logo se cambia solo ese archivo. |
 | `src/data/` | `contacto.ts` (datos ficticios, en un solo lugar) y `rebelbot.ts` (pasos y conversación de ejemplo). |
 | `src/lib/mark.ts` | Geometría del `</>` provisional; la usan el logo, la pantalla de carga y las partículas. |
-| `src/scripts/` | `motion.ts` (registra GSAP y sus plugins una vez, Lenis, entradas con `data-reveal`) y `particles.ts` (canvas 2D, sin Three.js). |
+| `src/scripts/` | `motion.ts` (registra GSAP y sus plugins una vez, Lenis, entradas con `data-reveal`) y `particles.ts` (partículas del `</>` con Three.js y shaders propios; sin WebGL queda el `</>` en SVG). |
 | `src/layouts/Base.astro` | `<head>`, fuentes y grano. |
-| `src/styles/global.css` | Tailwind, paleta y escala tipográfica en `@theme` y `@utility`. |
+| `src/styles/global.css` | Tailwind, paleta y escala tipográfica en `@theme` y `@utility`; el modo claro (`:root.light`) y el barrido del cambio de tema. Los nombres de color son de la marca: `ink` es el fondo y `bone` el texto en los dos temas. |
 | `public/` | Archivos que se sirven tal cual (favicon, imágenes, videos). |
 | `referencias/` | Material de marca e inspiración (ver «Fuentes»). No es código. |
 | `.claude/skills/` | Skills de IA del proyecto. |
@@ -242,7 +244,7 @@ Directa, segura y sin jerga innecesaria. «Rebelde en la actitud, premium en la 
   - **SplitText:** textos por partes.
   - Registrar los plugins una sola vez, en un módulo compartido.
 - **Lenis** se mueve con el ticker de GSAP para que el scroll y ScrollTrigger vayan sincronizados (patrón de la skill `cinematic-gsap-lenis-motion-system`).
-- **Partículas:** OGL si es un fondo sencillo (más liviano) o Three.js si es algo elaborado. **No instalado:** se agrega cuando se decida la sección.
+- **Partículas:** Three.js (instalado el 24 oct 2026) con un `ShaderMaterial` propio: el movimiento se calcula en la GPU. Importar solo las clases que se usan (no `import * as THREE`).
 - **React Bits:** solo como catálogo de ideas. No se agrega React (`@astrojs/react`) salvo que un componente concreto lo justifique y el usuario lo apruebe.
 - **Siempre:** respetar `prefers-reduced-motion` (con `gsap.matchMedia()`) y probar en el móvil.
 
@@ -273,7 +275,7 @@ Directa, segura y sin jerga innecesaria. «Rebelde en la actitud, premium en la 
 - `impeccable`, `taste-skill` y `ui-ux-pro-max`: se pisan con `frontend-design`. Si `frontend-design` se queda corta, se cambia por `impeccable`.
 
 **Para más adelante:**
-- Three.js (`cloudai-x/threejs-skills`): cuando se decidan las partículas.
+- Three.js (`cloudai-x/threejs-skills`): si las partículas crecen o se usa 3D en otra sección.
 - `web-perf` (Cloudflare): velocidad, antes de publicar.
 - `seo-audit` (`coreyhaines31/marketingskills`): cuando haya dominio. Astro no tiene skill oficial: su repositorio `withastro/skills` está vacío y la más popular de la comunidad (`astrolicious/agent-skills`) es básica y anterior a Astro 7. Para Astro se usan `AGENTS.md` y Context7.
 

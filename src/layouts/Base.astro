@@ -12,7 +12,7 @@ const { title, description } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#0B0A0E" />
+    <meta name="theme-color" content="#0B0A0E" data-theme-color />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -22,6 +22,13 @@ const { title, description } = Astro.props;
     <Font cssVariable="--font-instrument" preload />
     <Font cssVariable="--font-jetbrains" />
     <script is:inline>
+      // Tema guardado (oscuro por defecto, como la marca). Va antes de pintar para que no parpadee.
+      try {
+        if (localStorage.getItem('rd-theme') === 'light') {
+          document.documentElement.classList.add('light');
+          document.querySelector('[data-theme-color]').setAttribute('content', '#F4F0E8');
+        }
+      } catch (e) {}
       // Antes de pintar: marcar si habrá animación, para ocultar lo que va a entrar.
       // Sin JS o con «menos movimiento», todo se ve desde el inicio.
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {

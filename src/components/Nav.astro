@@ -10,19 +10,40 @@ const links = [
 ];
 ---
 <header class="nav fixed inset-x-0 top-0 z-50" data-nav>
-  <div class="wrap flex h-[4.5rem] items-center justify-between gap-6">
+  <div class="wrap flex h-[4.5rem] items-center justify-between gap-4 sm:gap-6">
     <a href="#inicio" class="text-[1.35rem] text-bone" aria-label="RebelDEV, ir al inicio"><Logo /></a>
     <nav aria-label="Principal" class="hidden items-center gap-8 md:flex">
       {links.map((l) => <a href={l.href} class="nav-link text-[0.95rem] text-ash transition-colors hover:text-bone">{l.label}</a>)}
     </nav>
-    <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary !px-4 !py-2.5 text-[0.95rem]">Agenda una demo</a>
+    <div class="flex items-center gap-2 sm:gap-3">
+      <button type="button" class="theme-btn" data-theme-toggle aria-label="Cambiar a modo claro">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <g class="sun"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" /></g>
+          <path class="moon" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
+        </svg>
+      </button>
+      <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary whitespace-nowrap !px-4 !py-2.5 text-[0.95rem] max-[400px]:!px-3.5 max-[400px]:text-[0.875rem]">Agenda<span class="max-[400px]:hidden"> una</span> demo</a>
+    </div>
   </div>
 </header>
 
 <style>
   .nav { transition: background-color .4s, border-color .4s, transform .5s var(--ease-out-expo); border-bottom: 1px solid transparent; }
-  .nav.is-solid { background: rgb(11 10 14 / 0.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-color: var(--color-line); }
+  .nav.is-solid { background: color-mix(in srgb, var(--color-ink) 72%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-color: var(--color-line); }
   .nav.is-hidden { transform: translateY(-100%); }
+
+  /* Botón de tema: en oscuro muestra el sol (pasar a claro); en claro, la luna. */
+  .theme-btn {
+    display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 999px; flex: none;
+    border: 1px solid var(--color-line-strong); color: var(--color-bone); cursor: pointer;
+    transition: border-color .3s;
+  }
+  .theme-btn:hover { border-color: var(--color-bone); }
+  .theme-btn svg { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+  .theme-btn .sun, .theme-btn .moon { transform-box: fill-box; transform-origin: center; transition: transform .6s var(--ease-out-expo), opacity .3s; }
+  .theme-btn .moon { opacity: 0; transform: rotate(-60deg) scale(.5); }
+  :global(:root.light) .theme-btn .sun { opacity: 0; transform: rotate(90deg) scale(.5); }
+  :global(:root.light) .theme-btn .moon { opacity: 1; transform: none; }
 </style>
 
 <script>
@@ -38,4 +59,29 @@ const links = [
   };
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
+  // Cambio de tema. Con View Transitions, la página nueva entra en diagonal (ver global.css);
+  // sin soporte o con «menos movimiento», cambia al instante.
+  const root = document.documentElement;
+  const btn = document.querySelector<HTMLButtonElement>('[data-theme-toggle]')!;
+  const meta = document.querySelector<HTMLMetaElement>('[data-theme-color]');
+  const syncLabel = () => btn.setAttribute('aria-label', root.classList.contains('light') ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro');
+  syncLabel();
+
+  function applyTheme(light: boolean) {
+    root.classList.toggle('light', light);
+    try { localStorage.setItem('rd-theme', light ? 'light' : 'dark'); } catch (e) {}
+    meta?.setAttribute('content', light ? '#F4F0E8' : '#0B0A0E');
+    syncLabel();
+    window.dispatchEvent(new Event('rd:theme'));
+  }
+
+  btn.addEventListener('click', () => {
+    const next = !root.classList.contains('light');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!document.startViewTransition || reduce) { applyTheme(next); return; }
+    root.classList.add('theme-anim');
+    const t = document.startViewTransition(() => applyTheme(next));
+    t.finished.finally(() => root.classList.remove('theme-anim'));
+  });
 </script>

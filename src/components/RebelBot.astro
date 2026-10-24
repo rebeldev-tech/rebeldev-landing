@@ -93,10 +93,15 @@ const mensajes = pasos.flatMap((p, step) => p.chat.map((m) => ({ ...m, step })))
 
   /* Teléfono */
   .phone {
+    /* El teléfono es oscuro en los dos temas: dentro se fijan los colores del tema oscuro. */
+    --color-bone: #F4F0E8; --color-ash: #A7A0A8; --color-ash-dim: #8E8791; --color-red-text: #FF2D3F;
+    --color-line: rgb(244 240 232 / 0.1); --color-max: #FFFFFF;
+    color: var(--color-bone); color-scheme: dark;
     width: min(100%, 22rem); margin-inline: auto; border-radius: 2.4rem; padding: 0.55rem;
     background: linear-gradient(160deg, #2a2430, #121016); border: 1px solid rgb(244 240 232 / 0.12);
     box-shadow: 0 40px 120px -40px rgb(228 18 31 / 0.35), 0 30px 60px -30px rgb(0 0 0 / 0.8);
   }
+  :global(:root.light) .phone { box-shadow: 0 40px 120px -40px rgb(228 18 31 / 0.3), 0 30px 60px -30px rgb(11 10 14 / 0.45); }
   .phone-head, .phone-body, .phone-foot { background: var(--color-wa); }
   .phone-head { display: flex; align-items: center; gap: 0.7rem; padding: 1.1rem 1rem 0.8rem; border-radius: 1.9rem 1.9rem 0 0; border-bottom: 1px solid rgb(255 255 255 / 0.06); }
   .phone-tag { margin-left: auto; padding: 0.2rem 0.55rem; border-radius: 99px; border: 1px solid rgb(255 255 255 / 0.14); font-size: 0.68rem; color: #8696a0; }

@@ -72,7 +72,7 @@ const stack = ['Java 21', 'Spring Boot', 'React', 'TypeScript', 'PostgreSQL', 'W
   .pipe-step.is-done { color: var(--color-bone); }
   .pipe-dot {
     display: grid; place-items: center; width: 1.8rem; height: 1.8rem; border-radius: 99px;
-    background: var(--color-ink); border: 1px solid rgb(244 240 232 / 0.25); transition: background-color .4s, border-color .4s;
+    background: var(--color-ink); border: 1px solid var(--color-line-strong); transition: background-color .4s, border-color .4s;
   }
   .pipe-dot svg { width: 0.9rem; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity .3s; }
   .is-done .pipe-dot { background: var(--color-red); border-color: var(--color-red); }
@@ -80,7 +80,7 @@ const stack = ['Java 21', 'Spring Boot', 'React', 'TypeScript', 'PostgreSQL', 'W
 
   .term { max-width: 36rem; border: 1px solid var(--color-line); border-radius: 0.9rem; background: var(--color-surface); overflow: hidden; }
   .term-bar { display: flex; gap: 0.4rem; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--color-line); }
-  .term-bar i { width: 0.6rem; height: 0.6rem; border-radius: 99px; background: rgb(244 240 232 / 0.15); }
+  .term-bar i { width: 0.6rem; height: 0.6rem; border-radius: 99px; background: color-mix(in srgb, var(--color-bone) 15%, transparent); }
   .term-body { padding: 1rem 1.1rem 1.2rem; font-size: 0.85rem; line-height: 1.9; color: var(--color-bone); }
   .term-line { margin: 0; }
 

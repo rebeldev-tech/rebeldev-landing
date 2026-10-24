@@ -1,17 +1,21 @@
 @import "tailwindcss";
 
-/* Paleta y tipografía de la marca (base: el mock; contrastes revisados en referencias/mapeo-mejoras-marca.md) */
+/* Paleta y tipografía de la marca (base: el mock; contrastes revisados en referencias/mapeo-mejoras-marca.md).
+   Los nombres son de la marca: «ink» es el FONDO y «bone» el TEXTO en cualquier tema.
+   El modo claro (más abajo, :root.light) solo cambia los valores. */
 @theme {
   --color-ink: #0B0A0E;        /* fondo */
   --color-surface: #141019;    /* bloques */
   --color-surface-2: #1D1824;  /* elevación */
   --color-line: rgb(244 240 232 / 0.1);
+  --color-line-strong: rgb(244 240 232 / 0.24); /* bordes de botones y puntos */
+  --color-max: #FFFFFF;        /* el extremo: texto al pasar el ratón */
   --color-bone: #F4F0E8;       /* texto principal: 17,4:1 */
   --color-ash: #A7A0A8;        /* texto secundario: 7,7:1 */
   --color-ash-dim: #8E8791;    /* notas: 5,7:1 (el del mock no pasaba) */
   --color-red: #E4121F;        /* rojo de marca: barra, botones, rellenos */
   --color-red-text: #FF2D3F;   /* rojo para texto e íconos sobre oscuro: 5,4:1 */
-  --color-wa: #0B141A;         /* fondo del chat */
+  --color-wa: #0B141A;         /* fondo del chat (el teléfono es oscuro en los dos temas) */
   --color-wa-in: #1F2C34;
   --color-wa-out: #144D37;
 
@@ -40,6 +44,36 @@
   h1, h2, h3 { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.03em; }
 }
 
+/* Modo claro: los colores de la marca invertidos. Contraste sobre el crema #F4F0E8:
+   texto 17,4:1 · gris 7,7:1 · notas 6,3:1 · rojo para texto 5,4:1. El rojo de marca no cambia. */
+:root.light {
+  color-scheme: light;
+  --color-ink: #F4F0E8;
+  --color-surface: #ECE6DB;
+  --color-surface-2: #E4DDD0;
+  --color-line: rgb(11 10 14 / 0.12);
+  --color-line-strong: rgb(11 10 14 / 0.28);
+  --color-max: #000000;
+  --color-bone: #0B0A0E;
+  --color-ash: #4F4954;
+  --color-ash-dim: #5B5560;
+  --color-red-text: #C40F1B;
+}
+
+/* Cambio de tema: transición diagonal propia (idea de «polygon-gradient», código nuestro).
+   La foto nueva de la página entra con una máscara en degradado que crece desde arriba a la izquierda.
+   Solo se aplica mientras dura el cambio de tema (clase theme-anim). */
+html.theme-anim::view-transition-old(root),
+html.theme-anim::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+html.theme-anim::view-transition-old(root) { z-index: 0; }
+html.theme-anim::view-transition-new(root) {
+  z-index: 1;
+  mask: linear-gradient(135deg, #000 0 42%, transparent 58%) top left / 0 0 no-repeat;
+  animation: rd-theme-sweep 1.1s cubic-bezier(0.55, 0, 0.2, 1) both;
+}
+/* 250vmax: el borde del degradado termina justo pasada la esquina inferior derecha. */
+@keyframes rd-theme-sweep { to { mask-size: 250vmax 250vmax; } }
+
 /* Escala tipográfica (6 tamaños + el titular) */
 @utility text-hero   { font-size: clamp(3.1rem, 9.2vw, 9.5rem); line-height: 0.9; letter-spacing: -0.045em; }
 @utility text-d1     { font-size: clamp(2.4rem, 5.6vw, 5rem); line-height: 0.98; letter-spacing: -0.04em; }
@@ -52,6 +86,7 @@
 @utility wrap { width: 100%; max-width: 84rem; margin-inline: auto; padding-inline: clamp(1.25rem, 4vw, 3rem); }
 
 /* Grano suave, como el banner de LinkedIn */
+:root.light .grain { opacity: 0.05; }
 .grain {
   position: fixed; inset: 0; pointer-events: none; z-index: 60; opacity: 0.07; mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -65,7 +100,7 @@
 }
 .btn-primary { background: var(--color-red); color: #fff; }
 .btn-primary:hover { background: #F21C2A; }
-.btn-ghost { border: 1px solid rgb(244 240 232 / 0.22); color: var(--color-bone); }
+.btn-ghost { border: 1px solid var(--color-line-strong); color: var(--color-bone); }
 .btn-ghost:hover { border-color: var(--color-bone); }
 
 /* La barra roja como separador (firma de la marca) */

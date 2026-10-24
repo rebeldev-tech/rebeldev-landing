@@ -4,13 +4,13 @@ import { contacto } from '../data/contacto';
 
 const servicios = ['Software a medida', 'Automatización de procesos', 'Plataformas web', 'Integraciones'];
 ---
-<!-- Pantalla de carga (estilo Zentry): el </> se dibuja y se deshace en partículas. Solo en la primera visita de la sesión. -->
+<!-- Pantalla de carga (estilo Zentry): el </> se dibuja y se deshace en partículas (estilo Philos). Solo en la primera visita de la sesión. -->
 <div class="intro" data-intro aria-hidden="true">
   <svg class="intro-mark" data-intro-mark viewBox={`0 0 ${MARK.width} ${MARK.height}`}>
     <g fill="none" stroke-width={MARK.stroke} stroke-linecap="round" stroke-linejoin="round">
-      <path d={MARK.left} stroke="#F4F0E8" data-intro-path />
-      <path d={MARK.right} stroke="#F4F0E8" data-intro-path />
-      <path d={MARK.slash} stroke="#E4121F" data-intro-slash />
+      <path d={MARK.left} stroke="var(--color-bone)" data-intro-path />
+      <path d={MARK.right} stroke="var(--color-bone)" data-intro-path />
+      <path d={MARK.slash} stroke="var(--color-red)" data-intro-slash />
     </g>
   </svg>
 </div>
@@ -24,7 +24,7 @@ const servicios = ['Software a medida', 'Automatización de procesos', 'Platafor
       <!-- Respaldo sin JavaScript -->
       <svg class="hero-fallback" viewBox={`0 0 ${MARK.width} ${MARK.height}`}>
         <g fill="none" stroke-width={MARK.stroke} stroke-linecap="round" stroke-linejoin="round">
-          <path d={MARK.left} stroke="#F4F0E8" /><path d={MARK.slash} stroke="#E4121F" /><path d={MARK.right} stroke="#F4F0E8" />
+          <path d={MARK.left} stroke="var(--color-bone)" /><path d={MARK.slash} stroke="var(--color-red)" /><path d={MARK.right} stroke="var(--color-bone)" />
         </g>
       </svg>
     </div>
@@ -95,7 +95,6 @@ const servicios = ['Software a medida', 'Automatización de procesos', 'Platafor
 
 <script>
   import { gsap, ScrollTrigger, reduceMotion, coarsePointer, lenis } from '../scripts/motion';
-  import { ParticleMark } from '../scripts/particles';
 
   const root = document.documentElement;
   const hero = document.querySelector<HTMLElement>('[data-hero]')!;
@@ -104,8 +103,15 @@ const servicios = ['Software a medida', 'Automatización de procesos', 'Platafor
   const intro = document.querySelector<HTMLElement>('[data-intro]')!;
   const showIntro = root.classList.contains('show-intro');
 
-  const pm = new ParticleMark(canvas, slot, { interactive: !reduceMotion && !coarsePointer, still: reduceMotion });
-  hero.classList.add('particles-on');
+  // Three.js se carga aparte para no frenar la página. Sin WebGL se queda el </> en SVG.
+  const particles = import('../scripts/particles')
+    .then(({ ParticleMark }) => {
+      if (!ParticleMark.supported()) return null;
+      const pm = new ParticleMark(canvas, slot, { interactive: !reduceMotion && !coarsePointer, still: reduceMotion });
+      hero.classList.add('particles-on');
+      return pm;
+    })
+    .catch((e) => { console.warn('[rebeldev] partículas desactivadas', e); return null; });
 
   const lines = hero.querySelectorAll('[data-hero-title] .line > span');
   const copy = hero.querySelector('[data-hero-copy]');
@@ -118,8 +124,8 @@ const servicios = ['Software a medida', 'Automatización de procesos', 'Platafor
       .fromTo(strip, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.9 }, '-=0.6');
   }
 
-  document.fonts.ready.then(() => {
-    if (reduceMotion) { pm.build(); return; }
+  Promise.all([particles, document.fonts.ready]).then(([pm]) => {
+    if (reduceMotion) { pm?.build(); return; }
 
     if (showIntro) {
       lenis?.stop();
@@ -132,23 +138,23 @@ const servicios = ['Software a medida', 'Automatización de procesos', 'Platafor
         .add(() => {
           // El dibujo se deshace: las partículas salen de donde estaba y arman el </> grande.
           const r = mark.getBoundingClientRect(), c = canvas.getBoundingClientRect();
-          pm.build({ x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height });
-          gsap.set(mark, { autoAlpha: 0 });
+          pm?.build({ x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height });
+          if (pm) gsap.set(mark, { autoAlpha: 0 });
           heroIn(0.35);
         })
-        .to(intro, { backgroundColor: 'rgba(11,10,14,0)', duration: 0.8, ease: 'power2.out' })
+        .to(intro, { autoAlpha: 0, duration: 0.8, ease: 'power2.out' })
         .add(() => {
           root.classList.remove('show-intro');
           try { sessionStorage.setItem('rd-intro', '1'); } catch (e) {}
           lenis?.start();
         });
     } else {
-      pm.build();
+      pm?.build();
       heroIn(0.15);
     }
 
-    // Al bajar, el </> se desarma.
-    ScrollTrigger.create({
+    // Al bajar, el </> se deshace en polvo.
+    if (pm) ScrollTrigger.create({
       trigger: hero, start: 'top top', end: 'bottom top', scrub: true,
       onUpdate: (self) => { pm.scatter = self.progress; },
     });

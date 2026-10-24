@@ -55,7 +55,8 @@ La columna «Nota del usuario» copia tal cual lo que escribió. La columna «D�
 ### Philos: partículas
 
 - **Lo que le gusta:** las partículas.
-- **Sección: por decidir.** Opciones propuestas:
+- **Decidido (24 oct 2026):** el `</>` del hero, hecho «como Philos». Philos usa Three.js: la escultura «El pensador» cubierta de miles de puntos redondos que suman luz, con brillo de brasa, respiración con ruido, remolino al pasar el ratón y, al bajar, una nube de polvo que gira. Lo mismo se aplicó al `</>` (ver `src/scripts/particles.ts`). La primera versión en canvas 2D (cuadraditos planos) no le gustó al usuario.
+- Opciones que se habían propuesto:
   1. **Fondo del hero:** partículas suaves que reaccionan al ratón.
   2. **Partículas que forman el `</>`:** por ejemplo, al terminar la pantalla de carga o en la llamada final.
   3. **Sección de ingeniería:** partículas que se ordenan en módulos para representar la arquitectura limpia; explican la idea de «pieza por pieza».
@@ -90,6 +91,5 @@ La columna «Nota del usuario» copia tal cual lo que escribió. La columna «D�
 
 ## Pendientes
 
-- **Partículas:** decidir en qué sección van (ver las opciones de Philos).
 - **Revisión a simple vista:** de estas webs solo hay notas, sin capturas. Si se conecta Chrome, sacar capturas de las secciones que gustaron (sobre todo la sección fija de Terminal Industries, la de Raycast y el orden de secciones de Runia).
 - **Logo:** la pantalla de carga depende del logo definitivo.
