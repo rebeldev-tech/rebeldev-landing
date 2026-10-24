@@ -1,0 +1,78 @@
+---
+// Por qué RebelBot es distinto (lo que gustó de Decagon). Íconos SVG que se dibujan al entrar (Raycast).
+// Todo sale de lo que el producto hace hoy: sin cifras ni resultados.
+const items = [
+  {
+    t: 'No inventa información.',
+    d: 'Precios, metrajes, disponibilidad y direcciones salen solo de los datos de tu negocio. Si falta un dato, ofrece que un asesor lo confirme.',
+    icon: `<ellipse cx="22" cy="11" rx="13" ry="5"/><path d="M9 11v22c0 2.8 5.8 5 13 5"/><path d="M35 11v10"/><path d="M9 22c0 2.8 5.8 5 13 5"/><path class="ac" d="M28 34l5 5 9-11"/>`,
+  },
+  {
+    t: 'Nunca deja a tu cliente sin respuesta.',
+    d: 'Si algo falla, se disculpa y pasa la conversación a un asesor.',
+    icon: `<path d="M8 12a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v15a4 4 0 0 1-4 4H20l-8 7v-7a4 4 0 0 1-4-4z"/><path class="ac" d="M17 19.5h.01M24 19.5h.01M31 19.5h.01"/>`,
+  },
+  {
+    t: 'Trabaja con tus asesores.',
+    d: 'Les pasa la conversación cuando hace falta. Si el asesor no responde a tiempo, la retoma con todo el contexto.',
+    icon: `<circle cx="13" cy="15" r="5"/><path d="M4 36c0-6 4-10 9-10s9 4 9 10"/><circle cx="35" cy="15" r="5"/><path d="M26 36c0-6 4-10 9-10s9 4 9 10"/><path class="ac" d="M19 9h10m-3-3 3 3-3 3"/>`,
+  },
+  {
+    t: 'Aprende de tu equipo, con permiso.',
+    d: 'Propone nuevas preguntas frecuentes a partir de lo que respondieron tus asesores. Solo se agregan cuando alguien las aprueba.',
+    icon: `<rect x="8" y="6" width="26" height="34" rx="4"/><path d="M14 15h14M14 22h14M14 29h7"/><circle class="ac" cx="36" cy="35" r="7"/><path class="ac" d="M33 35l2 2 4-4"/>`,
+  },
+  {
+    t: 'Pide consentimiento.',
+    d: 'Pide aceptar los términos de forma explícita antes de usar datos personales, de acuerdo con la Ley 29733.',
+    icon: `<path d="M24 5l15 6v11c0 9.5-6.3 17.3-15 21-8.7-3.7-15-11.5-15-21V11z"/><path class="ac" d="M17 24l5 5 10-11"/>`,
+  },
+  {
+    t: 'Todo a la vista.',
+    d: 'Un panel con las conversaciones, las citas, los clientes y las encuestas de satisfacción. Muestra qué casos resolvió solo, la satisfacción y los tiempos de respuesta.',
+    icon: `<path d="M6 40h36"/><path d="M12 34V22M20 34V14M36 34V18"/><path class="ac" d="M28 34V8"/>`,
+  },
+];
+---
+<section class="relative border-t border-line py-24 lg:py-36" aria-labelledby="dif-title">
+  <div class="wrap grid gap-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-24">
+    <div class="lg:sticky lg:top-28 lg:self-start" data-reveal>
+      <h2 id="dif-title" class="text-d1">Un asistente que sabe cuándo no responder.</h2>
+      <p class="text-lead mt-6 max-w-[38ch] text-ash">Lo que lo hace distinto no es que hable bonito. Es que no se inventa nada y sabe pasarle la posta a tu equipo.</p>
+    </div>
+    <ul class="dif-list">
+      {items.map((it) => (
+        <li class="dif-item" data-dif>
+          <svg class="dif-icon" viewBox="0 0 48 48" aria-hidden="true" set:html={it.icon} />
+          <div>
+            <h3 class="text-d3">{it.t}</h3>
+            <p class="text-body mt-2 max-w-[46ch] text-ash">{it.d}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .dif-list { list-style: none; margin: 0; padding: 0; }
+  .dif-item { display: grid; grid-template-columns: 3.5rem 1fr; gap: 1.5rem; padding-block: 2rem; border-top: 1px solid var(--color-line); }
+  .dif-item:last-child { border-bottom: 1px solid var(--color-line); }
+  .dif-icon { width: 3.25rem; height: 3.25rem; fill: none; stroke: var(--color-bone); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .dif-icon :global(.ac) { stroke: var(--color-red-text); }
+</style>
+
+<script>
+  import { gsap, reduceMotion } from '../scripts/motion';
+
+  if (!reduceMotion) {
+    document.querySelectorAll<HTMLElement>('[data-dif]').forEach((item) => {
+      const icon = item.querySelector('svg')!;
+      const shapes = icon.querySelectorAll('path, circle, ellipse, rect');
+      const text = item.querySelector('div')!;
+      gsap.timeline({ scrollTrigger: { trigger: item, start: 'top 82%', once: true } })
+        .fromTo(shapes, { drawSVG: '0%' }, { drawSVG: '100%', duration: 0.9, ease: 'power2.inOut', stagger: 0.08 })
+        .fromTo(text, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.8 }, 0.1);
+    });
+  }
+</script>

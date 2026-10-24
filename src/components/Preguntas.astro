@@ -1,0 +1,44 @@
+---
+// Preguntas frecuentes. Las respuestas salen de lo que el producto hace hoy (CLAUDE.md, secciones 1 y 2).
+const preguntas = [
+  { q: '¿Solo hacen asistentes de WhatsApp?', a: 'No. RebelBot es nuestro producto, pero somos un estudio de software: creamos soluciones a medida, desde automatización de procesos hasta plataformas web, backend, APIs e integraciones.' },
+  { q: '¿RebelBot puede inventar precios o datos?', a: 'No. Responde solo con los datos de tu negocio. Si falta algo, ofrece que un asesor lo confirme.' },
+  { q: '¿Qué pasa si el asistente no puede resolver algo?', a: 'Pasa la conversación a una persona de tu equipo. Si el asesor no responde a tiempo, la retoma con todo el contexto para que el cliente no se quede esperando.' },
+  { q: '¿Se conecta con mi sistema de ventas?', a: 'Sí: registra a cada cliente potencial en tu sistema de ventas. Hoy se conecta con Odoo; si usas otro, conversemos.' },
+  { q: '¿Cómo cuida los datos de mis clientes?', a: 'Pide aceptar los términos de forma explícita antes de procesar datos personales, de acuerdo con la Ley 29733. Además, oculta los teléfonos en los registros y no guarda ahí el contenido de los mensajes.' },
+  { q: '¿Sirve para mi industria?', a: 'Nació para el sector inmobiliario y está pensado para adaptarse a otras industrias. Cuéntanos cómo vendes y vemos cómo encaja.' },
+  { q: '¿Cómo empezamos?', a: 'Agenda una demo por WhatsApp. Primero entendemos tu negocio; después te proponemos la solución que realmente necesitas.' },
+];
+---
+<section id="preguntas" class="relative border-t border-line py-24 lg:py-36" aria-labelledby="faq-title">
+  <div class="wrap grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-24">
+    <h2 id="faq-title" class="text-d1 lg:sticky lg:top-28 lg:self-start" data-reveal>Preguntas frecuentes</h2>
+    <div class="faq">
+      {preguntas.map((p) => (
+        <details class="faq-item" name="faq">
+          <summary class="faq-q text-d3">
+            <span>{p.q}</span>
+            <span class="faq-icon" aria-hidden="true"></span>
+          </summary>
+          <p class="faq-a text-body text-ash">{p.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq { border-bottom: 1px solid var(--color-line); }
+  .faq-item { border-top: 1px solid var(--color-line); interpolate-size: allow-keywords; }
+  .faq-item::details-content { height: 0; overflow: clip; transition: height .5s var(--ease-out-expo), content-visibility .5s allow-discrete; }
+  .faq-item[open]::details-content { height: auto; }
+  .faq-q { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding-block: 1.6rem; cursor: pointer; list-style: none; font-family: var(--font-display); font-weight: 600; }
+  .faq-q::-webkit-details-marker { display: none; }
+  .faq-q:hover { color: #fff; }
+  .faq-icon { position: relative; flex: none; width: 1.1rem; height: 1.1rem; }
+  .faq-icon::before, .faq-icon::after { content: ''; position: absolute; left: 0; top: 50%; width: 100%; height: 2px; border-radius: 2px; background: currentColor; transition: transform .4s var(--ease-out-expo), background-color .3s; }
+  .faq-icon::after { transform: rotate(90deg); }
+  .faq-item[open] .faq-icon::after { transform: rotate(0); }
+  .faq-item[open] .faq-icon::before { background: var(--color-red-text); }
+  .faq-a { margin: 0; padding-bottom: 1.7rem; max-width: 58ch; }
+</style>

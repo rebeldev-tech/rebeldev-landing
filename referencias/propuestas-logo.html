@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RebelDEV · Propuestas de logo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:wght@400;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root{
+    --ink:#0B0A0E; --surface:#141019; --surface2:#1D1824;
+    --red:#FF2D3F; --red-deep:#E4121F;
+    --bone:#F4F0E8; --ash:#A7A0A8; --ash-dim:#8E8791;
+    --line:rgba(244,240,232,.09);
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--ink); color:var(--bone); font:16px/1.55 "Instrument Sans",system-ui,sans-serif; -webkit-font-smoothing:antialiased}
+  main{max-width:1180px; margin:0 auto; padding:56px 24px 96px}
+  h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif; font-weight:800; letter-spacing:-.02em; line-height:1.1; margin:0}
+  h1{font-size:clamp(30px,5vw,46px)}
+  h2{font-size:28px; margin:72px 0 8px}
+  h3{font-size:19px}
+  p{margin:0}
+  .lead{color:var(--ash); max-width:70ch; margin-top:12px}
+  .muted{color:var(--ash)}
+  .small{font-size:14px}
+  code{font-family:"JetBrains Mono",monospace; font-size:.9em; color:var(--bone); background:var(--surface2); padding:1px 6px; border-radius:6px}
+
+  .grid{display:grid; gap:18px; margin-top:24px}
+  .g2{grid-template-columns:repeat(auto-fill,minmax(520px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+  @media (max-width:600px){ .g2,.g3{grid-template-columns:1fr} }
+
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:18px; overflow:hidden; display:flex; flex-direction:column}
+  .card .body{padding:18px 20px 20px; display:flex; flex-direction:column; gap:8px}
+  .id{display:inline-block; font-weight:600; font-size:13px; color:var(--ink); background:var(--bone); border-radius:999px; padding:1px 10px; margin-right:8px; vertical-align:2px}
+  .pros{font-size:14px; color:var(--ash)}
+  .pros b{color:var(--bone); font-weight:600}
+  .rec{border-color:rgba(255,45,63,.55); box-shadow:0 0 0 1px rgba(255,45,63,.25)}
+  .rec .id{background:var(--red); color:#fff}
+
+  /* Escenarios */
+  .stage{display:flex; align-items:center; justify-content:center; min-height:200px; padding:28px}
+  .dark{background:var(--ink)}
+  .light{background:var(--bone); color:var(--ink)}
+  .redbg{background:var(--red-deep)}
+  .split{display:grid; grid-template-columns:1.3fr 1fr}
+  .split .stage{min-height:190px}
+  .row{display:flex; align-items:flex-end; gap:16px; justify-content:center}
+  .sizes{display:flex; align-items:center; gap:14px; justify-content:center; padding:14px; border-top:1px solid var(--line); background:var(--surface2)}
+  .sizes span{font-size:12px; color:var(--ash)}
+
+  /* Logotipo */
+  .wm{font-family:"Bricolage Grotesque",sans-serif; font-weight:800; letter-spacing:-.035em; line-height:1; white-space:nowrap; display:inline-flex; align-items:baseline}
+  .wm .lt{font-weight:400}
+  .wm svg.g{display:inline-block; height:1cap; overflow:visible; flex:none}
+  .wm.mono{font-family:"JetBrains Mono",monospace; font-weight:700; letter-spacing:-.04em}
+  .wm.caps{letter-spacing:.02em}
+
+  /* Imagotipo / isologo */
+  .wm .gap{display:inline-block; width:.55cap}
+  .wm .tile{display:inline-grid; place-items:center; flex:none; width:2.2cap; height:2.2cap; border-radius:.55cap}
+  .wm .tile-slot{display:inline-block; position:relative; flex:none; width:2.2cap; height:1cap}
+  .wm .tile-slot .tile{position:absolute; left:0; top:-.6cap}
+  .wm .tile svg{width:68%; height:auto}
+  .col{font-family:"Bricolage Grotesque",sans-serif; display:flex; flex-direction:column; align-items:center; gap:.75cap}
+  .col svg{flex:none}
+  .gloss .stage{min-height:120px}
+  .derive{display:flex; align-items:center; gap:22px; flex-wrap:wrap; justify-content:center}
+  .derive .arrow{color:var(--ash); font-size:22px}
+  .ghost{opacity:.18}
+  .tiny{display:flex; align-items:center; justify-content:center; gap:20px; padding:14px; border-top:1px solid var(--line); background:var(--surface2); flex-wrap:wrap}
+  .tiny span.lbl{font-size:12px; color:var(--ash)}
+
+  /* Contexto */
+  .nav{width:100%; display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border:1px solid var(--line); border-radius:12px; background:rgba(20,16,25,.8)}
+  .nav nav{display:flex; gap:18px; font-size:13px; color:var(--ash)}
+  .avatar{width:120px; height:120px; border-radius:50%; overflow:hidden; display:grid; place-items:center; background:var(--ink); border:1px solid var(--line)}
+
+  .note{margin-top:18px; padding:16px 18px; border-left:3px solid var(--red); background:var(--surface); border-radius:0 12px 12px 0; color:var(--ash); font-size:15px}
+  .note b{color:var(--bone)}
+  ol.q{color:var(--ash); padding-left:20px} ol.q li{margin:6px 0} ol.q b{color:var(--bone)}
+  table{border-collapse:collapse; width:100%; margin-top:16px; font-size:15px}
+  th,td{border-bottom:1px solid var(--line); padding:10px 8px; text-align:left; vertical-align:top}
+  th{color:var(--ash); font-weight:600}
+</style>
+</head>
+<body>
+<main>
+  <h1>Propuestas de logo · RebelDEV</h1>
+  <p class="lead">Opciones para el isotipo, el logotipo, cómo se combinan y sus variantes. Es material para elegir: nada está decidido. Cada opción tiene un código (I-A, L-3…) para comentarla. El detalle y las preguntas están en <code>mapeo-mejoras-marca.md</code>, sección 8.</p>
+  <div class="note">Reglas que siguen todas: <b>un solo grosor de trazo</b>, la <b>barra roja separada</b> de los signos (ya no se pega como en el logo actual), la barra con un <b>ángulo claramente distinto</b> al de los brazos, todo sobre una <b>cuadrícula de 48</b> y los signos del nombre <b>dibujados igual que los del isotipo</b> y a la altura de las mayúsculas.</div>
+
+  <h2>1. Isotipo</h2>
+  <p class="lead">El ícono solo. Cada tarjeta lo muestra sobre oscuro, sobre claro, dentro del cuadrado (como en LinkedIn) y en tamaño real de favicon (32 y 16 px).</p>
+  <div class="grid g2" id="isos"></div>
+
+  <h2>2. Logotipo</h2>
+  <p class="lead">El nombre escrito. Incluye las formas que propusiste (<code>rebel&lt;/dev&gt;</code>, <code>Rebel&lt;dev&gt;</code>, <code>Rebel&lt;DEV&gt;</code>) y otras. Los signos son dibujos, no letras de la fuente, para que coincidan con el isotipo.</p>
+  <div class="grid g2" id="wms"></div>
+
+  <h2>3. Isotipo + logotipo: imagotipo o isologo</h2>
+  <p class="lead">Hay dos formas de juntar el símbolo y el nombre. Una marca elige <b>una</b> de las dos; mezclarlas es lo que hacía que la versión anterior se viera desordenada.</p>
+  <div class="grid g4 gloss" id="gloss"></div>
+  <div class="note"><b>Qué fallaba en la versión anterior:</b> el <code>&lt;/&gt;</code> aparecía dos veces (en el ícono y dentro del nombre); el ícono tenía un trazo más grueso o más fino que las letras; los tamaños y la separación estaban puestos a ojo; y «Estudio de software» era tan chico que se veía como ruido.</div>
+  <div class="note"><b>Reglas nuevas:</b> (1) <b>un solo trazo</b>: los signos y el ícono tienen el grosor de las letras; (2) <b>sin repetir</b>: si el nombre lleva signos, va sin ícono al lado (isologo); si va el ícono al lado, el nombre va limpio (imagotipo); (3) <b>medidas fijas</b>: el ícono mide lo mismo que una mayúscula y la separación es media mayúscula; (4) <b>sin texto chico</b>: «Estudio de software» va aparte, no pegado al logo.</div>
+  <div class="grid g2" id="locks"></div>
+  <h3 style="margin-top:40px">Cómo se construyen</h3>
+  <p class="lead">Las líneas rojas marcan la base y la altura de las mayúsculas: el ícono y los signos caben justo entre las dos, igual que las letras.</p>
+  <div class="grid g2" id="build"></div>
+
+  <h2>4. Variantes del sistema recomendado (S-1)</h2>
+  <p class="lead">Cómo se vería el sistema S-1 en cada uso. Las mismas variantes se pueden armar con cualquier otro sistema.</p>
+  <div class="grid g4" id="vars"></div>
+  <div class="grid g2" id="ctx"></div>
+
+  <h2>5. Recomendación</h2>
+  <table>
+    <tr><th></th><th>Qué propongo</th><th>Por qué</th></tr>
+    <tr><td><b>Isotipo</b></td><td><b>I-A</b>, clásico corregido</td><td class="muted">Es el que ya está en LinkedIn, pero arreglado: no hay que «relanzar» la marca, solo pulirla. I-C es la alternativa si quieren algo más rebelde.</td></tr>
+    <tr><td><b>Logotipo</b></td><td><b>L-6</b>, <code>&lt;RebelDEV/&gt;</code></td><td class="muted">Se lee igual que el nombre en los textos y usa los mismos tres signos que el isotipo: el ícono es el logotipo sin el nombre. Un componente que se cierra solo encaja con «pieza por pieza».</td></tr>
+    <tr><td><b>Sistema</b></td><td><b>S-1</b>, isologo</td><td class="muted">El logotipo va solo (ya lleva el <code>&lt;/&gt;</code> dentro) y el isotipo se usa donde no cabe el nombre: favicon, foto de perfil, sellos.</td></tr>
+    <tr><td><b>Alternativa</b></td><td><b>S-2</b>, imagotipo</td><td class="muted">Si prefieren el nombre limpio, sin signos: el ícono al lado, del alto de una mayúscula.</td></tr>
+    <tr><td><b>Si prefieren tu idea</b></td><td><code>rebel&lt;/dev&gt;</code> (L-3) en lugar de L-6</td><td class="muted">Funciona igual que S-1: es un isologo, va solo y su ícono es el mismo <code>&lt;/&gt;</code>. Tiene más actitud, pero se lee como «cierre de dev», no como el nombre tal cual.</td></tr>
+  </table>
+
+  <h2>6. Para decidir</h2>
+  <ol class="q">
+    <li><b>Isotipo:</b> ¿I-A, I-B, I-C, I-D o I-E?</li>
+    <li><b>Logotipo:</b> ¿cuál de L-1 a L-9?</li>
+    <li><b>¿Isologo o imagotipo?</b> Isologo: el nombre lleva los signos y va solo (S-1, S-4). Imagotipo: ícono al lado y nombre limpio (S-2, S-3).</li>
+    <li><b>¿El isotipo va siempre en el cuadrado negro</b> o también suelto?</li>
+    <li><b>Una tinta:</b> para grabados o sellos de un solo color, ¿se permite que la barra pierda el rojo? Es la única excepción a «la barra siempre roja».</li>
+  </ol>
+</main>
+
+<script>
+const C = { ink:'#0B0A0E', bone:'#F4F0E8', red:'#FF2D3F', redDeep:'#E4121F', ash:'#A7A0A8' };
+
+/* ---------- Isotipos (cuadrícula 48 × 48) ---------- */
+const ISOS = {
+  A: {
+    name:'Clásico corregido', crop:'1 11.4 46 25.2',
+    idea:'El de LinkedIn, arreglado: la barra separada de los signos y el mismo grosor que las letras del nombre. Está armado con los mismos tres signos del logotipo.',
+    pros:'<b>A favor:</b> continuidad con lo que ya está publicado. <b>En contra:</b> es el <code>&lt;/&gt;</code> que usan muchos estudios de software; lo propio está en el detalle.',
+    draw:(f,r)=>{ const m = codeMark(f,r), k = 46/m.w; return `<g transform="translate(1 ${((48-T*k)/2).toFixed(2)}) scale(${k.toFixed(4)})">${m.inner}</g>`; }
+  },
+  B: {
+    name:'Recto', crop:'-1 10 50 28',
+    idea:'Puntas y vértices en ángulo, sin redondear. Más «ingeniería», más serio.',
+    pros:'<b>A favor:</b> se ve preciso y se diferencia del <code>&lt;/&gt;</code> redondeado típico. <b>En contra:</b> menos cercano; pierde algo de la calidez de LinkedIn.',
+    draw:(f,r)=>`<g fill="none" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="5">
+      <path d="M13.5 12 L3.5 24 L13.5 36" stroke="${f}"/><path d="M34.5 12 L44.5 24 L34.5 36" stroke="${f}"/>
+      <path d="M27.7 13 L20.3 35" stroke="${r}"/></g>`
+  },
+  C: {
+    name:'La barra se sale', crop:'0 3 48 42',
+    idea:'La barra roja es más alta que los signos y se sale del código por arriba y por abajo: la parte rebelde rompe el molde.',
+    pros:'<b>A favor:</b> cuenta la idea de la marca en un gesto y se distingue de cualquier <code>&lt;/&gt;</code>. <b>En contra:</b> pide más alto; en el cuadrado los signos quedan algo más chicos.',
+    draw:(f,r)=>`<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="5">
+      <path d="M13 15 L4 24 L13 33" stroke="${f}"/><path d="M35 15 L44 24 L35 33" stroke="${f}"/>
+      <path d="M29.5 6 L18.5 42" stroke="${r}"/></g>`
+  },
+  D: {
+    name:'Solo la barra', crop:'14 6 20 36', boxOnly:true,
+    idea:'La firma reducida al mínimo: la barra roja dentro del cuadrado negro. Como marca secundaria o favicon.',
+    pros:'<b>A favor:</b> se lee perfecto a 16 px y es muy reconocible si la barra se usa en toda la web. <b>En contra:</b> sola no dice «software»; necesita que la marca ya sea conocida.',
+    draw:(f,r)=>`<path d="M28.5 9 L19.5 39" fill="none" stroke="${r}" stroke-width="6.5" stroke-linecap="round"/>`
+  },
+  E: {
+    name:'Llaves', crop:'2 8 44 32',
+    idea:'Cambia los <code>&lt; &gt;</code> por llaves <code>{ }</code>: el bloque de código donde vive la lógica, no la etiqueta de la web.',
+    pros:'<b>A favor:</b> habla más de backend y lógica, y casi nadie lo usa. <b>En contra:</b> rompe con lo publicado en LinkedIn; las curvas se pierden un poco a 16 px.',
+    draw:(f,r)=>`<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="4.5">
+      <path d="M15 11 C10 11 9.5 13 9.5 17 L9.5 20 C9.5 22.5 8 24 5 24 C8 24 9.5 25.5 9.5 28 L9.5 31 C9.5 35 10 37 15 37" stroke="${f}"/>
+      <path d="M33 11 C38 11 38.5 13 38.5 17 L38.5 20 C38.5 22.5 40 24 43 24 C40 24 38.5 25.5 38.5 28 L38.5 31 C38.5 35 38 37 33 37" stroke="${f}"/>
+      <path d="M27 15 L21 33" stroke="${r}"/></g>`
+  }
+};
+
+function iso(k, {fg=C.bone, red=C.red, box=null, size=120, crop=false}={}) {
+  const d = ISOS[k];
+  if (box) {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 48 48" role="img" aria-label="Isotipo ${k}">
+      <rect width="48" height="48" rx="11" fill="${box}"/>
+      <g transform="translate(24 24) scale(.66) translate(-24 -24)">${d.draw(fg, red)}</g></svg>`;
+  }
+  const vb = crop ? d.crop : '0 0 48 48';
+  const [,,w,h] = vb.split(' ').map(Number);
+  return `<svg height="${size}" width="${size*w/h}" viewBox="${vb}" role="img" aria-label="Isotipo ${k}">${d.draw(fg, red)}</svg>`;
+}
+
+/* ---------- Signos del logotipo (misma forma que el isotipo, alto = mayúsculas) ---------- */
+/* Un solo trazo para todo: 0,22 de la altura de mayúscula (las letras de Bricolage 800 miden 0,25;
+   las diagonales se ven más gruesas, así que se compensan un poco). Alto T = 30 = una mayúscula. */
+const T = 30, SR = 0.22;
+function geo(sr=SR) {
+  const s = sr*T, h = (T-s)/2, dx = h*10/11, Wc = dx+s, Ws = (T-s)/3 + s, g = s/2;
+  return {s, Wc, Ws, g};
+}
+function pathOf(ch, x=0, sr=SR) {
+  const {s, Wc, Ws} = geo(sr), r = s/2, f = n => +n.toFixed(2);
+  if (ch==='<') return `M${f(x+Wc-r)} ${f(r)} L${f(x+r)} ${T/2} L${f(x+Wc-r)} ${f(T-r)}`;
+  if (ch==='>') return `M${f(x+r)} ${f(r)} L${f(x+Wc-r)} ${T/2} L${f(x+r)} ${f(T-r)}`;
+  return `M${f(x+Ws-r)} ${f(r)} L${f(x+r)} ${f(T-r)}`;
+}
+/* El isotipo </> armado con los mismos tres signos del nombre, separados por medio trazo */
+function codeMark(fg, red, sr=SR) {
+  const {s, Wc, Ws, g} = geo(sr);
+  const x0 = Wc+g, x1 = x0+Ws+g, w = x1+Wc;
+  const st = `fill="none" stroke-width="${+s.toFixed(2)}" stroke-linecap="round" stroke-linejoin="round"`;
+  return {w, inner:`<path d="${pathOf('<',0,sr)}" stroke="${fg}" ${st}/><path d="${pathOf('/',x0,sr)}" stroke="${red}" ${st}/><path d="${pathOf('>',x1,sr)}" stroke="${fg}" ${st}/>`};
+}
+const GUIDES = w => `<g stroke="#FF2D3F" stroke-width="1" stroke-dasharray="3 3" opacity=".8">
+  <line x1="-600" x2="${w+2400}" y1="0" y2="0" vector-effect="non-scaling-stroke"/><line x1="-600" x2="${w+2400}" y1="${T}" y2="${T}" vector-effect="non-scaling-stroke"/></g>`;
+/* Isotipo dentro de un texto: alto = k mayúsculas, mismo trazo que las letras */
+function markInline(fg, red, {k=1, guides=false}={}) {
+  const m = codeMark(fg, red);
+  return `<svg class="g" viewBox="0 0 ${m.w.toFixed(2)} ${T}" style="height:${k}cap; width:${(m.w/T*k).toFixed(3)}cap; overflow:visible" aria-hidden="true">${guides?GUIDES(m.w):''}${m.inner}</svg>`;
+}
+function glyph(ch, color, square=false, guides=false) {
+  const {s, Wc, Ws, g} = geo();
+  const w = ch==='/' ? Ws : Wc;
+  const cap = square ? 'butt' : 'round', join = square ? 'miter' : 'round';
+  return `<svg class="g" viewBox="0 0 ${w.toFixed(2)} ${T}" style="width:${(w/T).toFixed(3)}cap; margin:0 ${(g/2/T).toFixed(3)}cap" aria-hidden="true">${guides?GUIDES(w):''}
+    <path d="${pathOf(ch)}" fill="none" stroke="${color}" stroke-width="${+s.toFixed(2)}" stroke-linecap="${cap}" stroke-linejoin="${join}"/></svg>`;
+}
+
+/* tokens: texto, o signo '<' '>' '/'; con '!' va en rojo. '~texto' = peso fino */
+const WMS = new Map(Object.entries({
+  1: {name:'rebel‹DEV› corregido', t:['rebel','<!','DEV','>!'],
+      idea:'El del mock, con los signos redibujados a la altura de «DEV».',
+      pros:'<b>A favor:</b> el que ya conocen. <b>En contra:</b> no lleva la barra roja, que es la firma; el nombre y el ícono no comparten el signo clave.'},
+  2: {name:'REBEL</DEV>', t:['REBEL','<','/!','DEV','>'], caps:true, square:true,
+      idea:'Todo en mayúsculas, como en el banner de LinkedIn, con la barra roja.',
+      pros:'<b>A favor:</b> sobrio y técnico, combina con el isotipo recto (I-B). <b>En contra:</b> las mayúsculas se leen como grito si se abusa; muy ancho.'},
+  3: {name:'rebel</dev>', t:['rebel','<','/!','dev','>'],
+      idea:'Tu idea. Todo en minúscula: «rebel» cierra la etiqueta «dev».',
+      pros:'<b>A favor:</b> tiene actitud y la barra roja cae al centro. <b>En contra:</b> «dev» en minúscula pierde el «DEV» del nombre oficial; se lee como «fin de dev».'},
+  '4a': {name:'Rebel<DEV>', t:['Rebel','<!','DEV','>!'],
+      idea:'Tu idea. Mayúscula inicial y «DEV» en mayúsculas, como se escribe el nombre en los textos.',
+      pros:'<b>A favor:</b> el más fiel al nombre «RebelDEV». <b>En contra:</b> sin barra; el rojo queda en los signos y no en la firma.'},
+  '4b': {name:'Rebel<dev>', t:['Rebel','<!','dev','>!'],
+      idea:'Tu idea, variante en minúscula: «dev» como etiqueta.',
+      pros:'<b>A favor:</b> más amable y legible. <b>En contra:</b> el mismo problema de la barra; «dev» pierde fuerza frente a «Rebel».'},
+  5: {name:'Rebel</DEV>', t:['Rebel','<','/!','DEV','>'],
+      idea:'Mezcla de tus ideas: nombre oficial y barra roja.',
+      pros:'<b>A favor:</b> respeta el nombre y lleva la firma. <b>En contra:</b> la etiqueta de cierre <code>&lt;/…&gt;</code> sin apertura puede leerse como «terminado».'},
+  6: {name:'<RebelDEV/>', t:['<','RebelDEV','/!','>'], rec:true,
+      idea:'El nombre como componente que se cierra solo. Los tres signos del isotipo envuelven el nombre: el ícono es el logotipo sin el nombre.',
+      pros:'<b>A favor:</b> se lee «RebelDEV» tal cual, lleva la barra roja y no necesita el isotipo al lado. <b>En contra:</b> es el más ancho; en espacios chicos manda el isotipo.'},
+  7: {name:'rebel/dev', t:['rebel','/!','dev'],
+      idea:'Sin signos: solo la barra roja entre las dos palabras, como una ruta o un repositorio.',
+      pros:'<b>A favor:</b> el más limpio y el que mejor escala; la barra se vuelve el recurso de toda la marca. <b>En contra:</b> pierde el guiño a la etiqueta de código.'},
+  8: {name:'rebel</dev> mono', t:['rebel','<','/!','dev','>'], mono:true,
+      idea:'Escrito en la fuente de código (JetBrains Mono), como si fuera una línea de un editor.',
+      pros:'<b>A favor:</b> el más literal y «de programador». <b>En contra:</b> suma una tercera fuente al logo y se ve menos de marca premium.'},
+  9: {name:'RebelDEV limpio', t:['Rebel','~DEV'],
+      idea:'Solo el nombre, «Rebel» grueso y «DEV» fino. Todo el código lo pone el isotipo al lado.',
+      pros:'<b>A favor:</b> clásico y sin repetir el <code>&lt;/&gt;</code> en la combinación. <b>En contra:</b> solo, sin isotipo, no tiene nada propio.'}
+}));
+const WMS_ORDER = ['1','2','3','4a','4b','5','6','7','8','9'];
+
+function wm(k, {fg=C.bone, red=C.red, size=56, square, guides=false}={}) {
+  const d = WMS.get(k);
+  const sq = square ?? d.square;
+  const cls = ['wm', d.mono && 'mono', d.caps && 'caps'].filter(Boolean).join(' ');
+  const inner = d.t.map(tok => {
+    if (['<','>','/','<!','>!','/!'].includes(tok)) {
+      const ch = tok[0], col = tok.endsWith('!') ? red : fg;
+      if (d.mono) return `<span style="color:${col}">${ch.replace('<','&lt;').replace('>','&gt;')}</span>`;
+      const gd = guides; guides = false;
+      return glyph(ch, col, sq, gd);
+    }
+    if (tok.startsWith('~')) return `<span class="lt">${tok.slice(1)}</span>`;
+    return `<span>${tok}</span>`;
+  }).join('');
+  return `<span class="${cls}" style="font-size:${size}px; color:${fg}">${inner}</span>`;
+}
+
+/* ---------- Render ---------- */
+const $ = id => document.getElementById(id);
+
+$('isos').innerHTML = Object.entries(ISOS).map(([k,d]) => `
+  <article class="card${k==='A'?' rec':''}">
+    <div class="split">
+      <div class="stage dark">${d.boxOnly ? iso(k,{box:C.ink,size:150}) : iso(k,{size:150})}</div>
+      <div class="stage light">${d.boxOnly ? iso(k,{box:C.ink,size:110}) : iso(k,{fg:C.ink,red:C.redDeep,size:110})}</div>
+    </div>
+    <div class="sizes">
+      ${iso(k,{box:'#000',size:72})} ${iso(k,{box:C.ink,size:32})} ${iso(k,{box:C.ink,size:16})}
+      <span>cuadrado · 32 px · 16 px</span>
+    </div>
+    <div class="body">
+      <h3><span class="id">I-${k}</span>${d.name}</h3>
+      <p>${d.idea}</p><p class="pros">${d.pros}</p>
+    </div>
+  </article>`).join('');
+
+$('wms').innerHTML = WMS_ORDER.map(k => [k, WMS.get(k)]).map(([k,d]) => `
+  <article class="card${d.rec?' rec':''}">
+    <div class="stage dark" style="min-height:170px">${wm(k,{size:58})}</div>
+    <div class="stage light" style="min-height:96px; padding:18px">${wm(k,{fg:C.ink, red:C.redDeep, size:34})}</div>
+    <div class="body">
+      <h3><span class="id">L-${k}</span>${d.name.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</h3>
+      <p>${d.idea}</p><p class="pros">${d.pros}</p>
+    </div>
+  </article>`).join('');
+
+/* Imagotipos e isologos */
+/* En línea, el cuadrado se centra en la altura de las mayúsculas: un hueco de 1 mayúscula apoyado en la base y el cuadrado centrado sobre él */
+const tile = (bg, fg, red, inline=true) => { const m = codeMark(fg, red);
+  const t = `<span class="tile" style="background:${bg}"><svg viewBox="0 0 ${m.w.toFixed(2)} ${T}" aria-hidden="true">${m.inner}</svg></span>`;
+  return inline ? `<span class="tile-slot">${t}</span>` : t; };
+const NAME = 'RebelDEV';
+function sysH(id, {fg=C.bone, red=C.red, size=48, guides=false}={}) {
+  const onDark = fg===C.bone;
+  if (id==='S-1') return wm('6',{fg,red,size,guides});
+  if (id==='S-4') return wm('7',{fg,red,size});
+  if (id==='S-2') return `<span class="wm" style="font-size:${size}px; color:${fg}">${markInline(fg,red,{guides})}<span class="gap"></span><span>${NAME}</span></span>`;
+  if (id==='S-3') return `<span class="wm" style="font-size:${size}px; color:${fg}">${onDark ? tile(C.bone, C.ink, C.redDeep) : tile(C.ink, C.bone, C.red)}<span class="gap" style="width:.7cap"></span><span>${NAME}</span></span>`;
+}
+function sysIcon(id, {fg=C.bone, red=C.red, size=90}={}) {
+  if (id==='S-4') return iso('D',{box: fg===C.bone ? '#000' : C.ink, size});
+  return iso('A',{fg, red, size, crop:true});
+}
+function sysV(id, {fg=C.bone, red=C.red, size=34}={}) {
+  const onDark = fg===C.bone;
+  if (id==='S-2') return `<div class="col" style="font-size:${size}px; color:${fg}">${markInline(fg,red,{k:1.8})}<span class="wm" style="font-size:${size}px">${NAME}</span></div>`;
+  if (id==='S-3') return `<div class="col" style="font-size:${size}px; color:${fg}"><span class="wm" style="font-size:${size}px">${onDark ? tile(C.bone, C.ink, C.redDeep, false) : tile(C.ink, C.bone, C.red, false)}</span><span class="wm" style="font-size:${size}px">${NAME}</span></div>`;
+  return null;
+}
+const SYS = [
+  {id:'S-1', type:'Isologo', name:'<RebelDEV/>', rec:true,
+   txt:'El nombre ya lleva los signos, así que no se le pone ícono al lado. Si se le quita el nombre, queda el isotipo <code>&lt;/&gt;</code>: es el mismo dibujo. Mi recomendación.'},
+  {id:'S-2', type:'Imagotipo', name:'</> RebelDEV',
+   txt:'El ícono, del alto de una mayúscula, seguido del nombre limpio. El ícono se lee como una letra más: misma altura y mismo trazo.'},
+  {id:'S-3', type:'Imagotipo', name:'Cuadrado + RebelDEV',
+   txt:'El ícono dentro del cuadrado, como en la foto de perfil de LinkedIn, y el nombre limpio. Sobre oscuro el cuadrado va claro, para que se vea.'},
+  {id:'S-4', type:'Isologo', name:'rebel/dev',
+   txt:'La barra roja une las dos palabras. Su ícono es la barra sola (I-D). El sistema más simple: la barra es todo.'}
+];
+const tinyRow = id => `<div class="tiny"><span class="lbl">En la barra de la web (20 px):</span>${sysH(id,{size:20})}<span class="lbl">Ícono:</span>${sysIcon(id,{size:id==='S-4'?28:16})}</div>`;
+$('gloss').innerHTML = [
+  ['Isotipo', 'Solo el símbolo, sin texto.', iso('A',{size:44, crop:true})],
+  ['Logotipo', 'Solo el nombre escrito.', `<span class="wm" style="font-size:34px">RebelDEV</span>`],
+  ['Imagotipo', 'Símbolo + nombre, uno al lado del otro. Se pueden separar y cada uno funciona solo.', sysH('S-2',{size:30})],
+  ['Isologo', 'Símbolo y nombre fundidos en una sola pieza. No se separan.', sysH('S-1',{size:30})]
+].map(([t,d,v]) => `<article class="card"><div class="stage dark">${v}</div><div class="body"><h3 style="font-size:17px">${t}</h3><p class="pros">${d}</p></div></article>`).join('');
+
+$('locks').innerHTML = SYS.map(S => {
+  const v = sysV(S.id), vl = sysV(S.id,{fg:C.ink, red:C.redDeep, size:28});
+  const second = v
+    ? `<div class="split"><div class="stage dark" style="border-top:1px solid var(--line)">${v}</div><div class="stage light">${vl}</div></div>`
+    : `<div class="split"><div class="stage light">${sysH(S.id,{fg:C.ink, red:C.redDeep, size:30})}</div>
+       <div class="stage dark" style="border-top:1px solid var(--line)"><div class="derive"><span class="pros">Su ícono:</span>${sysIcon(S.id,{size:S.id==='S-4'?70:40})}</div></div></div>`;
+  return `<article class="card${S.rec?' rec':''}">
+    <div class="stage dark" style="min-height:170px">${sysH(S.id,{size:52})}</div>
+    ${second}${tinyRow(S.id)}
+    <div class="body"><h3><span class="id">${S.id}</span>${S.type} · ${S.name.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</h3><p class="muted">${S.txt}</p></div>
+  </article>`;
+}).join('');
+
+$('build').innerHTML = `
+  <article class="card"><div class="stage dark" style="min-height:200px">${sysH('S-1',{size:64, guides:true})}</div>
+    <div class="body"><h3 style="font-size:16px">S-1 · Isologo</h3><p class="pros">Los signos miden lo mismo que una mayúscula y tienen su mismo grosor. Entre signo y signo hay medio trazo de aire.</p></div></article>
+  <article class="card"><div class="stage dark" style="min-height:200px">${sysH('S-2',{size:64, guides:true})}</div>
+    <div class="body"><h3 style="font-size:16px">S-2 · Imagotipo</h3><p class="pros">El ícono cabe entre las mismas dos líneas que las letras. La separación entre el ícono y el nombre es media mayúscula.</p></div></article>
+  <article class="card" style="grid-column:1/-1"><div class="stage dark" style="min-height:170px"><div class="derive">
+      ${wm('6',{size:46})}<span class="arrow">→</span>
+      <span class="wm" style="font-size:46px">${glyph('<',C.bone)}<span class="ghost">RebelDEV</span>${glyph('/',C.red)}${glyph('>',C.bone)}</span><span class="arrow">→</span>
+      <span class="wm" style="font-size:46px">${markInline(C.bone,C.red)}</span><span class="arrow">→</span>${iso('A',{box:'#000', size:64})}</div></div>
+    <div class="body"><h3 style="font-size:16px">De dónde sale el isotipo de S-1</h3><p class="pros">Se quita el nombre de <code>&lt;RebelDEV/&gt;</code> y los tres signos se juntan: ese es el ícono. Por eso nombre e ícono son de la misma familia.</p></div></article>`;
+
+const VARS = [
+  {n:'Principal, sobre oscuro', bg:'dark', html: wm('6',{size:34})},
+  {n:'Sobre claro', bg:'light', html: wm('6',{fg:C.ink,red:C.redDeep,size:34}), note:'Rojo más oscuro (#E4121F) para que se vea sobre crema.'},
+  {n:'Una tinta clara', bg:'dark', html: wm('6',{red:C.bone,size:34}), note:'Solo para grabados o sellos de un color. Rompe «barra siempre roja»: decidir.'},
+  {n:'Una tinta oscura', bg:'light', html: wm('6',{fg:C.ink,red:C.ink,size:34}), note:'Igual que la anterior, para impresión en negro.'},
+  {n:'Sobre rojo', bg:'redbg', html: wm('6',{fg:C.bone,red:C.ink,size:34}), note:'La barra no puede ir roja sobre rojo. Propongo no usar esta variante.'},
+  {n:'Isotipo en cuadrado', bg:'dark', html: iso('A',{box:'#000',size:110})},
+  {n:'Isotipo suelto', bg:'light', html: iso('A',{fg:C.ink,red:C.redDeep,size:110})},
+  {n:'Favicon', bg:'light', html: `<div class="row">${iso('A',{box:C.ink,size:48})}${iso('A',{box:C.ink,size:32})}${iso('A',{box:C.ink,size:16})}</div>`, note:'48, 32 y 16 px. A 16 px conviene probar I-D.'}
+];
+$('vars').innerHTML = VARS.map(v => `
+  <article class="card"><div class="stage ${v.bg}" style="min-height:160px">${v.html}</div>
+  <div class="body"><h3 style="font-size:16px">${v.n}</h3>${v.note?`<p class="pros">${v.note}</p>`:''}</div></article>`).join('');
+
+$('ctx').innerHTML = `
+  <article class="card"><div class="stage dark" style="min-height:170px; padding:22px">
+    <div class="nav">${wm('6',{size:22})}<nav><span>Servicios</span><span>RebelBot</span><span>Contacto</span></nav></div></div>
+    <div class="body"><h3 style="font-size:16px">En la barra de la web</h3><p class="pros">El logotipo a 22 px. Debajo de unos 18 px conviene cambiar al isotipo.</p></div></article>
+  <article class="card"><div class="stage" style="min-height:170px; background:#1b1f23; gap:24px">
+    <div class="avatar">${iso('A',{size:100})}</div><div class="avatar" style="width:64px;height:64px">${iso('A',{size:54})}</div></div>
+    <div class="body"><h3 style="font-size:16px">Foto de perfil circular</h3><p class="pros">WhatsApp y otras redes recortan en círculo: el isotipo suelto, sin el cuadrado, aprovecha mejor el espacio.</p></div></article>`;
+</script>
+</body>
+</html>

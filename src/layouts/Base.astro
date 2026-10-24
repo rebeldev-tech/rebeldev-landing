@@ -1,0 +1,40 @@
+---
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+
+interface Props { title: string; description: string }
+const { title, description } = Astro.props;
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0B0A0E" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_PE" />
+    <Font cssVariable="--font-bricolage" preload />
+    <Font cssVariable="--font-instrument" preload />
+    <Font cssVariable="--font-jetbrains" />
+    <script is:inline>
+      // Antes de pintar: marcar si habrá animación, para ocultar lo que va a entrar.
+      // Sin JS o con «menos movimiento», todo se ve desde el inicio.
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('has-motion');
+        try { if (!sessionStorage.getItem('rd-intro')) document.documentElement.classList.add('show-intro'); } catch (e) {}
+        // Respaldo: si el JavaScript de la página no llega a cargar, se muestra todo igual.
+        setTimeout(function () { if (!window.__rdMotion) document.documentElement.classList.remove('has-motion', 'show-intro'); }, 4000);
+      }
+    </script>
+  </head>
+  <body>
+    <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-full focus:bg-bone focus:px-4 focus:py-2 focus:text-ink">Ir al contenido</a>
+    <slot />
+    <div class="grain" aria-hidden="true"></div>
+  </body>
+</html>

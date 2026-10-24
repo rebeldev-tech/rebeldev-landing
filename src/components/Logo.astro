@@ -1,0 +1,27 @@
+---
+// Logo PROVISIONAL: isotipo I-A + nombre limpio (sistema S-2 de referencias/propuestas-logo.html).
+// El logo definitivo está pendiente; al decidirlo, se cambia solo este archivo.
+import { MARK } from '../lib/mark';
+
+interface Props { class?: string; markOnly?: boolean }
+const { class: className = '', markOnly = false } = Astro.props;
+---
+<span class:list={['logo', className]} aria-label="RebelDEV" translate="no">
+  <svg class="logo-mark" viewBox={`0 0 ${MARK.width} ${MARK.height}`} aria-hidden="true">
+    <g fill="none" stroke-width={MARK.stroke} stroke-linecap="round" stroke-linejoin="round">
+      <path d={MARK.left} stroke="currentColor" />
+      <path d={MARK.slash} stroke="var(--color-red)" />
+      <path d={MARK.right} stroke="currentColor" />
+    </g>
+  </svg>
+  {!markOnly && <span class="logo-name" aria-hidden="true">RebelDEV</span>}
+</span>
+
+<style>
+  .logo {
+    display: inline-flex; align-items: baseline; gap: 0.55cap;
+    font-family: var(--font-display); font-weight: 800; letter-spacing: -0.035em; line-height: 1;
+    white-space: nowrap;
+  }
+  .logo-mark { height: 1cap; width: auto; aspect-ratio: 55.5 / 30; flex: none; overflow: visible; }
+</style>

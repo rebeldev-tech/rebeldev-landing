@@ -1,0 +1,41 @@
+---
+import Logo from './Logo.astro';
+import { contacto } from '../data/contacto';
+
+const links = [
+  { href: '#rebelbot', label: 'RebelBot' },
+  { href: '#servicios', label: 'Servicios' },
+  { href: '#como-trabajamos', label: 'Cómo trabajamos' },
+  { href: '#preguntas', label: 'Preguntas' },
+];
+---
+<header class="nav fixed inset-x-0 top-0 z-50" data-nav>
+  <div class="wrap flex h-[4.5rem] items-center justify-between gap-6">
+    <a href="#inicio" class="text-[1.35rem] text-bone" aria-label="RebelDEV, ir al inicio"><Logo /></a>
+    <nav aria-label="Principal" class="hidden items-center gap-8 md:flex">
+      {links.map((l) => <a href={l.href} class="nav-link text-[0.95rem] text-ash transition-colors hover:text-bone">{l.label}</a>)}
+    </nav>
+    <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary !px-4 !py-2.5 text-[0.95rem]">Agenda una demo</a>
+  </div>
+</header>
+
+<style>
+  .nav { transition: background-color .4s, border-color .4s, transform .5s var(--ease-out-expo); border-bottom: 1px solid transparent; }
+  .nav.is-solid { background: rgb(11 10 14 / 0.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-color: var(--color-line); }
+  .nav.is-hidden { transform: translateY(-100%); }
+</style>
+
+<script>
+  // Fondo al bajar; se esconde al bajar rápido y vuelve al subir.
+  const nav = document.querySelector<HTMLElement>('[data-nav]')!;
+  let last = window.scrollY;
+  const onScroll = () => {
+    const y = window.scrollY;
+    nav.classList.toggle('is-solid', y > 40);
+    nav.classList.toggle('is-hidden', y > 500 && y > last + 4);
+    if (y < last - 4) nav.classList.remove('is-hidden');
+    last = y;
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>

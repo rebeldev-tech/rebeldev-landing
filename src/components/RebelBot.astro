@@ -1,0 +1,205 @@
+---
+// RebelBot: texto a la izquierda y un teléfono fijo a la derecha cuyo chat avanza con cada paso
+// (estructura de Terminal Industries + la forma de explicar de Decagon y Runia).
+import { pasos } from '../data/rebelbot';
+
+const mensajes = pasos.flatMap((p, step) => p.chat.map((m) => ({ ...m, step })));
+---
+<section id="rebelbot" class="rb relative py-24 lg:py-36">
+  <div class="wrap">
+    <div class="max-w-[52rem]" data-reveal>
+      <p class="text-d3 font-display font-semibold text-red-text">RebelBot</p>
+      <h2 class="text-d1 mt-4">Tu WhatsApp responde, califica y agenda. Solo.</h2>
+      <p class="text-lead mt-6 max-w-[44ch] text-ash">Un asistente con IA que atiende a tus clientes como lo haría tu equipo, conectado a los datos de tu negocio. Nació en el sector inmobiliario y se adapta a otras industrias.</p>
+    </div>
+
+    <div class="rb-grid mt-16 lg:mt-24">
+      <div class="rb-phone-col">
+        <div class="phone" data-phone>
+          <div class="phone-head">
+            <span class="phone-avatar" aria-hidden="true">TN</span>
+            <span class="flex flex-col leading-tight">
+              <span class="text-[0.95rem] font-semibold text-bone">Tu negocio</span>
+              <span class="text-[0.75rem] text-ash" data-phone-status>en línea</span>
+            </span>
+            <span class="phone-tag">Ejemplo</span>
+          </div>
+          <div class="phone-body" data-chat aria-live="polite">
+            {mensajes.map((m) => (
+              <div class={`msg msg-${m.kind}`} data-msg data-step={m.step} data-kind={m.kind}>
+                {(m.kind === 'in' || m.kind === 'out' || m.kind === 'agent') && (
+                  <p class="bubble">{m.kind === 'agent' && <span class="bubble-tag">Asesor</span>}{m.text}</p>
+                )}
+                {m.kind === 'system' && <p class="sys"><span class="sys-dot" aria-hidden="true"></span>{m.text}</p>}
+                {m.kind === 'buttons' && (
+                  <div class="chips">{m.options.map((o, i) => <span class:list={['chip', { 'is-on': i === m.selected }]}>{o}</span>)}</div>
+                )}
+                {m.kind === 'form' && (
+                  <div class="form-card">
+                    <p class="font-semibold text-bone">{m.title}</p>
+                    <ul class="mt-2 space-y-1.5">
+                      {m.options.map((o, i) => <li class:list={['slot', { 'is-on': i === m.selected }]}><span class="radio" aria-hidden="true"></span>{o}</li>)}
+                    </ul>
+                    <span class="form-cta">{m.cta}</span>
+                  </div>
+                )}
+                {m.kind === 'location' && (
+                  <div class="loc-card">
+                    <div class="loc-map" aria-hidden="true"><span class="loc-pin"></span></div>
+                    <p class="px-3 pt-2 text-[0.85rem] font-semibold text-bone">{m.title}</p>
+                    <p class="px-3 pb-2.5 text-[0.75rem] text-ash">{m.text}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+            <div class="msg msg-out typing" data-typing aria-hidden="true"><p class="bubble"><i></i><i></i><i></i></p></div>
+          </div>
+          <div class="phone-foot" aria-hidden="true"><span>Escribe un mensaje</span></div>
+        </div>
+      </div>
+
+      <ol class="rb-steps">
+        {pasos.map((p, i) => (
+          <li class="rb-step" data-step-item={i}>
+            <span class="rb-num" aria-hidden="true">{i + 1}</span>
+            <h3 class="text-d2">{p.titulo}</h3>
+            <p class="text-lead mt-5 max-w-[40ch] text-ash">{p.texto}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .rb-grid { display: grid; grid-template-columns: 1fr; }
+  .rb-phone-col { position: sticky; top: 5rem; z-index: 2; padding-bottom: 1.5rem; background: linear-gradient(var(--color-ink) calc(100% - 1.5rem), transparent); }
+  .rb-steps { list-style: none; margin: 0; padding: 0; }
+  .rb-step { min-height: 70svh; display: flex; flex-direction: column; justify-content: flex-end; padding-block: 3rem; opacity: .32; transition: opacity .6s; }
+  .rb-step.is-active { opacity: 1; }
+  .rb-num {
+    display: inline-grid; place-items: center; width: 2.4rem; height: 2.4rem; margin-bottom: 1.4rem; border-radius: 999px;
+    border: 1px solid var(--color-line); font-family: var(--font-display); font-weight: 600; color: var(--color-ash);
+    transition: background-color .5s, color .5s, border-color .5s;
+  }
+  .rb-step.is-active .rb-num { background: var(--color-red); border-color: var(--color-red); color: #fff; }
+
+  @media (min-width: 1024px) {
+    .rb-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 6rem; }
+    .rb-phone-col { order: 2; top: calc(50svh - 19rem); align-self: start; background: none; }
+    .rb-step { min-height: 88svh; justify-content: center; padding-block: 0; }
+    .rb-step:first-child { min-height: 70svh; justify-content: flex-start; }
+  }
+
+  /* Teléfono */
+  .phone {
+    width: min(100%, 22rem); margin-inline: auto; border-radius: 2.4rem; padding: 0.55rem;
+    background: linear-gradient(160deg, #2a2430, #121016); border: 1px solid rgb(244 240 232 / 0.12);
+    box-shadow: 0 40px 120px -40px rgb(228 18 31 / 0.35), 0 30px 60px -30px rgb(0 0 0 / 0.8);
+  }
+  .phone-head, .phone-body, .phone-foot { background: var(--color-wa); }
+  .phone-head { display: flex; align-items: center; gap: 0.7rem; padding: 1.1rem 1rem 0.8rem; border-radius: 1.9rem 1.9rem 0 0; border-bottom: 1px solid rgb(255 255 255 / 0.06); }
+  .phone-tag { margin-left: auto; padding: 0.2rem 0.55rem; border-radius: 99px; border: 1px solid rgb(255 255 255 / 0.14); font-size: 0.68rem; color: #8696a0; }
+  .phone-avatar { display: grid; place-items: center; width: 2.2rem; height: 2.2rem; border-radius: 999px; background: #2b3a42; color: var(--color-bone); font-size: 0.75rem; font-weight: 600; }
+  .phone-body { height: min(27rem, 46svh); overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; gap: 0; padding: 0.6rem 0.75rem; }
+  .phone-foot { padding: 0.6rem 0.75rem 1rem; border-radius: 0 0 1.9rem 1.9rem; }
+  .phone-foot span { display: block; border-radius: 999px; background: var(--color-wa-in); padding: 0.6rem 1rem; font-size: 0.8rem; color: #8696a0; }
+  @media (max-width: 1023px) {
+    .phone-body { height: min(16rem, 33svh); }
+    .phone-foot { display: none; }
+    .phone-body { border-radius: 0 0 1.9rem 1.9rem; }
+    .rb-step { min-height: 64svh; justify-content: flex-start; padding-block: 2.5rem 0; }
+  }
+
+  .msg { display: flex; flex-shrink: 0; padding-block: 0.22rem; overflow: hidden; }
+  .msg-in { justify-content: flex-end; }
+  .bubble { max-width: 82%; margin: 0; padding: 0.5rem 0.75rem; border-radius: 0.9rem; font-size: 0.86rem; line-height: 1.4; color: #e9edef; background: var(--color-wa-in); }
+  .msg-in .bubble { background: var(--color-wa-out); border-bottom-right-radius: 0.25rem; }
+  .msg-out .bubble, .msg-agent .bubble { border-bottom-left-radius: 0.25rem; }
+  .bubble-tag { display: block; font-size: 0.72rem; font-weight: 600; color: #53bdeb; margin-bottom: 0.1rem; }
+  .msg-system { justify-content: center; }
+  .sys { display: inline-flex; align-items: center; gap: 0.45rem; margin: 0.2rem 0; padding: 0.3rem 0.7rem; border-radius: 0.5rem; background: rgb(255 255 255 / 0.06); font-size: 0.74rem; color: #d1d7db; }
+  .sys-dot { width: 0.45rem; height: 0.45rem; border-radius: 99px; background: var(--color-red-text); box-shadow: 0 0 10px var(--color-red-text); }
+  .chips { display: flex; gap: 0.4rem; }
+  .chip { padding: 0.4rem 0.8rem; border-radius: 0.6rem; border: 1px solid rgb(83 189 235 / 0.4); color: #53bdeb; font-size: 0.8rem; }
+  .chip.is-on { background: rgb(83 189 235 / 0.16); }
+  .form-card { width: 82%; padding: 0.75rem; border-radius: 0.9rem; background: var(--color-wa-in); font-size: 0.84rem; color: #d1d7db; }
+  .slot { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.5rem; border-radius: 0.5rem; }
+  .slot.is-on { background: rgb(255 255 255 / 0.06); color: #fff; }
+  .radio { width: 0.85rem; height: 0.85rem; border-radius: 99px; border: 2px solid #8696a0; }
+  .slot.is-on .radio { border-color: #25d366; box-shadow: inset 0 0 0 2px var(--color-wa-in), inset 0 0 0 6px #25d366; }
+  .form-cta { display: block; margin-top: 0.6rem; padding-top: 0.55rem; border-top: 1px solid rgb(255 255 255 / 0.08); text-align: center; font-weight: 600; color: #53bdeb; }
+  .loc-card { width: 70%; border-radius: 0.9rem; overflow: hidden; background: var(--color-wa-in); }
+  .loc-map {
+    height: 5.5rem; position: relative;
+    background:
+      linear-gradient(90deg, transparent 47%, rgb(255 255 255 / .12) 47% 53%, transparent 53%),
+      linear-gradient(20deg, transparent 60%, rgb(255 255 255 / .1) 60% 64%, transparent 64%),
+      linear-gradient(transparent 30%, rgb(255 255 255 / .08) 30% 35%, transparent 35%),
+      #22343c;
+  }
+  .loc-pin { position: absolute; left: 50%; top: 45%; width: 1rem; height: 1rem; border-radius: 50% 50% 50% 0; background: var(--color-red-text); transform: translate(-50%, -50%) rotate(-45deg); }
+  .typing .bubble { display: inline-flex; gap: 0.25rem; padding: 0.7rem 0.8rem; }
+  .typing i { width: 0.4rem; height: 0.4rem; border-radius: 99px; background: #8696a0; animation: blink 1s infinite; }
+  .typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: .3 } 40% { opacity: 1 } }
+
+  /* Sin JavaScript se ve la conversación completa; con JS, solo hasta el paso activo */
+  .typing { display: none; }
+  :global(html.has-motion) [data-msg] { display: none; }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion } from '../scripts/motion';
+
+  const chat = document.querySelector<HTMLElement>('[data-chat]')!;
+  const msgs = Array.from(chat.querySelectorAll<HTMLElement>('[data-msg]'));
+  const typing = chat.querySelector<HTMLElement>('[data-typing]')!;
+  const status = document.querySelector<HTMLElement>('[data-phone-status]')!;
+  const steps = Array.from(document.querySelectorAll<HTMLElement>('[data-step-item]'));
+  const mobile = window.matchMedia('(max-width: 1023px)').matches;
+  let current = -1;
+  let tl: gsap.core.Timeline | null = null;
+
+  const show = (el: HTMLElement) => { el.style.display = 'flex'; };
+  const hide = (el: HTMLElement) => { el.style.display = 'none'; };
+
+  function setStep(k: number) {
+    if (k === current) return;
+    tl?.progress(1).kill();
+    steps.forEach((s, i) => s.classList.toggle('is-active', i === k));
+
+    if (k < current || reduceMotion) {
+      msgs.forEach((m) => (Number(m.dataset.step) <= k ? show(m) : hide(m)));
+      gsap.set(msgs, { clearProps: 'height,opacity,visibility,transform' });
+      hide(typing); status.textContent = 'en línea';
+      current = k;
+      return;
+    }
+
+    const nuevos = msgs.filter((m) => { const s = Number(m.dataset.step); return s > current && s <= k; });
+    current = k;
+    tl = gsap.timeline({ onComplete: () => { hide(typing); status.textContent = 'en línea'; } });
+    nuevos.forEach((m) => {
+      const bot = m.dataset.kind !== 'in';
+      if (bot && m.dataset.kind !== 'system') {
+        tl!.add(() => { chat.appendChild(typing); show(typing); status.textContent = 'escribiendo…'; })
+          .fromTo(typing, { height: 0, autoAlpha: 0 }, { height: 'auto', autoAlpha: 1, duration: 0.3 })
+          .to({}, { duration: 0.55 })
+          .add(() => { hide(typing); status.textContent = 'en línea'; });
+      }
+      tl!.add(() => show(m))
+        .fromTo(m, { height: 0, autoAlpha: 0, y: 10 }, { height: 'auto', autoAlpha: 1, y: 0, duration: 0.45, ease: 'power3.out' })
+        .to({}, { duration: bot ? 0.15 : 0.35 });
+    });
+  }
+
+  steps.forEach((step, i) => {
+    ScrollTrigger.create({
+      trigger: step,
+      start: i === 0 ? 'top 85%' : mobile ? 'top 82%' : 'top 62%',
+      end: mobile ? 'bottom 82%' : 'bottom 62%',
+      onToggle: (self) => { if (self.isActive) setStep(i); },
+    });
+  });
+</script>

@@ -1,0 +1,58 @@
+---
+// Fredy Ramos. Solo datos aprobados en CLAUDE.md (sección 5, «Fredy en el landing»).
+// La cita es textual (fredy-ramos.md, sección 3). No se nombra al BCP ni datos personales.
+const trayectoria = ['Desarrollador', 'Arquitecto de software', 'Líder técnico', 'Arquitecto de tecnología', 'Product Owner'];
+---
+<section id="nosotros" class="relative overflow-hidden border-t border-line py-24 lg:py-36" aria-labelledby="fun-title">
+  <div class="wrap">
+    <blockquote class="m-0" data-quote>
+      <p class="quote font-display">«No todo el que pelea gana, pero solo gana el que pelea.»</p>
+    </blockquote>
+
+    <div class="mt-14 grid gap-10 lg:mt-20 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-24" data-reveal>
+      <div>
+        <h2 id="fun-title" class="text-d2">Fredy Ramos</h2>
+        <p class="text-lead mt-2 text-red-text">Responsable y líder de RebelDEV</p>
+      </div>
+      <div>
+        <p class="text-lead max-w-[52ch] text-ash">Ingeniero de Sistemas por la Universidad Nacional Mayor de San Marcos. Ha recorrido el camino completo del software, del código al producto, con experiencia en chatbots e inteligencia artificial.</p>
+        <ol class="tray mt-10" aria-label="Trayectoria">
+          {trayectoria.map((t, i) => (
+            <li class="tray-step" data-tray>
+              <span class="tray-dot" aria-hidden="true"></span>
+              <span class:list={['text-body', i === trayectoria.length - 1 ? 'text-bone font-semibold' : 'text-ash']}>{t}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .quote { font-size: clamp(2.2rem, 6.4vw, 6rem); font-weight: 800; line-height: 0.98; letter-spacing: -0.045em; max-width: 17ch; margin: 0; }
+  .tray { list-style: none; margin: 0; padding: 0 0 0 0.35rem; border-left: 1px solid var(--color-line); }
+  .tray-step { position: relative; display: flex; align-items: center; gap: 1rem; padding: 0.55rem 0 0.55rem 1.25rem; }
+  .tray-dot { position: absolute; left: calc(-0.35rem - 4.5px); width: 8px; height: 8px; border-radius: 99px; background: var(--color-ink); border: 1px solid rgb(244 240 232 / 0.4); }
+  .tray-step:last-child .tray-dot { background: var(--color-red); border-color: var(--color-red); box-shadow: 0 0 12px var(--color-red-text); }
+</style>
+
+<script>
+  import { gsap, SplitText, reduceMotion } from '../scripts/motion';
+  if (!reduceMotion) {
+    document.fonts.ready.then(() => {
+      const quote = document.querySelector<HTMLElement>('[data-quote] p')!;
+      SplitText.create(quote, {
+        type: 'words', mask: 'words', autoSplit: true,
+        onSplit: (self) => gsap.fromTo(self.words, { yPercent: 110 }, {
+          yPercent: 0, duration: 1.1, ease: 'expo.out', stagger: 0.05,
+          scrollTrigger: { trigger: quote, start: 'top 80%', once: true },
+        }),
+      });
+      gsap.fromTo('[data-tray]', { autoAlpha: 0, x: -12 }, {
+        autoAlpha: 1, x: 0, duration: 0.7, stagger: 0.09,
+        scrollTrigger: { trigger: '.tray', start: 'top 85%', once: true },
+      });
+    });
+  }
+</script>

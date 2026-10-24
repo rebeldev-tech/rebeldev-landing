@@ -1,0 +1,47 @@
+---
+// Cómo trabajamos: una secuencia real, por eso va numerada. Sale de la promesa oficial:
+// «Primero entendemos tu negocio; después construimos la solución que realmente necesitas.»
+const pasos = [
+  { t: 'Entendemos tu negocio', d: 'Antes de escribir una línea de código, conversamos con tu equipo y vemos cómo trabaja hoy.' },
+  { t: 'Diseñamos la solución', d: 'La que realmente necesitas, ni más ni menos.' },
+  { t: 'Construimos pieza por pieza', d: 'Con inteligencia artificial en el proceso para ganar calidad y tiempo, y con arquitectura limpia.' },
+  { t: 'Entregamos listo para crecer', d: 'Código sólido y probado, que puede escalar cuando tu negocio lo pida.' },
+];
+---
+<section id="como-trabajamos" class="relative border-t border-line py-24 lg:py-36" aria-labelledby="pro-title">
+  <div class="wrap">
+    <h2 id="pro-title" class="text-d1 max-w-[18ch]" data-reveal>Primero entendemos. Después construimos.</h2>
+    <ol class="pro-list mt-16 lg:mt-20" data-pro>
+      {pasos.map((p, i) => (
+        <li class="pro-step" data-pro-step>
+          <span class="pro-num font-display" aria-hidden="true">{i + 1}</span>
+          <h3 class="text-d3 mt-6">{p.t}</h3>
+          <p class="text-body mt-3 text-ash">{p.d}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .pro-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2.5rem; grid-template-columns: 1fr; counter-reset: s; }
+  @media (min-width: 768px) { .pro-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem; } }
+  @media (min-width: 1100px) { .pro-list { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .pro-step { position: relative; padding-top: 1.75rem; border-top: 1px solid var(--color-line); }
+  .pro-step::before {
+    content: ''; position: absolute; left: 0; top: -1px; height: 1px; width: 100%; background: var(--color-red);
+    transform: scaleX(var(--fill, 1)); transform-origin: left;
+  }
+  .pro-num { display: block; font-size: clamp(3.5rem, 6vw, 5.5rem); font-weight: 800; line-height: 0.85; letter-spacing: -0.05em; color: transparent; -webkit-text-stroke: 1.5px rgb(244 240 232 / 0.35); }
+  .pro-step:last-child .pro-num { -webkit-text-stroke-color: var(--color-red-text); }
+</style>
+
+<script>
+  import { gsap, reduceMotion } from '../scripts/motion';
+  if (!reduceMotion) {
+    const steps = document.querySelectorAll<HTMLElement>('[data-pro-step]');
+    gsap.timeline({ scrollTrigger: { trigger: '[data-pro]', start: 'top 78%', once: true } })
+      .fromTo(steps, { '--fill': 0 }, { '--fill': 1, duration: 0.9, ease: 'power2.inOut', stagger: 0.25 })
+      .fromTo(steps, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power4.out', stagger: 0.25 }, 0);
+  }
+</script>

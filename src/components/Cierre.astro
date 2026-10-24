@@ -1,0 +1,66 @@
+---
+// Llamada final + pie de página. La barra roja gigante se dibuja al bajar: la firma de la marca.
+import Logo from './Logo.astro';
+import { contacto } from '../data/contacto';
+const year = new Date().getFullYear();
+---
+<section id="contacto" class="cta relative overflow-hidden border-t border-line" aria-labelledby="cta-title">
+  <svg class="cta-slash" viewBox="0 0 100 300" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M75 -10 L25 310" data-cta-slash />
+  </svg>
+  <div class="wrap relative py-28 lg:py-44">
+    <h2 id="cta-title" class="text-hero max-w-[12ch]" data-reveal>Cuéntanos qué necesita tu negocio.</h2>
+    <div class="mt-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between" data-reveal data-reveal-delay="0.1">
+      <p class="text-lead max-w-[40ch] text-ash">Agenda una demo de RebelBot o conversemos sobre tu proyecto de software.</p>
+      <div class="flex flex-wrap gap-3">
+        <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary" data-magnetic>Agenda una demo por WhatsApp</a>
+        <a href={`mailto:${contacto.correo}`} class="btn btn-ghost">Escríbenos</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="border-t border-line">
+  <div class="wrap flex flex-col gap-10 py-14 md:flex-row md:items-start md:justify-between">
+    <div>
+      <span class="text-[1.6rem] text-bone"><Logo /></span>
+      <p class="mt-4 text-body text-ash">Ingeniería para empresas rebeldes.</p>
+    </div>
+    <ul class="grid gap-2 text-body text-ash">
+      <li><a class="hover:text-bone" href={`mailto:${contacto.correo}`}>{contacto.correo}</a></li>
+      <li><a class="hover:text-bone" href={contacto.whatsappLink} target="_blank" rel="noopener">WhatsApp {contacto.whatsapp}</a></li>
+      <li><a class="hover:text-bone" href={contacto.linkedin}>LinkedIn</a></li>
+    </ul>
+  </div>
+  <div class="wrap border-t border-line py-6 text-note text-ash-dim">© {year} RebelDEV. Estudio de desarrollo de software.</div>
+</footer>
+
+<style>
+  .cta-slash { position: absolute; right: 4%; top: 0; height: 100%; width: min(40vw, 34rem); overflow: visible; pointer-events: none; }
+  .cta-slash path { fill: none; stroke: var(--color-red); stroke-width: 1.5; vector-effect: non-scaling-stroke; opacity: .9; }
+  .cta::after {
+    content: ''; position: absolute; right: 10%; top: 20%; width: 40rem; height: 40rem; pointer-events: none;
+    background: radial-gradient(closest-side, rgb(228 18 31 / 0.12), transparent); filter: blur(10px);
+  }
+</style>
+
+<script>
+  import { gsap, reduceMotion, coarsePointer } from '../scripts/motion';
+  if (!reduceMotion) {
+    gsap.fromTo('[data-cta-slash]', { drawSVG: '0%' }, {
+      drawSVG: '100%', ease: 'none',
+      scrollTrigger: { trigger: '#contacto', start: 'top 85%', end: 'center center', scrub: 1 },
+    });
+    // Botones principales: se acercan levemente al puntero.
+    if (!coarsePointer) {
+      document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((el) => {
+        const xTo = gsap.quickTo(el, 'x', { duration: 0.45 }), yTo = gsap.quickTo(el, 'y', { duration: 0.45 });
+        el.addEventListener('pointermove', (e) => {
+          const r = el.getBoundingClientRect();
+          xTo((e.clientX - r.left - r.width / 2) * 0.18); yTo((e.clientY - r.top - r.height / 2) * 0.25);
+        });
+        el.addEventListener('pointerleave', () => { xTo(0); yTo(0); });
+      });
+    }
+  }
+</script>
