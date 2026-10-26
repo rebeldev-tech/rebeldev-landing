@@ -2,6 +2,8 @@
 // Llamada final + pie de página. La barra roja gigante se dibuja al bajar: la firma de la marca.
 import Logo from './Logo.astro';
 import { contacto } from '../data/contacto';
+interface Props { conRebelBot?: boolean }
+const { conRebelBot = true } = Astro.props;
 const year = new Date().getFullYear();
 ---
 <section id="contacto" class="cta relative overflow-hidden border-t border-line" aria-labelledby="cta-title">
@@ -11,7 +13,9 @@ const year = new Date().getFullYear();
   <div class="wrap relative py-28 lg:py-44">
     <h2 id="cta-title" class="text-hero max-w-[12ch]" data-reveal>Cuéntanos qué necesita tu negocio.</h2>
     <div class="mt-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between" data-reveal data-reveal-delay="0.1">
-      <p class="text-lead max-w-[40ch] text-ash">Agenda una demo de RebelBot o conversemos sobre tu proyecto de software.</p>
+      <p class="text-lead max-w-[40ch] text-ash">Ingeniería de sistemas usados por millones, entregada en semanas. {conRebelBot
+        ? 'Agenda una demo de RebelBot o conversemos sobre tu proyecto de software.'
+        : 'Conversemos sobre lo que necesita tu negocio.'}</p>
       <div class="flex flex-wrap gap-3">
         <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary" data-magnetic>Agenda una demo por WhatsApp</a>
         <a href={`mailto:${contacto.correo}`} class="btn btn-ghost">Escríbenos</a>

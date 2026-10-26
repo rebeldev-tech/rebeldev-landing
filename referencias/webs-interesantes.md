@@ -41,6 +41,10 @@ La columna «Nota del usuario» copia tal cual lo que escribió. La columna «D�
     - **RebelBot:** a la derecha, un chat de WhatsApp (video o animación) fijo; a la izquierda, los pasos: califica al cliente, agenda la visita, deriva a un asesor. El chat cambia según el paso.
     - **Cómo trabajamos:** «Primero entendemos tu negocio; después construimos…», paso a paso.
 - **Técnica:** GSAP ScrollTrigger con `pin`, o `position: sticky` en CSS si alcanza. En el móvil, poner el video arriba y el texto debajo, sin fijar.
+- **Revisión a simple vista (26 oct 2026, con Chrome):**
+  - **Hero:** pantalla de carga con el logo sobre líneas finas; después, una secuencia de imágenes en un `<canvas>` fijo (~2750 px de scroll) que avanza al bajar: camión al atardecer → la cámara sube sobre el patio → el patio se vuelve wireframe y partículas («la IA lo ve») → hilos abstractos → cuadrícula. Encima, tres frases que arman una sola idea; cada palabra pasa de apagada a blanca con el scroll y la frase anterior se va. El hero termina con un borde con muesca curva hacia una sección blanca.
+  - **Sección fija:** texto a la izquierda que cambia por pasos (la palabra activa se oscurece) y un video cuadrado a la derecha, fijo, con esquinas recortadas; los videos son tomas cenitales con wireframe encima, de 5 s en bucle.
+  - **Aplicado en la versión 2:** `src/components/HeroCine.astro` (video generado con Higgsfield + frases que se encienden).
 
 ### Zentry: pantalla de carga con el logo
 

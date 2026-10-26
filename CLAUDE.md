@@ -13,6 +13,9 @@ Guía para Claude Code al construir el landing de RebelDEV. Las pautas generales
 | `referencias/linkedin-rebeldev.png` | Cabecera de LinkedIn (logo y banner): la referencia visual. |
 | `referencias/rebeldev-mock.html` | «Brand Hub» de RebelDEV (agregado el 23 oct 2026): paleta, tipografías, logo, voz de marca y servicios. **Es la base visual, pero hay que mejorarlo**; el logo está descuadrado y se rehará más adelante. Resumen en la sección 4. |
 | `referencias/mapeo-mejoras-marca.md` | Mapa de lo que hay que mejorar de la marca (23 oct 2026), en orden: logo, nombre, color (con contraste calculado), tipografía, recursos gráficos, voz y piezas derivadas. Incluye las preguntas pendientes para el usuario o Fredy. **Aquí se anotan las decisiones de marca a medida que se toman.** |
+| `referencias/cuestionario-marca.md` | Respuestas de Fredy al cuestionario de marca (25 oct 2026): esencia, oferta, proceso, diferenciación, tono y límites. **Privado** (clientes, competidores y datos personales). Resumen en la sección 5. |
+| `referencias/animacion-logo.html` | Galería de variantes vectoriales de animación del logo (isotipo ↔ logotipo) en GSAP, sin partículas, con pestañas. **Decidido por ahora: «Bloqueo»** (25 oct 2026). Las demás (pulso, inversión, estela, latido, halo, cinta, rotación) quedan como referencia. Se abre en el navegador (25 oct 2026). |
+| `referencias/logo-rebeldev.html` | Vista visual del logo decidido (`Rebel</DEV>`) y del isotipo en cuadrado, en versión clara y oscura, con favicons a 48, 32 y 16 px. Incluye la explicación visual de las decisiones pendientes 4, 6, 7 y 13 (25 oct 2026). Se abre en el navegador. |
 | `referencias/propuestas-logo.html` | Hoja visual con las propuestas de logo del 23 oct 2026: 5 isotipos, 10 logotipos, 4 sistemas y las variantes. Se abre en el navegador. El resumen y la recomendación están en la sección 8 del mapeo. |
 | `referencias/webs-interesantes.md` | Las 7 webs que eligió el usuario (23 oct 2026) y qué tomar de cada una: hero y sección fija con video (Terminal Industries), pantalla de carga con el `</>` (Zentry), partículas (Philos), SVG animados (Raycast) y webs que explican su bot (Decagon, Runia). **Como inspiración, mandan sobre el benchmarking.** |
 | `referencias/benchmarking-web.md` | Investigación del 23 oct 2026: webs premiadas (3D, GSAP, scroll), competencia en Perú y LATAM, huecos que aprovechar e ideas por sección. |
@@ -97,9 +100,9 @@ Dos fuentes: la captura de LinkedIn y el mock `referencias/rebeldev-mock.html`. 
 ### Nombre y logo
 
 - **Nombre:** «RebelDEV» en textos.
-- **Logotipo:** en el mock es `rebel‹DEV›` («rebel» en minúscula, «DEV» en mayúscula, los signos `‹ ›` en rojo). En el banner de LinkedIn es `REBEL‹DEV›` en mayúsculas espaciadas, seguido de «· ESTUDIO DE SOFTWARE». Pendiente de decidir.
+- **Logotipo (decidido 25 oct 2026):** `Rebel</DEV>`, con «Rebel» en crema, «DEV» en crema y los signos `<`, `/`, `>` en rojo. Va solo, sin isotipo al lado. En los textos corridos se escribe «RebelDEV». El mock (`rebel‹DEV›`) y el banner de LinkedIn (`REBEL‹DEV›`) quedan como referencia, no como logo.
 - **Isotipo:** dos signos `<` `>` en crema con una barra `/` roja que los corta (como `</>`). Trazos gruesos y puntas redondeadas. En LinkedIn va sobre un cuadrado negro de esquinas redondeadas.
-- **El logo del mock está descuadrado y se rehará más adelante.** Mientras tanto, no copiar su SVG tal cual. Variantes previstas: sobre oscuro, sobre claro, isotipo solo (favicon) y monocromo rojo.
+- **El logo del mock está descuadrado y ya no se usa.** Archivos del logo (25 oct 2026) en `public/brand/`: `logotipo-oscuro.svg`, `logotipo-claro.svg` (letras convertidas a trazos desde Bricolage Grotesque 800), `isotipo-oscuro.svg` e `isotipo-claro.svg` (cuadrado con esquinas redondeadas). El favicon es `public/favicon.svg` (isotipo I-A en cuadrado oscuro). Pendiente: monocromo rojo para grabados.
 - **La barra roja va siempre y siempre en rojo:** es la firma de la marca.
 
 ### Colores (del mock)
@@ -153,6 +156,14 @@ Directa, segura y sin jerga innecesaria. «Rebelde en la actitud, premium en la 
 ### Decidido (23 oct 2026)
 
 - **Tecnología: Astro 7 + Tailwind CSS 4 + GSAP + Lenis, con Bun.** Detalle en la sección 7. La estructura de páginas y versiones la define el usuario.
+- **Logotipo `Rebel</DEV>` (25 oct 2026):** elegido entre `Rebel</DEV>` y `rebel</dev>`. Detalle en la sección 4.
+- **Isotipo (25 oct 2026):** siempre dentro de un cuadrado, en dos versiones: clara y oscura. Muestra visual en `referencias/logo-rebeldev.html`.
+- **Por ahora (25 oct 2026):** rojo de marca `#E4121F`; favicon con el isotipo I-A; puntas redondeadas; JetBrains Mono se mantiene; «rebeldes.» sin rojo (se cambiará después); ámbar `#FF6A2C` como acento.
+- **Multilenguaje:** se usará el soporte de Astro para varios idiomas. Los idiomas quedan por definir.
+- **Datos de prueba (25 oct 2026):** el BCP y la edad de Fredy son datos ficticios para ver el landing; se cambian por los reales después.
+- **Grabados de un color (25 oct 2026):** el logo va completo, con la barra del mismo color que el resto.
+- **Ámbar `#FF6A2C` (25 oct 2026):** se queda como acento.
+- **Fondo liso (25 oct 2026):** negro sólido, sin grano ni degradado.
 - **Varias versiones para debatir:** se harán dos o más versiones del landing para decidir qué secciones van y cuáles no. Cada versión debe poder verse por separado y compararse. Cómo se organizan dentro del proyecto lo define el usuario al armarlo.
 - **Beca Inmobiliaria no se nombra:** ni su nombre, ni su logo, ni capturas del panel, ni el nombre «Rebeca» (lo delata). El producto se describe por lo que hace.
 - **Contacto ficticio por ahora:** correo, WhatsApp y redes con datos de ejemplo que se vean falsos a simple vista (por ejemplo `hola@rebeldev.example` y `+51 900 000 000`). Todos en un solo lugar del código, para cambiarlos de una vez.
@@ -161,11 +172,34 @@ Directa, segura y sin jerga innecesaria. «Rebelde en la actitud, premium en la 
   - **Versión 1:** como un servicio más, «Asistentes de WhatsApp», dentro de la lista de servicios.
   - **Versión 2 (la preferida):** como producto propio, RebelBot, con su sección destacada (qué hace y una llamada a pedir una demo), además de la lista de servicios.
 
+### Cuestionario de marca (Fredy, 25 oct 2026)
+
+Las respuestas completas están en `referencias/cuestionario-marca.md` (**privado**: tiene clientes, competidores y datos personales de Fredy). Lo que el landing puede usar:
+
+- **Esencia:** «RebelDEV es el equipo de ingeniería que elimina la burocracia: entregamos en semanas lo que en una empresa tradicional toma meses.» La rebeldía es velocidad con calidad, no estética punk.
+- **Propuesta única (versión web):** «Ingeniería de sistemas usados por millones, entregada en semanas.»
+- **Oferta de entrada:** el asistente de WhatsApp con IA (responde en menos de 1 minuto, 24/7, califica, agenda visitas, hace seguimiento y registra en el CRM). Las demás líneas (plantilla inmobiliaria, panel de métricas, postventa, software a medida) tienen fecha de 2027 y **no se muestran como disponibles**.
+- **Proceso (8 pasos):** diagnóstico gratis de 30 min; demo en vivo con los datos del cliente; propuesta con retorno; arranque con línea base; sprints semanales con demo cada viernes; una semana en producción a prueba antes de pagar; salida en vivo con monitoreo diario las primeras 2 semanas; revisiones a los 30, 60 y 90 días.
+- **Garantías que se pueden decir:** prueba de una semana en producción antes de pagar; pago en cuotas después; revisión mensual incluida.
+- **Uso de IA:** «La IA acelera, no decide.» Un ingeniero senior define la arquitectura y aprueba cada cambio. El asistente solo responde con datos del CRM y deriva a una persona ante la duda.
+- **Credencial que sí se muestra:** liderazgo de sistemas de WhatsApp «usados por millones de personas», **sin nombrar a la empresa**. Frase de venta: «Lo construimos rápido con IA y lo revisan ingenieros que han hecho sistemas para millones de personas.»
+- **Botón «Pruébalo»** para el bot de agendamiento propio (demo que cualquiera puede probar).
+- **Tono:** tuteo por defecto. Donde el cliente decide, hablar en beneficios, sin jerga. Traducciones obligatorias: «Clean Architecture» → «Hecho para durar y crecer»; «Escalar» → «Crecer, funcionar a lo grande»; «Deuda técnica» → «Sin problemas escondidos»; «Conversacional» → «Habla como una persona»; «Retainer» → «Sin pagos mensuales eternos».
+- **Sí / no visual:** titulares con beneficio, demos reales, contraste fuerte y pocas palabras. No: fotos de stock de robots, degradados neón, estética gamer, anime.
+- **Referentes:** ambición de Globant, claridad de Stripe, velocidad de un equipo sin burocracia.
+- **No se muestra en el landing:** competidores por nombre, nombres de clientes o productos de terceros (Beca, Rebeca Reload, Mantra), la empresa de formación, datos personales de Fredy (edad, aficiones).
+
+**Diferencias con el cuestionario (resueltas el 25 oct 2026):**
+- **Logo:** se queda `Rebel</DEV>` (L-5). La «Ruta Brackets» del cuestionario queda descartada.
+- **Ámbar `#FF6A2C`:** se queda como acento, aunque el cuestionario no lo menciona.
+- **Carmesí sobre obsidiana y «Brasa» `#FF2D3F`:** coinciden con la paleta actual; «Brasa» es el rojo para texto sobre oscuro.
+
 ### Pendiente
 
-- **Landing, primera versión (23 oct 2026):** pantalla de carga con el `</>` que se deshace en partículas y arma un `</>` grande en el hero (reacciona al ratón y se desarma al bajar). **Partículas al estilo Philos (24 oct 2026, a pedido del usuario, que no quería las de canvas 2D):** el `</>` en 3D cubierto de miles de puntos redondos y brillantes, con luz, que respiran, se inclinan hacia el ratón, se apartan con un remolino y al bajar se hacen polvo que gira; RebelBot con un teléfono fijo cuyo chat avanza por pasos; por qué es distinto; cómo se prueba cada cambio; servicios; proceso; Fredy; preguntas; contacto. Las fuentes se sirven desde el sitio (API de fuentes de Astro). Tiene modo claro con un botón en la barra (24 oct 2026): se guarda en el navegador (`rd-theme`) y el cambio entra con un barrido en diagonal con borde difuminado (View Transitions, idea del efecto «polygon-gradient» de theme-toggle.rdsx.dev; código propio porque ese repositorio no tiene licencia). Sin soporte o con «menos movimiento», cambia al instante. Pendientes de esa versión: foto de Fredy (no hay), URL de LinkedIn, «rebeldes.» en rojo o no (va sin rojo), y el logo definitivo.
-- **Mejorar la marca, empezando por el logo:** el plan, los problemas detectados y las preguntas abiertas están en `referencias/mapeo-mejoras-marca.md`. Las propuestas de logo ya están hechas (`referencias/propuestas-logo.html`); falta elegir. Mientras tanto se puede usar una versión provisional basada en la captura y el mock.
-- **Dominio y hosting.**
+- **Video del hero «Pieza por pieza» (26 oct 2026):** el usuario lo eligió tras rechazar el del teléfono («el chatbot es solo una parte lo que hacemos realmente»). El hero habla del estudio completo y RebelBot queda en su sección. Se genera con la CLI `higgsfield` (el conector MCP no genera). En plan gratis solo funcionó Seedance 1.5 Pro (`seedance1_5`, 4 s a 720p = 4,8 créditos; a 480p = 1,2). Se generó el 26 oct 2026 en 480p (quedan 3,4 créditos), pero el usuario lo descartó: prefirió el anterior porque se ve mejor. Si se retoma, hacerlo en 720p o más. Frases del hero: «Ingeniería para empresas rebeldes.» → «Cada empresa trabaja distinto. Su software también debería.» → «Lo construimos pieza por pieza: web, automatización, integraciones y asistentes de WhatsApp.» → «Hecho para durar y crecer.»
+
+- **Landing, primera versión (23 oct 2026):** pantalla de carga con el `</>` que se deshace en partículas y arma un `</>` grande en el hero (reacciona al ratón y se desarma al bajar). **Partículas al estilo Philos (24 oct 2026, a pedido del usuario, que no quería las de canvas 2D):** el `</>` en 3D cubierto de miles de puntos redondos y brillantes, con luz, que respiran, se inclinan hacia el ratón, se apartan con un remolino y al bajar se hacen polvo que gira; RebelBot con un teléfono fijo cuyo chat avanza por pasos; por qué es distinto; cómo se prueba cada cambio; servicios; proceso; Fredy; preguntas; contacto. Las fuentes se sirven desde el sitio (API de fuentes de Astro). Tiene modo claro con un botón en la barra (24 oct 2026): se guarda en el navegador (`rd-theme`) y el cambio entra con un barrido en diagonal con borde difuminado (View Transitions, idea del efecto «polygon-gradient» de theme-toggle.rdsx.dev; código propio porque ese repositorio no tiene licencia). Sin soporte o con «menos movimiento», cambia al instante. Pendientes de esa versión: foto de Fredy (no hay), URL de LinkedIn, «rebeldes.» en rojo o no (va sin rojo), y el SVG definitivo del logo.
+- **Mejorar la marca, empezando por el logo:** el plan, los problemas detectados y las preguntas abiertas están en `referencias/mapeo-mejoras-marca.md`. El logotipo ya está elegido (`Rebel</DEV>`, L-5 en `referencias/propuestas-logo.html`).- **Dominio y hosting.**
 - **Idioma:** solo español o también inglés.
 
 ### Fredy en el landing
@@ -186,6 +220,7 @@ Directa, segura y sin jerga innecesaria. «Rebelde en la actitud, premium en la 
 - **No publicar detalles internos de Rebeca:** nombres de recursos de Azure, URLs de los ambientes, variables, códigos de defectos o historias, ni nada de los archivos privados del repositorio.
 - Los textos oficiales de la sección 1 se copian tal cual; los textos nuevos deben seguir el mismo tono.
 - **No nombrar al cliente** (Beca Inmobiliaria) ni a su bot (Rebeca). Ver sección 5.
+- **Repositorio privado (25 oct 2026):** se usa para llenar la info y generar versiones. Al final se crea otro repositorio, limpio, también privado. Hasta entonces no hace falta excluir archivos como `referencias/cuestionario-marca.md`.
 - **Carpeta limpia:** solo el proyecto Astro, `referencias/` y la configuración (`.claude/`, `.vscode/`, `skills-lock.json`). Nada de copias, borradores ni archivos sueltos.
 
 ---
@@ -221,8 +256,10 @@ Directa, segura y sin jerga innecesaria. «Rebelde en la actitud, premium en la 
 
 | Ruta | Contenido |
 |---|---|
-| `src/pages/index.astro` | La primera versión del landing (23 oct 2026): RebelBot destacado. Solo junta las secciones. |
-| `src/components/` | Una sección por archivo: `Nav`, `Hero` (pantalla de carga + partículas), `RebelBot` (teléfono fijo con el chat), `Diferencial`, `Ingenieria`, `Servicios`, `Proceso`, `Fundador`, `Preguntas`, `Cierre` (llamada final y pie). `Logo.astro` es el logo **provisional** (sistema S-2): al decidir el logo se cambia solo ese archivo. |
+| `src/pages/index.astro` | **Versión 2** (26 oct 2026): portada en video que avanza al bajar (`HeroCine`), íconos animados en servicios (`Glifo`), RebelBot en recorrido horizontal que «escribe» en cada paso, proceso que se llena en orden, columna de RebelDEV que se enciende en la comparación y cierre rojo que se abre. |
+| `src/pages/v1.astro` | **Versión 1**: la publicada en https://rebeldev-landing.vercel.app (pantalla de carga, partículas en el hero, RebelBot en teléfono fijo). Junta los componentes `Nav`, `Hero`, `RebelBot`, `Diferencial`, `Ingenieria`, `Servicios`, `Proceso`, `Fundador`, `Preguntas` y `Cierre`. **No se reemplaza por otro diseño** (el 26 oct 2026 se había cambiado por error y se restauró). Las versiones se listan en `src/data/versiones.ts` (selector abajo a la izquierda). |
+| `public/video/hero.mp4` | Video del hero de la versión 2, generado con Higgsfield (Seedance 1.5 Pro, 4 s, 720p, 4,8 MB): teléfono que recibe mensajes, partículas rojas y una red. Se probó el de «Pieza por pieza» (bloques que forman una torre, 480p) y el usuario prefirió este porque se ve mejor (26 oct 2026). Para cambiarlo basta reemplazar el archivo; no hay que tocar el código. |
+| `src/components/` | `HeroCine` (portada de la versión 2: pantalla de carga con el `</>` y video fijo que avanza con el scroll, con frases que se encienden palabra por palabra, como Terminal Industries) y `Glifo` (íconos SVG animados de cada servicio, como Raycast). De la versión 1 (con partículas): `Nav`, `Hero` (pantalla de carga + partículas), `RebelBot` (teléfono fijo con el chat), `Diferencial`, `Ingenieria`, `Servicios`, `Proceso`, `Fundador`, `Preguntas`, `Cierre` (llamada final y pie). `Logo.astro` es el logotipo `Rebel</DEV>` en texto (provisional; el SVG definitivo está pendiente). |
 | `src/data/` | `contacto.ts` (datos ficticios, en un solo lugar) y `rebelbot.ts` (pasos y conversación de ejemplo). |
 | `src/lib/mark.ts` | Geometría del `</>` provisional; la usan el logo, la pantalla de carga y las partículas. |
 | `src/scripts/` | `motion.ts` (registra GSAP y sus plugins una vez, Lenis, entradas con `data-reveal`) y `particles.ts` (partículas del `</>` con Three.js y shaders propios; sin WebGL queda el `</>` en SVG). |

@@ -1,0 +1,39 @@
+---
+// Versión 1: la primera que se publicó (rebeldev-landing.vercel.app). Pantalla de carga con el </>,
+// partículas en el hero, RebelBot con un teléfono fijo cuyo chat avanza por pasos y el resto de secciones.
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import RebelBot from '../components/RebelBot.astro';
+import Diferencial from '../components/Diferencial.astro';
+import Ingenieria from '../components/Ingenieria.astro';
+import Servicios from '../components/Servicios.astro';
+import Proceso from '../components/Proceso.astro';
+import Fundador from '../components/Fundador.astro';
+import Preguntas from '../components/Preguntas.astro';
+import Cierre from '../components/Cierre.astro';
+import Versiones from '../components/Versiones.astro';
+---
+<Base
+  title="RebelDEV · Ingeniería para empresas rebeldes"
+  description="Estudio de desarrollo de software. Creamos soluciones a medida y RebelBot, un asistente de WhatsApp con IA que responde, califica y agenda por tu negocio."
+>
+  <Nav />
+  <main id="contenido">
+    <Hero />
+    <RebelBot />
+    <Diferencial />
+    <Ingenieria />
+    <Servicios />
+    <Proceso />
+    <Fundador />
+    <Preguntas />
+  </main>
+  <Cierre />
+  <Versiones actual="v1" />
+</Base>
+
+<script>
+  import { initReveals } from '../scripts/motion';
+  initReveals();
+</script>

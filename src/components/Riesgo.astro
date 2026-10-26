@@ -1,0 +1,71 @@
+---
+// Garantías y comparación (cuestionario de marca, sección D). Se compara con categorías, nunca con competidores por nombre.
+const garantias = [
+  { t: 'Una semana en producción, a prueba.', d: 'Antes de pagar, la solución funciona una semana en producción.' },
+  { t: 'Pagas en cuotas.', d: 'Después de la prueba, el pago se reparte en cuotas.' },
+  { t: 'Revisión mensual incluida.', d: 'Revisamos tus métricas cada mes y las mejoras siguen incluidas.' },
+];
+const filas = [
+  { k: 'Tiempo de entrega', a: 'Meses, con mucha burocracia', f: 'Variable', r: 'Semanas, construidas con IA' },
+  { k: 'Calidad', a: 'Pareja, con rotación de juniors', f: 'Depende de una persona', r: 'Arquitectura senior, código revisado y probado' },
+  { k: 'Riesgo para ti', a: 'Pago adelantado, contrato largo', f: 'Pago adelantado, sin garantía', r: 'Una semana en producción antes de pagar' },
+  { k: 'Después de entregar', a: 'Cobra por cada cambio', f: 'Desaparece', r: 'Revisión mensual y mejoras incluidas' },
+];
+---
+<section class="relative border-t border-line py-24 lg:py-36" aria-labelledby="gar-title">
+  <div class="wrap">
+    <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-24" data-reveal>
+      <h2 id="gar-title" class="text-d1">Pruébalo antes de pagar.</h2>
+      <p class="text-lead max-w-[44ch] text-ash lg:pt-3">Primero ves cómo funciona en producción, con tu negocio. Después, pagas.</p>
+    </div>
+
+    <ul class="gar mt-16 lg:mt-24">
+      {garantias.map((g) => (
+        <li class="gar-item" data-reveal>
+          <h3 class="text-d3">{g.t}</h3>
+          <p class="text-body mt-2 max-w-[36ch] text-ash">{g.d}</p>
+        </li>
+      ))}
+    </ul>
+
+    <div class="cmp mt-20" data-reveal>
+      <table>
+        <caption class="sr-only">Comparación con una agencia tradicional y con un freelancer</caption>
+        <thead>
+          <tr>
+            <th scope="col"><span class="sr-only">Aspecto</span></th>
+            <th scope="col">Agencia tradicional</th>
+            <th scope="col">Freelancer</th>
+            <th scope="col" class="is-us">RebelDEV</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filas.map((f) => (
+            <tr>
+              <th scope="row">{f.k}</th>
+              <td>{f.a}</td>
+              <td>{f.f}</td>
+              <td class="is-us">{f.r}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<style>
+  .gar { list-style: none; margin: 0; padding: 0; display: grid; gap: 2.5rem; }
+  @media (min-width: 768px) { .gar { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem; } }
+  .gar-item { padding-top: 1.75rem; border-top: 1px solid var(--color-line); }
+
+  .cmp { overflow-x: auto; }
+  .cmp table { width: 100%; min-width: 40rem; border-collapse: collapse; }
+  .cmp th, .cmp td { padding: 1.1rem 1rem; text-align: left; vertical-align: top; border-top: 1px solid var(--color-line); font-size: 0.95rem; line-height: 1.5; }
+  .cmp thead th { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 400; letter-spacing: 0.04em; color: var(--color-ash-dim); text-transform: uppercase; }
+  .cmp tbody th { font-family: var(--font-display); font-weight: 600; color: var(--color-bone); width: 22%; }
+  .cmp td { color: var(--color-ash); }
+  .cmp .is-us { color: var(--color-bone); }
+  .cmp thead .is-us { color: var(--color-red-text); }
+  .cmp tbody tr:last-child th, .cmp tbody tr:last-child td { border-bottom: 1px solid var(--color-line); }
+</style>

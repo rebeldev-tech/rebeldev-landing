@@ -1,0 +1,84 @@
+---
+// Conversación de ejemplo de RebelBot. Cada versión la muestra a su manera:
+// «texto» (líneas con quien habla) o «burbujas» (estilo de mensajería, con botones, formulario y ubicación).
+import type { Msg } from '../data/rebelbot';
+
+interface Props { msgs: Msg[]; estilo?: 'texto' | 'burbujas' }
+const { msgs, estilo = 'texto' } = Astro.props;
+const quien: Record<string, string> = { in: 'Cliente', out: 'RebelBot', agent: 'Asesor' };
+const burbujas = estilo === 'burbujas';
+---
+<div class:list={['chat', `chat-${estilo}`]}>
+  {msgs.map((m) => {
+    if (m.kind === 'system') return <p class="chat-sys">{burbujas && <span class="chat-dot" aria-hidden="true"></span>}{m.text}</p>;
+    if (m.kind === 'buttons') return burbujas
+      ? <p class="chat-chips">{m.options.map((o, i) => <span class:list={['chat-chip', { 'is-on': i === m.selected }]}>{o}</span>)}</p>
+      : <p class="chat-opts">Opciones: {m.options.join(', ')}</p>;
+    if (m.kind === 'form') return burbujas
+      ? (
+        <div class="chat-card">
+          <p class="chat-card-title">{m.title}</p>
+          <ul class="chat-slots">{m.options.map((o, i) => <li class:list={['chat-slot', { 'is-on': i === m.selected }]}><span class="chat-radio" aria-hidden="true"></span>{o}</li>)}</ul>
+          <p class="chat-cta">{m.cta}</p>
+        </div>
+      )
+      : <p class="chat-opts">{m.title}: {m.options.join(', ')}</p>;
+    if (m.kind === 'location') return burbujas
+      ? (
+        <div class="chat-card chat-loc">
+          <div class="chat-map" aria-hidden="true"><span class="chat-pin"></span></div>
+          <p class="chat-card-title">{m.title}</p>
+          <p class="chat-loc-sub">{m.text}</p>
+        </div>
+      )
+      : <p class="chat-opts">{m.title}</p>;
+    return (
+      <p class:list={['chat-msg', `chat-${m.kind}`]}>
+        <span class="chat-who">{quien[m.kind]}</span>
+        {m.text}
+      </p>
+    );
+  })}
+</div>
+
+<style>
+  .chat { display: grid; gap: 0.5rem; }
+  .chat-msg { margin: 0; color: var(--color-bone); }
+  .chat-who { display: block; font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-ash-dim); }
+  .chat-sys, .chat-opts { margin: 0; font-size: 0.875rem; color: var(--color-ash); }
+
+  /* Texto: una línea por mensaje, separada por filetes */
+  .chat-texto .chat-msg, .chat-texto .chat-sys, .chat-texto .chat-opts { padding: 0.6rem 0; border-top: 1px solid var(--color-line); }
+
+  /* Burbujas: el cliente a la izquierda, RebelBot y el asesor a la derecha */
+  .chat-burbujas .chat-msg { max-width: 84%; padding: 0.6rem 0.9rem; border-radius: 1.1rem; background: var(--color-surface-2); }
+  .chat-burbujas .chat-in { justify-self: start; border-bottom-left-radius: 0.3rem; }
+  .chat-burbujas .chat-out, .chat-burbujas .chat-agent { justify-self: end; border-bottom-right-radius: 0.3rem; background: color-mix(in srgb, var(--color-red) 20%, var(--color-surface-2)); }
+  .chat-burbujas .chat-sys { justify-self: center; display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.35rem 0.75rem; border-radius: 0.6rem; background: var(--color-surface-2); font-size: 0.8rem; }
+  .chat-dot { width: 0.45rem; height: 0.45rem; border-radius: 99px; background: var(--color-red-text); box-shadow: 0 0 10px var(--color-red-text); }
+
+  /* Botones, formulario y ubicación: van del lado de RebelBot */
+  .chat-chips { justify-self: end; display: flex; gap: 0.4rem; margin: 0; }
+  .chat-chip { padding: 0.4rem 0.85rem; border-radius: 0.7rem; border: 1px solid var(--color-line-strong); font-size: 0.85rem; color: var(--color-bone); }
+  .chat-chip.is-on { border-color: var(--color-red-text); background: color-mix(in srgb, var(--color-red) 16%, transparent); }
+  .chat-card { justify-self: end; width: min(84%, 17rem); padding: 0.8rem; border-radius: 1.1rem; border-bottom-right-radius: 0.3rem; background: var(--color-surface-2); font-size: 0.875rem; color: var(--color-ash); }
+  .chat-card-title { margin: 0; font-weight: 600; color: var(--color-bone); }
+  .chat-slots { list-style: none; margin: 0.5rem 0 0; padding: 0; display: grid; gap: 0.25rem; }
+  .chat-slot { display: flex; align-items: center; gap: 0.55rem; padding: 0.4rem 0.5rem; border-radius: 0.55rem; }
+  .chat-slot.is-on { background: color-mix(in srgb, var(--color-bone) 6%, transparent); color: var(--color-bone); }
+  .chat-radio { width: 0.85rem; height: 0.85rem; flex: none; border-radius: 99px; border: 2px solid var(--color-ash-dim); }
+  .chat-slot.is-on .chat-radio { border-color: var(--color-red-text); box-shadow: inset 0 0 0 2px var(--color-surface-2), inset 0 0 0 6px var(--color-red-text); }
+  .chat-cta { margin: 0.6rem 0 0; padding-top: 0.55rem; border-top: 1px solid var(--color-line); text-align: center; font-weight: 600; color: var(--color-red-text); }
+  .chat-loc { padding: 0; overflow: hidden; }
+  .chat-loc .chat-card-title { padding: 0.6rem 0.8rem 0; }
+  .chat-loc-sub { margin: 0; padding: 0.1rem 0.8rem 0.7rem; font-size: 0.78rem; }
+  .chat-map {
+    position: relative; height: 5rem;
+    background:
+      linear-gradient(90deg, transparent 47%, rgb(244 240 232 / 0.12) 47% 53%, transparent 53%),
+      linear-gradient(20deg, transparent 60%, rgb(244 240 232 / 0.1) 60% 64%, transparent 64%),
+      linear-gradient(transparent 30%, rgb(244 240 232 / 0.08) 30% 35%, transparent 35%),
+      #1f2a30;
+  }
+  .chat-pin { position: absolute; left: 50%; top: 45%; width: 1rem; height: 1rem; border-radius: 50% 50% 50% 0; background: var(--color-red-text); transform: translate(-50%, -50%) rotate(-45deg); }
+</style>

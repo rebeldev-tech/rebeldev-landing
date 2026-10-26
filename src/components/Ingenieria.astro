@@ -4,7 +4,7 @@
 const etapas = ['Cambio en el código', 'Reglas de arquitectura', 'Pruebas automáticas', 'Ambiente de pruebas', 'Producción'];
 const log = ['nuevo cambio', 'reglas de arquitectura: ok', 'pruebas automáticas: ok', 'publicado en el ambiente de pruebas', 'en producción'];
 const hechos = [
-  { t: 'Arquitectura limpia', d: 'El sistema está dividido en módulos, con reglas que se revisan solas en cada cambio.' },
+  { t: 'Hecho para durar y crecer', d: 'Arquitectura limpia: el sistema está dividido en módulos, con reglas que se revisan solas en cada cambio. Las piezas se pueden cambiar sin rehacer el sistema.' },
   { t: 'Probado antes de salir', d: 'Pruebas automáticas en cada cambio y un ambiente de pruebas antes de pasar a producción.' },
   { t: 'Nada a ciegas', d: 'Las decisiones quedan documentadas y la operación tiene alertas y monitoreo.' },
   { t: 'Datos cuidados', d: 'Las claves se guardan en una bóveda en la nube y los teléfonos se ocultan en los registros.' },
@@ -43,7 +43,11 @@ const stack = ['Java 21', 'Spring Boot', 'React', 'TypeScript', 'PostgreSQL', 'W
       </div>
     </div>
 
-    <div class="mt-20 grid gap-x-16 sm:grid-cols-2">
+    <div class="mt-20 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-24" data-reveal>
+      <p class="text-d2 font-display">La IA acelera, no decide.</p>
+      <p class="text-body max-w-[46ch] text-ash">La IA escribe borradores de código, pruebas y documentación. Un ingeniero senior define la arquitectura y aprueba cada cambio. Lo construimos rápido con IA y lo revisan ingenieros que han hecho sistemas para millones de personas.</p>
+    </div>
+    <div class="mt-16 grid gap-x-16 sm:grid-cols-2">
       {hechos.map((h) => (
         <div class="border-t border-line py-7" data-reveal>
           <h3 class="text-d3">{h.t}</h3>

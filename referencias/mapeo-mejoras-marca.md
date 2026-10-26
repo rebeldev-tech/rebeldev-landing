@@ -303,7 +303,7 @@ Sobre oscuro (principal), sobre claro (con el rojo `#E4121F`), una tinta clara y
 - **Con la idea del usuario:** `rebel</dev>` (L-3) en lugar de L-6; funciona igual que S-1.
 - **Favicon:** probar I-D si I-A no se lee bien a 16 px.
 
-**Decidido:** (pendiente)
+**Decidido (25 oct 2026):** logotipo `Rebel</DEV>` (L-5), sin isotipo al lado (regla de 8.2). Los signos y la barra van en rojo. Pendiente: SVG definitivo del logotipo, en versión oscura y clara, con el isotipo en cuadrado.
 
 ---
 
@@ -320,6 +320,26 @@ Sobre oscuro (principal), sobre claro (con el rojo `#E4121F`), una tinta clara y
 ---
 
 ## Preguntas para el usuario o Fredy
+
+**Respuestas (25 oct 2026):**
+- 1. El isotipo va dentro de un cuadrado. Hay dos versiones: clara y oscura (ver `logo-rebeldev.html`).
+- 2. Puntas redondeadas.
+- 3. Favicon con I-A.
+- 5. Rojo principal `#E4121F`, por ahora.
+- 8. «rebeldes.» sin rojo por ahora; el color se cambiará más adelante.
+- 9. Se mantiene JetBrains Mono por ahora.
+- 10. Multilenguaje (se usa el soporte de Astro para varios idiomas); los idiomas, por definir.
+- 11. Dominio y hosting: se definen después.
+- 12. Foto de Fredy y URL de LinkedIn: para futuras versiones.
+- 4. En grabados de un solo color la barra se mantiene: el logo va completo, con la barra del mismo color que el resto.
+- 6. Se queda el ámbar `#FF6A2C`.
+- 13. Datos de Fredy (BCP, edad): son datos de prueba. Se usan para ver cómo queda el landing y se cambian por los reales después.
+
+- 7. Fondo liso: negro sólido, sin grano ni degradado.
+
+**Siguen abiertas:** ninguna. Todas las preguntas de esta lista están respondidas.
+
+Las preguntas originales:
 
 1. ¿El isotipo va siempre dentro del cuadrado negro o también solo?
 2. ¿Puntas redondeadas o rectas?

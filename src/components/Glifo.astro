@@ -1,0 +1,60 @@
+---
+// Íconos de los servicios (idea de los SVG animados de Raycast). Cada uno cuenta en pequeño qué hace
+// el servicio; la animación vive en la página (src/pages/index.astro) y usa los data-a de cada pieza.
+// El rojo marca la pieza que «hace el trabajo»: la barra, el dato que viaja, el clic.
+interface Props { id: string; class?: string }
+const { id, class: className = '' } = Astro.props;
+---
+<svg class:list={['glifo', className]} data-glifo={id} viewBox="0 0 64 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  {id === 'medida' && <>
+    <path data-a="l" d="M24 18 12 32l12 14" />
+    <path data-a="r" d="M40 18 52 32 40 46" />
+    <path data-a="s" class="g-red" d="M36 14 28 50" />
+  </>}
+  {id === 'auto' && <>
+    <g data-a="ring">
+      <path d="M48 32a16 16 0 1 1-4.7-11.3" />
+      <path d="M44 12.5v8.5h-8.5" />
+    </g>
+    <circle data-a="dot" cx="25" cy="32" r="2.6" fill="currentColor" stroke="none" />
+    <circle data-a="dot" class="g-red-fill" cx="32" cy="32" r="2.6" stroke="none" />
+    <circle data-a="dot" cx="39" cy="32" r="2.6" fill="currentColor" stroke="none" />
+  </>}
+  {id === 'wa' && <>
+    <rect data-a="b" data-o="left" x="8" y="10" width="30" height="13" rx="6.5" />
+    <rect data-a="b" data-o="right" class="g-red" x="26" y="27" width="30" height="13" rx="6.5" />
+    <rect data-a="b" data-o="left" x="8" y="44" width="22" height="13" rx="6.5" />
+  </>}
+  {id === 'web' && <>
+    <rect data-a="frame" x="8" y="12" width="48" height="40" rx="6" />
+    <path data-a="frame" d="M8 22h48" />
+    <rect data-a="blk" x="14" y="28" width="20" height="5" rx="2.5" fill="currentColor" stroke="none" />
+    <rect data-a="blk" class="g-red-fill" x="40" y="27.5" width="10" height="6" rx="3" stroke="none" />
+    <rect data-a="blk" x="14" y="38" width="36" height="3" rx="1.5" fill="currentColor" stroke="none" opacity="0.5" />
+    <rect data-a="blk" x="14" y="44" width="26" height="3" rx="1.5" fill="currentColor" stroke="none" opacity="0.5" />
+  </>}
+  {id === 'api' && <>
+    <rect data-a="layer" x="12" y="12" width="40" height="10" rx="5" />
+    <rect data-a="layer" x="12" y="27" width="40" height="10" rx="5" />
+    <rect data-a="layer" x="12" y="42" width="40" height="10" rx="5" />
+    <circle data-a="pkt" class="g-red-fill" cx="32" cy="17" r="2.6" stroke="none" />
+  </>}
+  {id === 'int' && <>
+    <circle data-a="node" cx="15" cy="32" r="7" />
+    <circle data-a="node" cx="49" cy="32" r="7" />
+    <path data-a="link" d="M22 32h20" />
+    <circle data-a="pkt" class="g-red-fill" cx="22" cy="32" r="2.6" stroke="none" />
+  </>}
+  {id === 'ux' && <>
+    <rect data-a="btn" x="8" y="15" width="34" height="15" rx="7.5" />
+    <circle data-a="rip" class="g-red" cx="33" cy="23" r="4" />
+    <path data-a="cur" d="M33 23v18l5-5 4 8.5 3.5-1.6-4-8.4h7z" fill="currentColor" stroke-width="1.5" />
+  </>}
+</svg>
+
+<style>
+  .glifo { display: block; width: 3.25rem; height: 3.25rem; color: var(--color-bone); overflow: visible; }
+  .g-red { stroke: var(--color-red-text); }
+  .g-red-fill { fill: var(--color-red-text); }
+  [data-a="cur"] { stroke: var(--color-ink); }
+</style>

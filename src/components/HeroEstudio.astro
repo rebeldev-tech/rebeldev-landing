@@ -1,0 +1,37 @@
+---
+// Portada de la versión 2: el estudio, sin la pantalla de carga ni las partículas.
+// El texto es el resumen oficial de RebelDEV (CLAUDE.md, sección 1). RebelBot va destacado justo debajo.
+import { contacto } from '../data/contacto';
+
+const lineas = ['Asistentes de WhatsApp', 'Automatización de procesos', 'Plataformas web', 'Backend y APIs', 'Integraciones'];
+---
+<section id="inicio" class="he relative overflow-hidden" aria-labelledby="he-title">
+  <div class="he-glow" aria-hidden="true"></div>
+  <div class="wrap relative pb-16 pt-32 lg:pt-40">
+    <h1 id="he-title" class="text-d1 max-w-[18ch]" data-reveal>Software a medida para cada empresa.</h1>
+
+    <div class="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-16" data-reveal>
+      <div>
+        <p class="text-lead max-w-[44ch] text-bone">Desde asistentes de WhatsApp y automatización de procesos hasta plataformas web, backend, APIs e integraciones.</p>
+        <p class="mt-4 text-body max-w-[44ch] text-ash">Primero entendemos tu negocio; después construimos la solución que realmente necesitas.</p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary" data-magnetic>Agenda una demo</a>
+        <a href="#rebelbot" class="btn btn-ghost">Conoce RebelBot</a>
+      </div>
+    </div>
+
+    <p class="he-strip mt-16 text-note text-ash" data-reveal>
+      <span class="sr-only">Especialidades: </span>
+      {lineas.map((l, i) => <>{i > 0 && <span class="slash" aria-hidden="true">/</span>}<span>{l}</span></>)}
+    </p>
+  </div>
+</section>
+
+<style>
+  .he-glow {
+    position: absolute; right: -15%; top: -10%; width: 70%; height: 90%; pointer-events: none;
+    background: radial-gradient(closest-side, rgb(228 18 31 / 0.2), transparent 70%); filter: blur(30px);
+  }
+  .he-strip { border-top: 1px solid var(--color-line); padding-top: 1.1rem; }
+</style>
