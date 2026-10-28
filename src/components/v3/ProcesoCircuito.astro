@@ -1,0 +1,144 @@
+---
+// Proceso como circuito impreso (versión 3): una pista roja recorre los ocho pasos y se dibuja al bajar.
+// Cada nodo se enciende cuando la pista llega a él. El paso 6 (la semana a prueba) es el que más pesa.
+// La pista se calcula midiendo los nodos (sirve para cualquier ancho); en móvil queda vertical a la izquierda.
+// Sin JavaScript o con «menos movimiento»: una línea fija y todos los pasos encendidos.
+import { proceso } from '../../data/estudio';
+
+const CLAVE = 5; // índice de «Una semana a prueba»
+---
+<section id="proceso" class="wrap v3-sec pc" aria-labelledby="pc-title" data-pc>
+  <h2 id="pc-title" class="text-d2 max-w-[20ch]">Ocho pasos, con una semana a prueba antes de pagar.</h2>
+
+  <div class="pc-board" data-pc-board>
+    <svg class="pc-svg" data-pc-svg aria-hidden="true">
+      <path class="pc-base" data-pc-base />
+      <path class="pc-trace" data-pc-trace />
+    </svg>
+
+    <ol class="pc-list">
+      {proceso.map((p, i) => (
+        <li class:list={['pc-step', { 'pc-key': i === CLAVE }]} data-pc-step>
+          <span class="pc-node" data-pc-node aria-hidden="true"></span>
+          <span class="pc-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <div class="pc-txt">
+            <h3 class="pc-t">{p.t}</h3>
+            {i === CLAVE && <p class="pc-tag">Antes de que pagues</p>}
+            <p class="pc-d text-body text-ash">{p.d}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .pc-board { position: relative; margin-top: clamp(3rem, 6vw, 5rem); }
+  .pc-list { list-style: none; margin: 0; padding: 0; position: relative; }
+
+  /* Sin la pista dibujada (sin JS o «menos movimiento»): una línea fija detrás de los nodos */
+  .pc-list::before { content: ''; position: absolute; left: 0.7rem; top: 1rem; bottom: 1rem; width: 2px; background: var(--color-red); }
+  .pc.has-trace .pc-list::before { display: none; }
+
+  .pc-step {
+    position: relative; display: grid; grid-template-columns: 3.25rem minmax(0, 1fr); column-gap: 0.5rem;
+    padding-block: 1.6rem; border-top: 1px solid var(--color-line);
+  }
+  .pc-step:first-child { border-top: 0; }
+  .pc-node {
+    position: absolute; left: 0.7rem; top: 2.15rem; width: 1rem; height: 1rem; margin: -0.5rem 0 0 -0.45rem; border-radius: 99px;
+    background: var(--color-red); border: 2px solid var(--color-red); box-shadow: 0 0 0 5px var(--color-ink);
+    transition: background-color 0.35s, border-color 0.35s, transform 0.5s var(--ease-out-expo);
+  }
+  .pc-n { grid-column: 2; font-family: var(--font-display); font-weight: 800; font-size: 0.95rem; font-variant-numeric: tabular-nums; color: var(--color-red-text); transition: color 0.35s; }
+  .pc-txt { grid-column: 2; }
+  .pc-t { margin: 0.35rem 0 0; font-size: clamp(1.3rem, 1.9vw, 1.6rem); line-height: 1.2; letter-spacing: -0.02em; }
+  .pc-d { margin: 0.5rem 0 0; max-width: 46ch; }
+
+  /* El paso clave: más grande y con la pastilla roja */
+  .pc-key .pc-t { font-size: clamp(1.9rem, 3.6vw, 3.2rem); line-height: 1.04; letter-spacing: -0.035em; }
+  .pc-key .pc-node { width: 1.5rem; height: 1.5rem; margin: -0.75rem 0 0 -0.7rem; }
+  .pc-tag {
+    display: inline-block; margin: 0.8rem 0 0; padding: 0.35rem 0.8rem; border-radius: 999px;
+    background: var(--color-red); color: #fff; font-size: 0.875rem; font-weight: 600;
+  }
+
+  @media (min-width: 900px) {
+    .pc-step { grid-template-columns: 5rem 3.5rem minmax(0, 1fr); align-items: baseline; padding-block: 2rem; }
+    .pc-node { left: 1.5rem; top: 2.65rem; }
+    .pc-list::before { left: 1.5rem; }
+    .pc-n { grid-column: 2; }
+    .pc-txt { grid-column: 3; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); column-gap: 3rem; align-items: baseline; }
+    .pc-t { margin: 0; }
+    .pc-d { margin: 0; grid-column: 2; grid-row: 1 / span 2; }
+    .pc-tag { grid-column: 1; justify-self: start; }
+  }
+
+  /* La pista: base apagada y trazo rojo que se dibuja */
+  .pc-svg { display: none; }
+  .pc.has-trace .pc-svg { display: block; position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .pc-svg path { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .pc-base { stroke: var(--color-line-strong); }
+  .pc-trace { stroke: var(--color-red); }
+
+  /* Apagado hasta que la pista llega (solo con la pista activa) */
+  .pc.has-trace .pc-step:not(.is-on) .pc-node { background: var(--color-ink); border-color: var(--color-line-strong); transform: scale(0.8); }
+  .pc.has-trace .pc-step:not(.is-on) .pc-n { color: var(--color-ash-dim); }
+  .pc.has-trace .pc-step.is-on .pc-node { box-shadow: 0 0 0 5px var(--color-ink), 0 0 18px rgb(255 45 63 / 0.55); }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion } from '../../scripts/motion';
+
+  const sec = document.querySelector<HTMLElement>('[data-pc]')!;
+  const board = sec.querySelector<HTMLElement>('[data-pc-board]')!;
+  const svg = sec.querySelector<SVGSVGElement>('[data-pc-svg]')!;
+  const base = sec.querySelector<SVGPathElement>('[data-pc-base]')!;
+  const trace = sec.querySelector<SVGPathElement>('[data-pc-trace]')!;
+  const steps = Array.from(sec.querySelectorAll<HTMLElement>('[data-pc-step]'));
+  const nodes = steps.map((s) => s.querySelector<HTMLElement>('[data-pc-node]')!);
+
+  if (!reduceMotion) {
+    sec.classList.add('has-trace');
+    // Fracción de la pista en la que está cada nodo (para encenderlo a tiempo).
+    let at: number[] = [];
+
+    // Pista tipo circuito: baja recta, se desvía a 45° a un carril paralelo y vuelve antes del nodo siguiente.
+    function build() {
+      const b = board.getBoundingClientRect();
+      const pts = nodes.map((n) => {
+        const r = n.getBoundingClientRect();
+        return { x: r.left + r.width / 2 - b.left, y: r.top + r.height / 2 - b.top };
+      });
+      const lane = 14;
+      let d = `M${pts[0].x} ${pts[0].y}`;
+      const lens = [0];
+      let len = 0;
+      for (let i = 1; i < pts.length; i++) {
+        const a = pts[i - 1], c = pts[i];
+        const h = c.y - a.y;
+        const off = i % 2 ? lane : -lane;
+        const y1 = a.y + h * 0.28, y2 = c.y - h * 0.28;
+        d += ` L${a.x} ${y1} L${a.x + off} ${y1 + Math.abs(off)} L${c.x + off} ${y2 - Math.abs(off)} L${c.x} ${y2} L${c.x} ${c.y}`;
+        // Largo de este tramo: dos rectas, dos diagonales a 45° y el carril.
+        len += (y1 - a.y) + 2 * Math.SQRT2 * lane + (y2 - y1 - 2 * lane) + (c.y - y2);
+        lens.push(len);
+      }
+      base.setAttribute('d', d);
+      trace.setAttribute('d', d);
+      svg.setAttribute('viewBox', `0 0 ${b.width} ${b.height}`);
+      at = lens.map((l) => (len ? l / len : 0));
+    }
+
+    build();
+    ScrollTrigger.addEventListener('refreshInit', build);
+
+    gsap.fromTo(trace, { drawSVG: '0% 0%' }, {
+      drawSVG: '0% 100%', ease: 'none',
+      scrollTrigger: {
+        trigger: board, start: 'top 68%', end: 'bottom 62%', scrub: 0.5, invalidateOnRefresh: true,
+        onUpdate: (self) => steps.forEach((s, i) => s.classList.toggle('is-on', self.progress >= at[i] - 0.002)),
+      },
+    });
+  }
+</script>

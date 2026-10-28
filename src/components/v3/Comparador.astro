@@ -1,0 +1,188 @@
+---
+// «Pruébalo antes de pagar»: dos capas superpuestas, la agencia tradicional encima y RebelDEV debajo.
+// La barra «/» roja, inclinada como la del isotipo, es la manija: recorta la capa de arriba y se
+// arrastra (Draggable + Inertia), o se mueve con el teclado (flechas, Inicio y Fin).
+// Sin JavaScript o en pantallas angostas, las dos columnas se leen una al lado de la otra o apiladas.
+import { comparacion, garantias } from '../../data/estudio';
+---
+<section class="wrap v3-sec cmp" aria-labelledby="cmp-title" data-cmp>
+  <h2 id="cmp-title" class="text-d2 max-w-[18ch]">Pruébalo antes de pagar.</h2>
+  <p class="mt-5 max-w-[46ch] text-lead text-ash">Una agencia tradicional frente a RebelDEV, punto por punto.</p>
+  <p id="cmp-hint" class="cmp-hint mt-3 text-note text-ash">Arrastra la barra roja, o usa las flechas, para comparar.</p>
+
+  <div class="cmp-stage mt-12" data-cmp-stage>
+    <div class="cmp-layer cmp-them" data-cmp-top>
+      <h3 class="cmp-who">Agencia tradicional</h3>
+      <dl class="cmp-rows">
+        {comparacion.map((f) => <div class="cmp-row"><dt>{f.k}</dt><dd>{f.a}</dd></div>)}
+      </dl>
+    </div>
+    <div class="cmp-layer cmp-us">
+      <h3 class="cmp-who">RebelDEV</h3>
+      <dl class="cmp-rows">
+        {comparacion.map((f) => <div class="cmp-row"><dt>{f.k}</dt><dd>{f.r}</dd></div>)}
+      </dl>
+    </div>
+    <div class="cmp-handle" data-cmp-handle>
+      <span class="cmp-line" aria-hidden="true"></span>
+      <span
+        class="cmp-knob" role="slider" tabindex="0" data-cmp-knob
+        aria-label="Comparar agencia tradicional y RebelDEV" aria-describedby="cmp-hint" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="50 % agencia tradicional, 50 % RebelDEV"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 4 12l5 5M15 7l5 5-5 5" /></svg>
+      </span>
+    </div>
+  </div>
+
+  <p class="cmp-garantias mt-14 text-d3">
+    {garantias.map((g, i) => <>{i > 0 && <span class="slash" aria-hidden="true">/</span>}<span>{g.t}</span></>)}
+  </p>
+</section>
+
+<style>
+  .cmp-hint { display: none; }
+  .cmp.is-live .cmp-hint { display: block; }
+
+  /* Sin JS o en pantallas angostas: dos columnas (o apiladas), sin manija */
+  .cmp-stage { display: grid; gap: 1rem; }
+  @media (min-width: 640px) { .cmp-stage { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .cmp-layer { border-radius: 1.5rem; padding: clamp(1.4rem, 3vw, 2.4rem); }
+  .cmp-them { background: var(--color-surface); color: var(--color-ash); }
+  .cmp-us { background: color-mix(in srgb, var(--color-red) 14%, var(--color-ink)); border: 1px solid color-mix(in srgb, var(--color-red) 40%, transparent); }
+  .cmp-who { font-size: clamp(1.3rem, 1.9vw, 1.6rem); line-height: 1.2; letter-spacing: -0.02em; }
+  .cmp-them .cmp-who { color: var(--color-ash); }
+  .cmp-us .cmp-who { color: var(--color-red-text); }
+  .cmp-rows { margin: 1.4rem 0 0; display: grid; }
+  .cmp-row { padding-block: 1rem; border-top: 1px solid var(--color-line); }
+  .cmp-row dt { font-size: 0.875rem; line-height: 1.5; color: var(--color-ash-dim); }
+  .cmp-row dd { margin: 0.3rem 0 0; font-size: clamp(1.05rem, 1.5vw, 1.25rem); line-height: 1.4; }
+  .cmp-us .cmp-row dd { color: var(--color-bone); }
+  .cmp-handle { display: none; }
+
+  /* Con la manija: las capas ocupan el mismo lugar y cada una se alinea a su lado */
+  .cmp.is-live .cmp-stage {
+    position: relative; display: grid; grid-template-columns: 1fr; gap: 0; border-radius: 1.75rem; overflow: hidden;
+    --p: 50%; --o: 0px; touch-action: pan-y;
+  }
+  .cmp.is-live .cmp-layer { grid-area: 1 / 1; border-radius: 0; border: 0; }
+  .cmp.is-live .cmp-them { z-index: 2; clip-path: polygon(0 0, calc(var(--p) + var(--o)) 0, calc(var(--p) - var(--o)) 100%, 0 100%); }
+  .cmp.is-live .cmp-them > * { max-width: 44%; }
+  .cmp.is-live .cmp-us > * { max-width: 44%; margin-left: auto; text-align: right; }
+  .cmp.is-live .cmp-us .cmp-rows { margin-top: 1.4rem; }
+
+  .cmp.is-live .cmp-handle {
+    display: block; position: absolute; z-index: 3; top: 0; bottom: 0; left: 0; width: 3rem; margin-left: -1.5rem;
+    cursor: grab; touch-action: pan-y;
+  }
+  .cmp.is-live .cmp-handle:active { cursor: grabbing; }
+  .cmp-line {
+    position: absolute; left: 50%; top: 50%; width: 4px; height: var(--len, 120%); border-radius: 4px; background: var(--color-red);
+    transform: translate(-50%, -50%) rotate(18deg);
+  }
+  .cmp-knob {
+    position: absolute; left: 50%; top: 50%; display: grid; place-items: center; width: 3.25rem; height: 3.25rem; border-radius: 999px;
+    background: var(--color-red); color: #fff; transform: translate(-50%, -50%); transition: transform 0.3s var(--ease-out-expo);
+  }
+  .cmp-handle:hover .cmp-knob, .cmp-knob:focus-visible { transform: translate(-50%, -50%) scale(1.08); }
+  .cmp-knob:focus-visible { outline: 2px solid var(--color-bone); outline-offset: 4px; border-radius: 999px; }
+  .cmp-knob svg { width: 1.3rem; height: 1.3rem; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .cmp-garantias { margin-bottom: 0; max-width: 60ch; color: var(--color-bone); font-family: var(--font-display); font-weight: 800; }
+  .cmp-garantias .slash { padding-inline: 0.35em; }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion } from '../../scripts/motion';
+  import { Draggable } from 'gsap/Draggable';
+  import { InertiaPlugin } from 'gsap/InertiaPlugin';
+
+  gsap.registerPlugin(Draggable, InertiaPlugin);
+
+  const sec = document.querySelector<HTMLElement>('[data-cmp]')!;
+  const stage = sec.querySelector<HTMLElement>('[data-cmp-stage]')!;
+  const handle = sec.querySelector<HTMLElement>('[data-cmp-handle]')!;
+  const knob = sec.querySelector<HTMLElement>('[data-cmp-knob]')!;
+  const TAN = Math.tan((18 * Math.PI) / 180);
+
+  // La manija solo tiene sentido si las dos capas caben una sobre otra.
+  gsap.matchMedia().add('(min-width: 640px)', () => {
+    sec.classList.add('is-live');
+    let w = 0, o = 0, pct = 50;
+
+    // pct (0–100) recorre de la esquina izquierda a la derecha, contando la inclinación de la barra.
+    const toX = (p: number) => -o + (p / 100) * (w + 2 * o);
+    const sync = (x: number) => {
+      pct = gsap.utils.clamp(0, 100, ((x + o) / (w + 2 * o)) * 100);
+      stage.style.setProperty('--p', `${x}px`);
+      const v = Math.round(pct);
+      knob.setAttribute('aria-valuenow', String(v));
+      knob.setAttribute('aria-valuetext', `${v} % agencia tradicional, ${100 - v} % RebelDEV`);
+    };
+
+    const drag = Draggable.create(handle, {
+      type: 'x',
+      trigger: stage,
+      inertia: !reduceMotion,
+      edgeResistance: 0.85,
+      allowNativeTouchScrolling: true,
+      onPress() { gsap.killTweensOf(handle); },
+      onDrag() { sync(this.x); },
+      onThrowUpdate() { sync(this.x); },
+    })[0];
+
+    const measure = () => {
+      w = stage.offsetWidth;
+      const h = stage.offsetHeight;
+      o = (TAN * h) / 2;
+      stage.style.setProperty('--o', `${o}px`);
+      handle.style.setProperty('--len', `${h / Math.cos((18 * Math.PI) / 180) + 8}px`);
+      drag.applyBounds({ minX: -o, maxX: w + o });
+      gsap.set(handle, { x: toX(pct) });
+      drag.update();
+      sync(toX(pct));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(stage);
+
+    // Llevar la manija a un porcentaje (teclado y vaivén de entrada).
+    const goTo = (p: number, vars: gsap.TweenVars = {}) => gsap.to(handle, {
+      x: toX(gsap.utils.clamp(0, 100, p)), duration: reduceMotion ? 0 : 0.6, ease: 'power3.out', overwrite: true,
+      onUpdate: () => sync(gsap.getProperty(handle, 'x') as number),
+      onComplete: () => drag.update(),
+      ...vars,
+    });
+
+    const onKey = (e: KeyboardEvent) => {
+      const step = e.shiftKey ? 20 : 5;
+      const keys: Record<string, number> = { ArrowLeft: pct - step, ArrowDown: pct - step, ArrowRight: pct + step, ArrowUp: pct + step, PageDown: pct - 20, PageUp: pct + 20, Home: 0, End: 100 };
+      if (!(e.key in keys)) return;
+      e.preventDefault();
+      goTo(keys[e.key]);
+    };
+    knob.addEventListener('keydown', onKey);
+
+    // Al entrar en pantalla, un vaivén corto para mostrar que la barra se mueve.
+    if (!reduceMotion) {
+      ScrollTrigger.create({
+        trigger: stage, start: 'top 70%', once: true,
+        onEnter: () => {
+          gsap.timeline({ defaults: { ease: 'sine.inOut', onUpdate: () => sync(gsap.getProperty(handle, 'x') as number) }, onComplete: () => drag.update() })
+            .to(handle, { x: toX(64), duration: 0.7 })
+            .to(handle, { x: toX(38), duration: 0.9 })
+            .to(handle, { x: toX(50), duration: 0.6 });
+        },
+      });
+    }
+
+    return () => {
+      ro.disconnect();
+      drag.kill();
+      knob.removeEventListener('keydown', onKey);
+      gsap.set(handle, { clearProps: 'transform' });
+      stage.style.removeProperty('--p');
+      stage.style.removeProperty('--o');
+      sec.classList.remove('is-live');
+    };
+  });
+</script>

@@ -1,0 +1,148 @@
+---
+// «La IA acelera, no decide.» (frase del cuestionario de marca). Un editor muestra el reparto de trabajo:
+// la IA escribe rápido (ScrambleText) y un ingeniero senior revisa. El segundo bloque vuelve con un
+// pedido de cambio, la IA agrega el caso que faltaba y recién entonces llega la aprobación.
+// Se reproduce una sola vez al entrar en pantalla. Sin JavaScript o con «menos movimiento», el panel
+// se ve completo. El código es un ejemplo ilustrativo (data/v3.ts), no de un cliente.
+import { revision } from '../../data/v3';
+import { hechos } from '../../data/estudio';
+---
+<section class="wrap v3-sec ia" aria-labelledby="ia-title" data-ia>
+  <div class="ia-top">
+    <div>
+      <h2 id="ia-title" class="text-d1 max-w-[12ch]">La IA acelera, no decide.</h2>
+      <p class="mt-8 max-w-[40ch] text-lead text-bone">Un ingeniero senior define la arquitectura y aprueba cada cambio. Lo construimos rápido con IA y lo revisan ingenieros que han hecho sistemas para millones de personas.</p>
+    </div>
+
+    <figure class="ia-fig">
+      <figcaption class="sr-only">Ejemplo: la IA escribe una función de agenda y su prueba. Un ingeniero senior aprueba la función, pide agregar el caso de los feriados a la prueba y la aprueba después del cambio.</figcaption>
+      <div class="ia-ed" aria-hidden="true" data-ia-ed>
+        <div class="ia-bar">
+          <span class="ia-who" data-ia-who>La IA escribe</span>
+          <span class="ia-pulse" data-ia-pulse></span>
+        </div>
+        {revision.map((b, i) => (
+          <div class="ia-blk" data-ia-blk>
+            <p class="ia-file">{b.archivo}</p>
+            <pre class="ia-code"><code>{b.codigo.map((l) => <span class="ia-ln" data-ia-ln style={`--i:${l.length - l.trimStart().length}`}>{l.trimStart()}</span>)}{b.arreglo && <span class="ia-ln ia-add" data-ia-fix>{b.arreglo}</span>}</code></pre>
+            {b.pedido && (
+              <p class="ia-rev ia-ask" data-ia-ask><span class="ia-mark" aria-hidden="true">!</span>Cambio pedido: {b.pedido}</p>
+            )}
+            <p class="ia-rev ia-ok" data-ia-ok><span class="ia-mark" aria-hidden="true">✓</span>{b.nota}</p>
+          </div>
+        ))}
+      </div>
+    </figure>
+  </div>
+
+  <ul class="ia-hechos">
+    {hechos.map((h) => (
+      <li>
+        <h3 class="ia-h3">{h.t}</h3>
+        <p class="mt-2 text-body text-ash">{h.d}</p>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .ia-top { display: grid; gap: 3.5rem; align-items: start; }
+  @media (min-width: 1024px) { .ia-top { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 4rem; } }
+  .ia-fig { margin: 0; }
+
+  /* El editor: un solo panel, oscuro en los dos temas, con la monoespaciada solo aquí */
+  .ia-ed {
+    border-radius: 1.25rem; background: #0F0C13; border: 1px solid rgb(244 240 232 / 0.12); color: #F4F0E8;
+    font-family: var(--font-mono); font-size: clamp(0.72rem, 1.1vw, 0.85rem); line-height: 1.7; overflow: hidden;
+  }
+  .ia-bar { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.2rem; border-bottom: 1px solid rgb(244 240 232 / 0.1); color: #C9C3CA; }
+  .ia-pulse { width: 0.5rem; height: 0.5rem; border-radius: 99px; background: #FF2D3F; opacity: 0; }
+  .ia-blk { padding: 1rem 1.2rem 1.1rem; }
+  .ia-blk + .ia-blk { border-top: 1px solid rgb(244 240 232 / 0.08); }
+  .ia-file { margin: 0 0 0.5rem; color: #8E8791; }
+  .ia-code { margin: 0; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .ia-ln { display: block; min-height: 1.7em; padding-left: calc(var(--i, 0) * 1ch); }
+  .ia-add { position: relative; padding-left: 1.1em; margin-left: -1.1em; background: rgb(228 18 31 / 0.14); }
+  .ia-add::before { content: '+'; position: absolute; left: 0.25em; color: #FF2D3F; }
+  .ia-rev { display: flex; align-items: center; gap: 0.6rem; margin: 0.8rem 0 0; font-family: var(--font-sans); font-size: 0.875rem; }
+  .ia-mark { display: inline-grid; place-items: center; width: 1.35rem; height: 1.35rem; border-radius: 99px; font-size: 0.75rem; font-weight: 700; }
+  .ia-ok { color: #F4F0E8; }
+  .ia-ok .ia-mark { background: #E4121F; color: #fff; }
+  .ia-ask { color: #FF2D3F; }
+  .ia-ask .ia-mark { border: 1.5px solid #FF2D3F; }
+
+  /* Mientras se escribe: lo que aún no llega queda oculto (solo con animación) */
+  :global(html.has-motion) .ia-ed.is-pending [data-ia-ok],
+  :global(html.has-motion) .ia-ed.is-pending [data-ia-ask],
+  :global(html.has-motion) .ia-ed.is-pending [data-ia-fix] { visibility: hidden; }
+
+  /* Lo que lo hace sólido: una lista con separadores, sin tarjetas */
+  .ia-hechos { list-style: none; margin: clamp(4rem, 8vw, 6rem) 0 0; padding: 0; display: grid; gap: 0 2.5rem; }
+  .ia-hechos li { padding-block: 1.5rem; border-top: 1px solid var(--color-line); }
+  .ia-h3 { margin: 0; font-size: clamp(1.15rem, 1.6vw, 1.35rem); line-height: 1.2; letter-spacing: -0.02em; }
+  @media (min-width: 768px) { .ia-hechos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1200px) { .ia-hechos { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion } from '../../scripts/motion';
+  import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+
+  gsap.registerPlugin(ScrambleTextPlugin);
+
+  const ed = document.querySelector<HTMLElement>('[data-ia-ed]')!;
+
+  if (!reduceMotion) {
+    const who = ed.querySelector<HTMLElement>('[data-ia-who]')!;
+    const pulse = ed.querySelector('[data-ia-pulse]');
+    const blocks = Array.from(ed.querySelectorAll<HTMLElement>('[data-ia-blk]'));
+    const chars = '{}()[]<>=;:._abcdefghijklmnopqrstuvwxyz';
+
+    // Cada línea guarda su texto y empieza vacía; la IA la «escribe» después.
+    const lines = Array.from(ed.querySelectorAll<HTMLElement>('[data-ia-ln], [data-ia-fix]'));
+    const texts = new Map(lines.map((l) => [l, l.textContent ?? '']));
+    lines.forEach((l) => { l.textContent = ''; });
+    ed.classList.add('is-pending');
+
+    const type = (tl: gsap.core.Timeline, l: HTMLElement) => {
+      const text = texts.get(l)!;
+      tl.to(l, { duration: Math.max(0.25, text.length * 0.012), ease: 'none', scrambleText: { text, chars, speed: 0.8, tweenLength: true } });
+    };
+    const say = (tl: gsap.core.Timeline, msg: string) => tl.add(() => { who.textContent = msg; });
+    const stamp = (tl: gsap.core.Timeline, el: Element | null) => {
+      if (!el) return;
+      tl.fromTo(el, { autoAlpha: 0, x: -8 }, { autoAlpha: 1, x: 0, duration: 0.45, ease: 'power3.out' }, '+=0.35')
+        .from(el.querySelector('.ia-mark'), { scale: 0.4, duration: 0.4, ease: 'expo.out' }, '<');
+    };
+
+    // El punto rojo late mientras se trabaja; va aparte porque se repite sin fin.
+    const beat = gsap.to(pulse, { autoAlpha: 1, duration: 0.45, repeat: -1, yoyo: true, ease: 'power1.inOut', paused: true });
+    const tl = gsap.timeline({
+      paused: true,
+      onStart: () => { beat.play(); },
+      onComplete: () => { who.textContent = 'Todo aprobado'; beat.kill(); gsap.to(pulse, { autoAlpha: 0, duration: 0.4 }); },
+    });
+    tl.add(() => ed.classList.remove('is-pending'), 0)
+      .set(ed.querySelectorAll('[data-ia-ok], [data-ia-ask], [data-ia-fix]'), { autoAlpha: 0 }, 0);
+
+    blocks.forEach((b) => {
+      const file = b.querySelector('.ia-file')!.textContent;
+      say(tl, `La IA escribe ${file}`);
+      b.querySelectorAll<HTMLElement>('[data-ia-ln]:not([data-ia-fix])').forEach((l) => type(tl, l));
+      const ask = b.querySelector('[data-ia-ask]');
+      const fix = b.querySelector<HTMLElement>('[data-ia-fix]');
+      say(tl, 'Revisa un ingeniero senior');
+      if (ask && fix) {
+        stamp(tl, ask);
+        say(tl, 'La IA corrige');
+        tl.set(fix, { autoAlpha: 1 }, '+=0.4');
+        type(tl, fix);
+        say(tl, 'Revisa un ingeniero senior');
+      }
+      stamp(tl, b.querySelector('[data-ia-ok]'));
+      tl.to({}, { duration: 0.3 });
+    });
+
+    ScrollTrigger.create({ trigger: ed, start: 'top 72%', once: true, onEnter: () => tl.play() });
+  }
+</script>

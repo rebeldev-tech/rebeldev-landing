@@ -1,0 +1,189 @@
+---
+// Portada de la versión 3: «el corte». La barra roja (la firma de la marca) baja en diagonal y el
+// titular entra partido en dos mitades que se deslizan a lo largo de la barra hasta encajar.
+// Al mover el ratón, las mitades se desplazan un poco sobre el corte; al bajar, se separan.
+// La inclinación es la de la barra del isotipo (~18°). Al pie, una cinta con las especialidades
+// cuya velocidad y dirección siguen al scroll.
+// Sin JavaScript o con «menos movimiento»: titular entero, barra quieta y cinta sin moverse.
+import { contacto } from '../../data/contacto';
+import { hero } from '../../data/v3';
+
+const especialidades = ['Software a medida', 'Automatización de procesos', 'Asistentes de WhatsApp', 'Plataformas web', 'Backend y APIs', 'Integraciones', 'Diseño UX/UI'];
+---
+<section id="inicio" class="hc" data-hc aria-labelledby="hc-title">
+  <div class="hc-line" data-hc-line aria-hidden="true"><span data-hc-draw></span></div>
+
+  <div class="wrap hc-body">
+    <div class="hc-tw" data-hc-tw>
+      <h1 id="hc-title" class="text-hero hc-title hc-a" data-hc-half>
+        <span class="hc-in">{hero.titulo.map((l) => <span class="hc-l">{l} </span>)}</span>
+      </h1>
+      <div class="text-hero hc-title hc-b" data-hc-half aria-hidden="true">
+        <span class="hc-in">{hero.titulo.map((l) => <span class="hc-l">{l} </span>)}</span>
+      </div>
+    </div>
+
+    <div class="hc-foot">
+      <p class="text-lead hc-bajada" data-hc-in>{hero.bajada}</p>
+      <div class="hc-ctas" data-hc-in>
+        <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary" data-magnetic>Agenda una demo</a>
+        <a href="#como" class="btn btn-ghost">Mira cómo trabajamos</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hc-tape" data-hc-in>
+    <ul class="sr-only">{especialidades.map((e) => <li>{e}</li>)}</ul>
+    <div class="hc-track" data-hc-track aria-hidden="true">
+      {[0, 1].map(() => (
+        <span class="hc-run">
+          {especialidades.map((e) => <><span>{e}</span><span class="hc-sl">/</span></>)}
+        </span>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hc {
+    position: relative; min-height: 100svh; display: flex; flex-direction: column; overflow: hidden; isolation: isolate;
+    background: var(--color-ink);
+  }
+  /* La barra: sin JS queda en un lugar razonable; el script la pone justo sobre el titular */
+  .hc-line {
+    position: absolute; z-index: 1; left: 64%; top: 46%; width: clamp(5px, 0.5vw, 8px); height: 260vh; border-radius: 99px;
+    transform: translate(-50%, -50%) rotate(18deg); pointer-events: none;
+  }
+  .hc-line span { display: block; width: 100%; height: 100%; border-radius: inherit; background: var(--color-red); }
+
+  .hc-body { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: clamp(2.5rem, 6vh, 4.5rem); padding-top: 8rem; padding-bottom: clamp(2rem, 5vh, 3.5rem); }
+  .hc-tw { position: relative; }
+  .hc-title { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(3rem, 8.2vw, 8.8rem); }
+  .hc-l { display: block; width: fit-content; }
+  .hc-in { display: block; }
+  .hc-b { display: none; }
+
+  .hc-foot { display: grid; gap: 1.75rem; }
+  .hc-bajada { margin: 0; max-width: 40ch; color: var(--color-ash); }
+  .hc-ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  @media (min-width: 900px) {
+    .hc-foot { grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 3rem; }
+  }
+
+  .hc-tape { position: relative; z-index: 2; border-top: 1px solid var(--color-line); overflow: hidden; padding-block: 1.1rem; }
+  .hc-track { display: flex; width: max-content; }
+  .hc-run { display: flex; align-items: baseline; flex: none; font-family: var(--font-display); font-weight: 800; font-size: clamp(1.25rem, 2.2vw, 1.9rem); letter-spacing: -0.03em; color: var(--color-ash); white-space: nowrap; }
+  .hc-sl { color: var(--color-red-text); padding-inline: 0.7em; }
+  /* Sin animación, la cinta es una sola vuelta que se parte en líneas (se leen todas) */
+  .hc-run + .hc-run { display: none; }
+  .hc-run { flex-wrap: wrap; white-space: normal; padding-inline: clamp(1.25rem, 4vw, 3rem); }
+  :global(html.has-motion) .hc-run { flex-wrap: nowrap; white-space: nowrap; padding-inline: 0; }
+  :global(html.has-motion) .hc-run + .hc-run { display: flex; }
+
+  /* Con animación: la segunda mitad existe y lo que entra empieza oculto */
+  :global(html.has-motion) .hc-b { display: block; position: absolute; inset: 0; }
+  :global(html.has-motion) [data-hc-half], :global(html.has-motion) [data-hc-in], :global(html.has-motion) .hc-line { visibility: hidden; }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion, coarsePointer } from '../../scripts/motion';
+
+  const sec = document.querySelector<HTMLElement>('[data-hc]')!;
+  const line = sec.querySelector<HTMLElement>('[data-hc-line]')!;
+  const draw = line.querySelector<HTMLElement>('[data-hc-draw]')!;
+  const tw = sec.querySelector<HTMLElement>('[data-hc-tw]')!;
+  const [a, b] = gsap.utils.toArray<HTMLElement>('[data-hc-half]', sec);
+  const ins = [a, b].map((h) => h.querySelector<HTMLElement>('.hc-in')!);
+  const rise = sec.querySelectorAll<HTMLElement>('[data-hc-in]');
+
+  // Dirección de la barra: 18° desde la vertical, inclinada hacia la derecha arriba (como «/»).
+  const ANG = (18 * Math.PI) / 180;
+  const down = { x: -Math.sin(ANG), y: Math.cos(ANG) };
+  const along = (d: number) => ({ x: down.x * d, y: down.y * d });
+
+  // Coloca la barra sobre el titular y recorta cada mitad a un lado de ella.
+  function place(clip = true) {
+    const hr = sec.getBoundingClientRect();
+    const tr = tw.getBoundingClientRect();
+    const lines = a.querySelectorAll<HTMLElement>('.hc-l');
+    const maxW = Math.max(...Array.from(lines, (l) => l.offsetWidth));
+    const cx = tr.left - hr.left + maxW * 0.6;
+    const cy = tr.top - hr.top + tr.height * 0.5;
+    gsap.set(line, { left: cx, top: cy });
+    if (!clip) return;
+
+    // En coordenadas del titular: x del corte para una altura y.
+    const ox = tr.left - hr.left, oy = tr.top - hr.top;
+    const xAt = (y: number) => cx - ox + (cy - oy - y) * Math.tan(ANG);
+    const L = 400, H = tr.height, W = tr.width;
+    const t = -L, bt = H + L;
+    a.style.clipPath = `polygon(${-L}px ${t}px, ${xAt(t)}px ${t}px, ${xAt(bt)}px ${bt}px, ${-L}px ${bt}px)`;
+    b.style.clipPath = `polygon(${xAt(t)}px ${t}px, ${W + L}px ${t}px, ${W + L}px ${bt}px, ${xAt(bt)}px ${bt}px)`;
+  }
+
+  if (!reduceMotion) {
+    gsap.set(line, { xPercent: -50, yPercent: -50, x: 0, y: 0, rotation: 18 });
+
+    const tape = sec.querySelector<HTMLElement>('[data-hc-track]')!;
+    const loop = gsap.to(tape, { xPercent: -50, duration: 38, ease: 'none', repeat: -1, paused: true });
+
+    // La cinta se detiene con el ratón encima o con el foco dentro, y cuando el hero no se ve.
+    let started = false, visible = true, held = false;
+    const tapeBox = sec.querySelector<HTMLElement>('.hc-tape')!;
+    const sync = () => { if (started && visible && !held) loop.play(); else loop.pause(); };
+    tapeBox.addEventListener('pointerenter', () => { held = true; sync(); });
+    tapeBox.addEventListener('pointerleave', () => { held = false; sync(); });
+    ScrollTrigger.create({ trigger: sec, start: 'top bottom', end: 'bottom top', onToggle: (self) => { visible = self.isActive; sync(); } });
+
+    // La cinta acelera con el scroll y cambia de dirección si se sube.
+    let dir = 1;
+    ScrollTrigger.create({
+      trigger: sec, start: 'top top', end: 'bottom top',
+      onUpdate: (self) => {
+        dir = self.direction;
+        const boost = 1 + Math.min(6, Math.abs(self.getVelocity()) / 260);
+        gsap.to(loop, { timeScale: dir * boost, duration: 0.2, overwrite: true, onComplete: () => { gsap.to(loop, { timeScale: dir, duration: 1.2, ease: 'power2.out' }); } });
+      },
+    });
+
+    document.fonts.ready.then(() => {
+      place();
+      const d = Math.max(window.innerHeight * 0.55, 380);
+      const fromA = along(-d), fromB = along(d);
+
+      // Entrada: baja la barra, las mitades se deslizan por el corte y encajan; después, el resto.
+      gsap.set([a, b, line], { visibility: 'visible' });
+      gsap.timeline({ delay: 0.15 })
+        .fromTo(draw, { scaleY: 0, transformOrigin: '50% 0%' }, { scaleY: 1, duration: 1.1, ease: 'expo.inOut' })
+        .fromTo(a, { x: fromA.x, y: fromA.y, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: 1.4, ease: 'expo.out' }, 0.55)
+        .fromTo(b, { x: fromB.x, y: fromB.y, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: 1.4, ease: 'expo.out' }, 0.62)
+        .fromTo(rise, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out', stagger: 0.12 }, 1.25)
+        .add(() => { started = true; if (visible && !held) loop.play(); }, 1.4)
+        .add(() => {
+          // Al bajar: las mitades se separan por el corte y la barra se ensancha.
+          const out = along(window.innerHeight * 0.4);
+          gsap.timeline({ scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom top', scrub: 0.5 } })
+            .to(a, { x: -out.x, y: -out.y, ease: 'none' }, 0)
+            .to(b, { x: out.x, y: out.y, ease: 'none' }, 0)
+            .to(line, { scaleX: 4, ease: 'none' }, 0)
+            .to(sec.querySelector('.hc-foot'), { autoAlpha: 0, y: -40, ease: 'none', duration: 0.6 }, 0);
+        });
+
+      // El ratón corre las mitades sobre el corte, en sentidos opuestos.
+      if (!coarsePointer) {
+        const moves = ins.map((el) => ({ x: gsap.quickTo(el, 'x', { duration: 0.9, ease: 'power3.out' }), y: gsap.quickTo(el, 'y', { duration: 0.9, ease: 'power3.out' }) }));
+        sec.addEventListener('pointermove', (e) => {
+          const k = (e.clientX / window.innerWidth - 0.5) * 36;
+          moves.forEach((m, i) => { const p = along(i ? k : -k); m.x(p.x); m.y(p.y); });
+        });
+        sec.addEventListener('pointerleave', () => moves.forEach((m) => { m.x(0); m.y(0); }));
+      }
+    });
+
+  }
+
+  // Sin animación, la barra igual se coloca sobre el titular (sin recortarlo).
+  document.fonts.ready.then(() => { if (reduceMotion) place(false); });
+  let w = window.innerWidth;
+  window.addEventListener('resize', () => { if (window.innerWidth !== w) { w = window.innerWidth; place(!reduceMotion); } });
+</script>

@@ -2,8 +2,9 @@
 import { Font } from 'astro:assets';
 import '../styles/global.css';
 
-interface Props { title: string; description: string }
-const { title, description } = Astro.props;
+// grano: la capa de ruido de fondo. La versión 3 la apaga (fondo negro liso, decisión del 25 oct 2026).
+interface Props { title: string; description: string; grano?: boolean }
+const { title, description, grano = true } = Astro.props;
 ---
 <!doctype html>
 <html lang="es">
@@ -42,6 +43,6 @@ const { title, description } = Astro.props;
   <body>
     <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-full focus:bg-bone focus:px-4 focus:py-2 focus:text-ink">Ir al contenido</a>
     <slot />
-    <div class="grain" aria-hidden="true"></div>
+    {grano && <div class="grain" aria-hidden="true"></div>}
   </body>
 </html>

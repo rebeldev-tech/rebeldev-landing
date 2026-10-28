@@ -1,0 +1,72 @@
+---
+// Fredy: su frase (textual, de la entrevista) se enciende palabra por palabra al leer, y su
+// trayectoria es una escalera que sube, un peldaño por rol. Solo datos aprobados (CLAUDE.md, sección 5).
+import { cita, fundador } from '../../data/estudio';
+---
+<section id="nosotros" class="wrap v3-sec fd" aria-labelledby="fd-name">
+  <figure class="fd-fig">
+    <blockquote class="fd-quote">
+      <p class="text-d1" data-fd-words>{cita}</p>
+    </blockquote>
+    <figcaption class="sr-only">Fredy Ramos</figcaption>
+  </figure>
+
+  <div class="fd-grid">
+    <div>
+      <h2 id="fd-name" class="text-d2">Fredy Ramos</h2>
+      <p class="mt-2 text-lead text-red-text">{fundador.cargo}</p>
+      <p class="mt-5 max-w-[46ch] text-body text-ash">{fundador.formacion}</p>
+    </div>
+    <ol class="fd-stairs" aria-label="Trayectoria de Fredy" data-fd-stairs>
+      {fundador.trayectoria.map((t, i) => (
+        <li class="fd-step" style={`--i: ${i}`} data-fd-step><span>{t}</span></li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .fd-fig { margin: 0; }
+  .fd-quote { margin: 0; }
+  .fd-quote p { max-width: 18ch; }
+  .fd-grid { display: grid; gap: 3rem; margin-top: clamp(3.5rem, 7vw, 6rem); }
+  @media (min-width: 1024px) { .fd-grid { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: end; } }
+
+  /* Escalera: en móvil, cada rol un poco más adentro y más arriba (se lee de abajo hacia arriba) */
+  .fd-stairs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column-reverse; gap: 0.5rem; }
+  .fd-step {
+    margin-left: calc(var(--i) * 9%); padding: 0.85rem 1rem; border-top: 2px solid var(--color-line-strong);
+    background: var(--color-surface); color: var(--color-bone); font-size: 0.95rem; line-height: 1.35;
+  }
+  .fd-step:last-child { border-top-color: var(--color-red); }
+
+  /* Escritorio: cinco peldaños de izquierda a derecha, cada uno más alto que el anterior */
+  @media (min-width: 768px) {
+    .fd-stairs { flex-direction: row; align-items: flex-end; gap: 0.4rem; height: 19rem; }
+    .fd-step { flex: 1 1 0; margin-left: 0; height: calc(26% + var(--i) * 18.5%); padding: 1rem 0.9rem; }
+  }
+</style>
+
+<script>
+  import { gsap, SplitText, reduceMotion } from '../../scripts/motion';
+
+  if (!reduceMotion) {
+    // La frase se enciende al leerla (como en la versión 2).
+    document.fonts.ready.then(() => {
+      const el = document.querySelector<HTMLElement>('[data-fd-words]')!;
+      const words = SplitText.create(el, { type: 'words' }).words;
+      gsap.fromTo(words, { opacity: 0.16 }, { opacity: 1, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: el, start: 'top 82%', end: 'bottom 50%', scrub: true } });
+    });
+
+    // La escalera se arma una vez: cada peldaño crece desde el piso, en orden.
+    // Escritorio o móvil se decide con matchMedia: si se gira la pantalla, se rehace.
+    const steps = gsap.utils.toArray<HTMLElement>('[data-fd-step]');
+    gsap.matchMedia().add({ desk: '(min-width: 768px)', mob: '(max-width: 767px)' }, (ctx) => {
+      gsap.timeline({ scrollTrigger: { trigger: '[data-fd-stairs]', start: 'top 80%', once: true } })
+        .from(steps, ctx.conditions!.desk
+          ? { scaleY: 0, transformOrigin: '50% 100%', duration: 0.9, ease: 'expo.out', stagger: 0.12 }
+          : { x: -24, autoAlpha: 0, duration: 0.8, ease: 'power3.out', stagger: 0.1 })
+        .from(steps.map((s) => s.firstElementChild), { autoAlpha: 0, y: 8, duration: 0.5, stagger: 0.12 }, 0.3);
+    });
+  }
+</script>
