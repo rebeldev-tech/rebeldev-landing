@@ -1,0 +1,105 @@
+---
+// Portada «Square over a moving line»: el nombre corre de lado a lado y cruza un cuadrado con el video
+// del proyecto (el mismo de la versión 2). El h1 lleva el nombre una vez; las copias que corren son decorativas.
+import Logo from '../Logo.astro';
+import { portada } from '../../data/v5';
+import { contacto } from '../../data/contacto';
+
+const copias = Array.from({ length: 4 });
+---
+<section class="pt" id="inicio" aria-labelledby="pt-h1">
+  <nav class="pt-top" aria-label="Principal">
+    <a href="#como" class="pt-link">Cómo trabajamos</a>
+    <a href="#inicio" class="pt-marca" aria-label="RebelDEV, inicio"><Logo /></a>
+    <a href="#preguntas" class="pt-link">Preguntas</a>
+  </nav>
+
+  <div class="pt-banda">
+    <div class="pt-cuadro" aria-hidden="true">
+      <video src="/video/hero.mp4" autoplay muted loop playsinline preload="auto" data-pt-video></video>
+    </div>
+    <h1 id="pt-h1" class="pt-linea">
+      <span class="sr-only">RebelDEV</span>
+      <span class="pt-pista" aria-hidden="true" data-pt-pista>
+        {[0, 1].map(() => (
+          <span class="pt-grupo">
+            {copias.map(() => (<><span class="pt-nombre">Rebel<b>&lt;/</b>DEV<b>&gt;</b></span><span class="pt-punto"></span></>))}
+          </span>
+        ))}
+      </span>
+    </h1>
+  </div>
+
+  <div class="pt-sub">
+    <p class="pt-frase">{portada.frase}</p>
+    <p class="pt-dato">{portada.dato}</p>
+  </div>
+
+  <div class="pt-pie">
+    <p>{portada.lema} <button type="button" class="pt-pausa" aria-pressed="false" data-pt-pausa>Pausar movimiento</button></p>
+    <a class="b5" href={contacto.whatsappLink} target="_blank" rel="noopener">{portada.accion}</a>
+  </div>
+</section>
+
+<style>
+  .pt { position: relative; min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto auto; overflow: clip; }
+
+  .pt-top { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 28px var(--m) 0; font-size: 18px; }
+  .pt-top .pt-link:last-child { justify-self: end; }
+  .pt-marca { font-size: var(--t-m); color: var(--c-ink); }
+  .pt-link { padding-block: 10px; color: var(--c-ink); text-underline-offset: 6px; }
+  .pt-link:hover { text-decoration: underline; text-decoration-color: var(--c-red); text-decoration-thickness: 2px; }
+
+  .pt-banda { position: relative; display: grid; place-items: center; min-height: 360px; }
+  .pt-cuadro {
+    position: absolute; left: 50%; top: 50%; translate: -50% -50%;
+    width: clamp(220px, 19vw, 300px); aspect-ratio: 1; background: var(--c-surface); overflow: hidden;
+  }
+  .pt-cuadro video { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) brightness(0.62) contrast(1.1); }
+
+  .pt-linea { position: relative; width: 100%; margin: 0; font-size: var(--t-xl); line-height: 1; letter-spacing: -0.04em; white-space: nowrap; overflow: hidden; padding-block: 0.06em 0.12em; }
+  .pt-pista { display: inline-flex; width: max-content; animation: pt-corre var(--pt-dur, 40s) linear infinite; }
+  .pt-linea:hover .pt-pista, .pt.is-quieto .pt-pista { animation-play-state: paused; }
+  .pt-pausa { margin-left: 12px; padding: 10px 0; color: var(--c-muted); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; transition: color .2s; }
+  .pt-pausa:hover { color: var(--c-ink); }
+  .pt-grupo { display: inline-flex; align-items: center; }
+  .pt-nombre b { font-weight: inherit; color: var(--c-red); }
+  .pt-punto { display: inline-block; width: 0.22em; height: 0.22em; margin-inline: 0.3em; border-radius: 50%; background: var(--c-red); }
+  @keyframes pt-corre { to { transform: translateX(-50%); } }
+
+  .pt-sub { justify-self: center; text-align: center; max-width: 36ch; padding: clamp(40px, 6vh, 72px) var(--m) 0; }
+  .pt-frase { font-size: var(--t-m); line-height: 1.3; text-wrap: balance; }
+  .pt-dato { margin-top: 20px; font-size: 18px; color: var(--c-muted); }
+
+  .pt-pie { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 40px var(--m) 40px; font-size: 18px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pt-pista { animation: none; transform: translateX(-12%); }
+    .pt-pausa { display: none; }
+  }
+
+  @media (max-width: 767px) {
+    .pt-top .pt-link:first-child { visibility: hidden; }
+    .pt-banda { min-height: 46vh; }
+    .pt-cuadro { width: 46vw; }
+    .pt-linea { font-size: 34vw; }
+    .pt-sub { padding-top: 48px; }
+    .pt-pie { flex-direction: column; align-items: stretch; padding-bottom: 20px; }
+    .pt-pie p { text-align: center; }
+    .pt-pie .b5 { justify-content: center; }
+  }
+</style>
+
+<script>
+  // Pausa el nombre que corre y el video (pauta de accesibilidad: el movimiento largo se puede detener).
+  const pt = document.querySelector<HTMLElement>('.pt');
+  const boton = document.querySelector<HTMLButtonElement>('[data-pt-pausa]');
+  const video = document.querySelector<HTMLVideoElement>('[data-pt-video]');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { video?.removeAttribute('autoplay'); video?.pause(); }
+  boton?.addEventListener('click', () => {
+    const quieto = pt!.classList.toggle('is-quieto');
+    boton.setAttribute('aria-pressed', String(quieto));
+    boton.textContent = quieto ? 'Reanudar movimiento' : 'Pausar movimiento';
+    if (quieto) video?.pause(); else video?.play().catch(() => {});
+  });
+</script>

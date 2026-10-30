@@ -1,0 +1,47 @@
+---
+// «La IA acelera, no decide»: cómo usamos la IA y quién revisa. Sección quieta: tipografía y espacio,
+// sin animación de entrada. Los hechos son los de la ingeniería que respalda cada entrega (estudio.ts).
+import { ia } from '../../data/v4';
+import { hechos } from '../../data/estudio';
+---
+<section id="ia" class="wrap v4-sec ia" aria-labelledby="ia-title">
+  <div class="ia-top">
+    <h2 id="ia-title" class="text-d2 ia-title">{ia.titulo}</h2>
+    <div class="ia-copy">
+      <p class="text-body text-ash">{ia.texto}</p>
+      <p class="text-lead">{ia.credencial}</p>
+    </div>
+  </div>
+
+  <ul class="ia-hechos" role="list">
+    {hechos.map((h) => (
+      <li class="ia-hecho">
+        <h3 class="text-d3">{h.t}</h3>
+        <p class="text-body text-ash">{h.d}</p>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .ia-top { display: grid; gap: 1.5rem; }
+  .ia-title { max-width: 18ch; margin: 0; }
+  .ia-copy { display: grid; gap: 1.25rem; align-content: start; }
+  .ia-copy p { margin: 0; max-width: 60ch; }
+
+  .ia-hechos {
+    list-style: none; margin: 2.5rem 0 0; padding: 0;
+    display: grid; gap: 2.25rem clamp(2rem, 5vw, 5rem);
+  }
+  .ia-hecho { display: grid; gap: 0.6rem; padding-top: 1.5rem; border-top: 1px solid var(--color-line); }
+  .ia-hecho h3, .ia-hecho p { margin: 0; }
+  .ia-hecho p { max-width: 52ch; }
+
+  @media (min-width: 768px) {
+    .ia-hechos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 1024px) {
+    .ia-top { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(2rem, 5vw, 5rem); }
+    .ia-hechos { margin-top: 3.5rem; }
+  }
+</style>

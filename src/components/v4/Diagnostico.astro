@@ -1,0 +1,256 @@
+---
+// Inicio de la versión 4 («Tu diagnóstico»), el único momento fuerte de la página. El visitante marca lo
+// que hoy le quita tiempo y, al lado, una maqueta 3D (src/scripts/v4/maqueta.ts) sube las piezas que
+// construiríamos. La frase de resultado se anuncia a lectores de pantalla y el botón abre WhatsApp con
+// lo marcado ya escrito. La selección se guarda en la sesión (src/scripts/v4/estado.ts) y viaja al
+// resto de la página.
+// Sin WebGL, la lista HTML de piezas (con sus Glifo) hace de maqueta; con WebGL queda solo para
+// lectores de pantalla. Sin JavaScript, el formulario se ve entero y el botón lleva el saludo de siempre.
+import Glifo from '../Glifo.astro';
+import { corto, hero, modulos, sintomas } from '../../data/v4';
+import { calcular, enlaceWhatsApp, resumen } from '../../lib/diagnostico';
+
+const wa = enlaceWhatsApp([]);
+const inicial = resumen(calcular([]));
+---
+<section id="inicio" class="dg" data-dg aria-labelledby="dg-title">
+  <div class="wrap dg-grid">
+    <div class="dg-head">
+      <h1 id="dg-title" class="text-d1 dg-title">{hero.titulo}</h1>
+      <p class="text-lead text-ash dg-bajada">{hero.bajada}</p>
+    </div>
+
+    <div class="dg-form">
+      <fieldset id="sintomas" class="dg-sintomas">
+        <legend class="text-d3 dg-legend">{hero.pregunta}</legend>
+        <ul class="dg-ops" role="list">
+          {sintomas.map((s) => (
+            <li>
+              <label class="dg-op">
+                <input class="dg-check" type="checkbox" name="sintoma" value={s.id} autocomplete="off" />
+                <span class="text-body">{s.t}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </fieldset>
+
+      <p class="text-lead dg-res is-vacio" data-dg-res aria-live="polite">{inicial}</p>
+      <p class="text-note text-ash dg-paraguas">{hero.paraguas}</p>
+      <a href={wa} target="_blank" rel="noopener" class="btn btn-primary dg-cta" data-dg-cta>{hero.cta}</a>
+      <p class="text-note text-ash-dim dg-nota">{hero.nota}</p>
+    </div>
+
+    <!-- Escenario: el lienzo 3D y sus etiquetas; la lista es el respaldo sin WebGL -->
+    <div class="dg-stage" data-dg-stage>
+      <canvas class="dg-canvas" data-dg-canvas aria-hidden="true"></canvas>
+      <div class="dg-labels" data-dg-labels aria-hidden="true"></div>
+      <ul class="dg-piezas" role="list" aria-label="Piezas">
+        {modulos.map((m) => (
+          <li class="dg-pieza" data-pieza={m}>
+            <Glifo id={m} />
+            <span class="dg-pieza-t">{corto[m]}<span class="sr-only dg-incl">, incluida</span></span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .dg {
+    min-height: 100svh;
+    padding-top: calc(var(--v4-nav) + clamp(1.25rem, 4vw, 3.5rem));
+    padding-bottom: clamp(3.5rem, 8vw, 6rem);
+  }
+  /* Móvil: titular, maqueta (pegada arriba mientras se marcan los síntomas) y formulario */
+  .dg-grid { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "stage" "form"; row-gap: 1.5rem; }
+  .dg-head { grid-area: head; }
+  .dg-form { grid-area: form; }
+  .dg-stage { grid-area: stage; }
+
+  .dg-title { margin: 0; max-width: 12ch; }
+  .dg-bajada { margin: 1.25rem 0 0; max-width: 44ch; }
+
+  /* Síntomas: un formulario de verdad, filas con borde fino */
+  .dg-sintomas { margin: 0; padding: 0; border: 0; min-width: 0; }
+  .dg-legend { padding: 0 0 1rem; font-family: var(--font-display); font-weight: 800; color: var(--color-ash); }
+  .dg-ops { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; max-width: 36rem; }
+  .dg-op {
+    display: flex; align-items: flex-start; gap: 0.85rem; padding: 0.85rem 1rem;
+    border: 1px solid var(--color-line); border-radius: 14px; cursor: pointer;
+    transition: border-color 0.3s;
+  }
+  .dg-op:hover { border-color: var(--color-line-strong); }
+  .dg-op:has(:checked), .dg-op:has(:focus-visible) { border-color: var(--color-bone); }
+  /* Casilla propia (sigue siendo un checkbox real): marcada, borde crema y punto rojo */
+  .dg-check {
+    appearance: none; -webkit-appearance: none; flex: none; display: grid; place-items: center;
+    width: 1.1rem; height: 1.1rem; margin: 0.3rem 0 0; border: 1.5px solid var(--color-ash-dim);
+    border-radius: 5px; background: transparent; cursor: pointer; transition: border-color 0.3s;
+  }
+  .dg-check::before {
+    content: ''; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--color-red);
+    transform: scale(0); transition: transform 0.35s var(--ease-out-expo);
+  }
+  .dg-check:checked { border-color: var(--color-bone); }
+  .dg-check:checked::before { transform: scale(1); }
+
+  .dg-res { margin: 1.75rem 0 0; max-width: 46ch; min-height: calc(2 * 1.55em); color: var(--color-bone); transition: color 0.4s; }
+  .dg-res.is-vacio { color: var(--color-ash); }
+  .dg-paraguas { margin: 0.5rem 0 0; max-width: 52ch; }
+  .dg-cta { margin-top: 1.75rem; }
+  .dg-nota { margin: 0.9rem 0 0; max-width: 44ch; }
+
+  /* Escenario. En el móvil va a todo el ancho, con fondo, pegado bajo la barra */
+  .dg-stage {
+    position: relative; top: var(--v4-nav); z-index: 2; height: 40svh; min-height: 12rem;
+    margin-inline: calc(-1 * clamp(1.25rem, 4vw, 3rem)); padding-inline: clamp(1.25rem, 4vw, 3rem);
+    display: grid; align-content: center; background: var(--color-ink);
+  }
+  .dg-stage::after {
+    content: ''; position: absolute; inset: 100% 0 auto; height: 1.25rem; pointer-events: none;
+    background: linear-gradient(var(--color-ink), transparent);
+  }
+  /* Solo se queda pegada si sobra altura (con zoom alto o el móvil en horizontal taparía los síntomas) */
+  @media (min-height: 40rem) { .dg-stage { position: sticky; } }
+  .dg-canvas, .dg-labels { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .dg-canvas { display: block; }
+
+  /* Etiquetas de la maqueta (las crea maqueta.ts): el «plano», en mono */
+  .dg-labels :global(.mq-tag) {
+    position: absolute; left: 0; top: 0; font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.25;
+    white-space: nowrap; color: var(--color-ash-dim); transition: color 0.4s; will-change: transform;
+  }
+  .dg-labels :global(.mq-tag.is-on), .dg-labels :global(.mq-centro) { color: var(--color-bone); }
+
+  /* Respaldo sin WebGL: las seis piezas en una grilla; se encienden las que construiríamos */
+  .dg-piezas { position: relative; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; }
+  .dg-pieza {
+    display: grid; justify-items: start; align-content: start; gap: 0.55rem; padding: 0.8rem;
+    border: 1px dashed var(--color-line-strong); border-radius: 14px; transition: opacity 0.4s, border-color 0.4s;
+  }
+  .dg-pieza :global(.glifo) { width: 2rem; height: 2rem; }
+  .dg-pieza-t { font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.3; color: var(--color-ash); transition: color 0.4s; }
+  .dg.is-live .dg-pieza:not(.is-on) { opacity: 0.6; }
+  .dg-pieza:not(.is-on) .dg-incl { display: none; }
+  .dg-pieza.is-on { border-style: solid; border-color: var(--color-bone); }
+  .dg-pieza.is-on .dg-pieza-t { color: var(--color-bone); }
+
+  /* Con WebGL, la lista queda solo para lectores de pantalla */
+  .dg-stage.is-3d .dg-piezas {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
+  /* Mientras se decide (WebGL o lista), no se muestra la lista para que no parpadee */
+  :global(html.has-motion) .dg-stage:not(.is-3d):not(.is-plano) .dg-piezas { visibility: hidden; }
+
+  /* Alto contraste de Windows: la casilla nativa, para que se vea cuál está marcada */
+  @media (forced-colors: active) {
+    .dg-check { appearance: auto; -webkit-appearance: auto; }
+    .dg-check::before { content: none; }
+  }
+
+  @media (max-width: 639px) {
+    .dg-labels :global(.mq-tag) { font-size: 0.6875rem; }
+  }
+
+  /* Escritorio: dos columnas; la maqueta acompaña mientras se recorren los síntomas */
+  @media (min-width: 1024px) {
+    .dg-grid {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); grid-template-rows: auto 1fr;
+      grid-template-areas: "head stage" "form stage"; column-gap: clamp(2rem, 5vw, 5rem); row-gap: 2.5rem;
+      align-items: start;
+    }
+    .dg-stage {
+      top: calc(var(--v4-nav) + 1rem); z-index: auto; height: min(42rem, 72svh);
+      margin-inline: 0; padding-inline: 0; background: none;
+    }
+    .dg-stage::after { display: none; }
+    .dg-piezas { gap: 0.75rem; }
+    .dg-pieza { padding: 1.1rem; }
+    .dg-pieza :global(.glifo) { width: 2.75rem; height: 2.75rem; }
+  }
+</style>
+
+<script>
+  import { reduceMotion, coarsePointer } from '../../scripts/motion';
+  import { glifoTl } from '../../scripts/glifos';
+  import { alCambiar, guardar } from '../../scripts/v4/estado';
+  import { enlaceWhatsApp, resumen, type Diagnostico } from '../../lib/diagnostico';
+  import type { Maqueta } from '../../scripts/v4/maqueta';
+
+  const dg = document.querySelector<HTMLElement>('[data-dg]')!;
+  const campo = dg.querySelector<HTMLFieldSetElement>('#sintomas')!;
+  const casillas = Array.from(campo.querySelectorAll<HTMLInputElement>('input[name="sintoma"]'));
+  const res = dg.querySelector<HTMLElement>('[data-dg-res]')!;
+  const cta = dg.querySelector<HTMLAnchorElement>('[data-dg-cta]')!;
+  const escenario = dg.querySelector<HTMLElement>('[data-dg-stage]')!;
+  const canvas = escenario.querySelector<HTMLCanvasElement>('[data-dg-canvas]')!;
+  const capa = escenario.querySelector<HTMLElement>('[data-dg-labels]')!;
+  const piezas = Array.from(escenario.querySelectorAll<HTMLElement>('[data-pieza]'));
+  const glifos = piezas.flatMap((li) => {
+    const svg = li.querySelector<SVGSVGElement>('svg[data-glifo]');
+    return svg ? [svg] : [];
+  });
+
+  // Con JavaScript, las piezas que no van se atenúan (sin JS, la lista se ve entera).
+  dg.classList.add('is-live');
+
+  let maqueta: Maqueta | null = null;
+  let plano = false; // sin WebGL: la lista HTML hace de maqueta
+  let ultimo: Diagnostico | null = null;
+
+  // En la lista de respaldo, el ícono de cada pieza se arma al encenderse (una timeline por ícono).
+  const tls = new Map<HTMLElement, ReturnType<typeof glifoTl>>();
+  const animar = (li: HTMLElement) => {
+    if (reduceMotion) return;
+    if (!tls.has(li)) tls.set(li, glifoTl(li.querySelector<SVGSVGElement>('svg[data-glifo]')));
+    tls.get(li)?.restart();
+  };
+
+  // Casillas, frase de resultado, enlace y piezas según la selección (al cargar y en cada cambio).
+  const pintar = (d: Diagnostico) => {
+    ultimo = d;
+    const ids: readonly string[] = d.ids;
+    const ms: readonly string[] = d.modulos;
+    casillas.forEach((c) => { c.checked = ids.includes(c.value); });
+    const texto = resumen(d);
+    if (res.textContent !== texto) res.textContent = texto;
+    res.classList.toggle('is-vacio', !ids.length);
+    cta.href = enlaceWhatsApp(d.ids);
+    piezas.forEach((li) => {
+      const on = ms.includes(li.dataset.pieza!);
+      if (on && plano && !li.classList.contains('is-on')) animar(li);
+      li.classList.toggle('is-on', on);
+    });
+    maqueta?.set(d.modulos);
+  };
+
+  campo.addEventListener('change', () => {
+    guardar(casillas.filter((c) => c.checked).map((c) => c.value));
+  });
+  alCambiar(pintar);
+
+  const sinMaqueta = () => {
+    maqueta = null;
+    plano = true;
+    escenario.classList.add('is-plano');
+    piezas.filter((li) => li.classList.contains('is-on')).forEach(animar);
+  };
+
+  // Three.js se carga aparte para no frenar la página. Las fuentes, antes de medir las etiquetas.
+  Promise.all([import('../../scripts/v4/maqueta'), document.fonts.ready])
+    .then(([{ Maqueta }]) => {
+      if (!Maqueta.supported()) { sinMaqueta(); return; }
+      maqueta = new Maqueta(canvas, capa, { still: reduceMotion, interactive: !reduceMotion && !coarsePointer, glifos });
+      escenario.classList.add('is-3d');
+      // La frase de resultado ya anuncia qué construiríamos: la lista oculta no se lee dos veces.
+      escenario.querySelector('.dg-piezas')?.setAttribute('aria-hidden', 'true');
+      if (ultimo) maqueta.set(ultimo.modulos);
+    })
+    .catch((e) => {
+      console.warn('[rebeldev] maqueta 3D desactivada', e);
+      sinMaqueta();
+    });
+</script>

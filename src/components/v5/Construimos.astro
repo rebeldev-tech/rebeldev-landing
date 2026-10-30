@@ -1,0 +1,57 @@
+---
+// «Pinned heading, passing rows»: el titular queda fijo a la izquierda mientras pasan los servicios.
+// El de WhatsApp lleva un trozo de la interfaz (dibujado en HTML) en vez de foto.
+import { construimos, chat, fotos, type FotoId } from '../../data/v5';
+---
+<section class="co campo-claro" id="servicios" aria-labelledby="co-h2">
+  <div class="co-grid">
+    <h2 id="co-h2" class="co-h2">{construimos.titulo}</h2>
+    <div class="co-bloques">
+      {construimos.bloques.map((b, i) => {
+        const f = b.foto === 'chat' ? null : fotos[b.foto as FotoId];
+        return (
+          <article class:list={['co-b', { 'co-inv': i % 2 === 1 }]} data-reveal>
+            <h3 class="co-h3">{b.t}</h3>
+            <div class="co-fila">
+              {f ? (
+                <img class="co-foto" src={f.src} width={f.w} height={f.h} alt={f.alt} loading="lazy" decoding="async" />
+              ) : (
+                <div class="co-foto co-ui" data-ui role="img" aria-label="Ejemplo de conversación de RebelBot en WhatsApp">
+                  {chat.slice(0, 4).map((m) => <p class:list={['co-m', `co-${m.de}`]}>{m.t}</p>)}
+                </div>
+              )}
+              <ul class="co-lista">{b.lineas.map((l) => <li>{l}</li>)}</ul>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<style>
+  .co { padding-block: clamp(120px, 14vw, 200px); }
+  .co-grid { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 16px; padding-inline: var(--m); }
+  .co-h2 { grid-column: 1 / 6; align-self: start; position: sticky; top: 32px; font-size: var(--t-l); line-height: 0.95; letter-spacing: -0.04em; }
+  .co-bloques { grid-column: 7 / 13; display: grid; gap: 88px; }
+  .co-h3 { font-size: var(--t-m); line-height: 1.15; letter-spacing: -0.02em; }
+  .co-fila { margin-top: 24px; display: grid; grid-template-columns: 180px 1fr; gap: 28px; align-items: start; }
+  .co-inv .co-fila { grid-template-columns: 1fr 180px; }
+  .co-inv .co-foto { order: 2; }
+  .co-foto { width: 180px; aspect-ratio: 3 / 4; object-fit: cover; filter: grayscale(1) contrast(1.05); }
+  .co-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; font-size: 18px; line-height: 1.4; }
+
+  .co-ui { background: var(--c-wa); padding: 12px 10px; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; overflow: hidden; }
+  .co-m { padding: 6px 8px; border-radius: 8px; max-width: 90%; font-size: 15px; line-height: 1.35; color: #E9EDEF; }
+  .co-cliente { background: var(--c-wa-in); }
+  .co-bot { margin-left: auto; background: var(--c-wa-out); }
+
+  @media (max-width: 1023px) {
+    .co-h2 { grid-column: 1 / -1; z-index: 2; top: 0; margin-inline: calc(var(--m) * -1); padding: 12px var(--m); background: var(--c-paper); font-size: 9vw; }
+    .co-bloques { grid-column: 1 / -1; gap: 64px; margin-top: 32px; }
+    .co-fila, .co-inv .co-fila { grid-template-columns: 1fr; }
+    .co-inv .co-foto { order: 0; }
+    .co-foto { width: 100%; aspect-ratio: 16 / 9; }
+    .co-ui { aspect-ratio: 16 / 9; }
+  }
+</style>

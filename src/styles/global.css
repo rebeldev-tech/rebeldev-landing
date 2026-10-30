@@ -15,6 +15,7 @@
   --color-ash-dim: #8E8791;    /* notas: 5,7:1 (el del mock no pasaba) */
   --color-red: #E4121F;        /* rojo de marca: barra, botones, rellenos */
   --color-red-text: #FF2D3F;   /* rojo para texto e íconos sobre oscuro: 5,4:1 */
+  --color-amber: #FF6A2C;      /* ámbar: «a prueba» (v4). Solo relleno con texto oscuro encima: 6,9:1 */
   --color-wa: #0B141A;         /* fondo del chat (el teléfono es oscuro en los dos temas) */
   --color-wa-in: #1F2C34;
   --color-wa-out: #144D37;

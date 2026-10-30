@@ -1,0 +1,162 @@
+---
+// Cierre de la versión 4: tu diagnóstico resumido y un solo botón grande. Muestra los síntomas que
+// marcaste y los íconos de las piezas que construiríamos (Glifo), y el botón abre WhatsApp con ese
+// mensaje ya escrito. Sin selección (o sin JavaScript), invita a contar qué necesita tu negocio y el
+// botón lleva el saludo de siempre. El eslogan va al pie, como firma.
+// Los 7 síntomas y los 6 glifos se arman al compilar; el script solo muestra los elegidos.
+import Glifo from '../Glifo.astro';
+import { cierre, corto, hero, modulos, sintomas } from '../../data/v4';
+import { contacto } from '../../data/contacto';
+import { enlaceWhatsApp } from '../../lib/diagnostico';
+
+const wa = enlaceWhatsApp([]);
+---
+<section id="contacto" class="wrap v4-sec ci" aria-labelledby="ci-title" data-ci>
+  <h2 id="ci-title" class="text-d1 ci-title" data-ci-title>{cierre.sin}</h2>
+
+  <div class="ci-diag" data-ci-diag hidden>
+    <ul class="text-lead ci-sintomas" role="list">
+      {sintomas.map((s) => <li data-ci-s={s.id} hidden>{s.t}</li>)}
+    </ul>
+    <ul role="list" class="ci-piezas" aria-label={hero.prefijo} data-ci-piezas hidden>
+      {modulos.map((m) => (
+        <li class="ci-pieza" data-ci-m={m} hidden>
+          <Glifo id={m} />
+          <span class="text-note text-ash">{corto[m]}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <p class="text-lead text-ash ci-texto">{cierre.texto}</p>
+
+  <div class="ci-acciones">
+    <a href={wa} target="_blank" rel="noopener" class="btn btn-primary ci-btn" data-magnetic data-ci-wa>{cierre.cta}</a>
+    <p class="text-body text-ash ci-correo">{cierre.correo} <a href={`mailto:${contacto.correo}`}>{contacto.correo}</a></p>
+  </div>
+
+  <p class="text-d3 ci-firma">{cierre.firma}</p>
+</section>
+
+<style>
+  .ci-title { margin: 0; max-width: 16ch; }
+
+  .ci-diag { margin-top: 2.5rem; display: grid; gap: 2.5rem; }
+  /* Lo que marcaste: el punto rojo es el mismo de la casilla marcada del inicio */
+  .ci-sintomas { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; max-width: 60ch; }
+  .ci-sintomas li { position: relative; padding-left: 1.5rem; }
+  .ci-sintomas li::before {
+    content: ''; position: absolute; left: 0.1rem; top: calc(0.775em - 0.25rem); width: 0.5rem; height: 0.5rem;
+    border-radius: 50%; background: var(--color-red);
+  }
+
+  .ci-piezas { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1.75rem 2.5rem; }
+  .ci-pieza { display: grid; justify-items: start; gap: 0.75rem; }
+
+  .ci-texto { margin: 2.5rem 0 0; max-width: 48ch; }
+
+  .ci-acciones { margin-top: 2.5rem; display: flex; flex-wrap: wrap; align-items: center; gap: 1.25rem 2rem; }
+  .ci-btn { padding: 1.25rem 2rem; font-size: 1.15rem; }
+  .ci-correo { margin: 0; }
+  .ci-correo a {
+    color: var(--color-bone); text-decoration: underline; text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em; text-decoration-color: var(--color-line-strong); transition: text-decoration-color 0.3s;
+  }
+  .ci-correo a:hover { text-decoration-color: currentColor; }
+
+  .ci-firma {
+    margin: clamp(4.5rem, 9vw, 7rem) 0 0; padding-top: 1.5rem; border-top: 1px solid var(--color-line);
+    font-family: var(--font-display); font-weight: 800;
+  }
+
+  @media (min-width: 1024px) {
+    .ci-diag { margin-top: 3.5rem; }
+  }
+  /* En el móvil, el botón grande ocupa todo el ancho (lo único centrado de la página) */
+  @media (max-width: 639px) {
+    .ci-btn { width: 100%; justify-content: center; }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion } from '../../scripts/motion';
+  import { glifoTl } from '../../scripts/glifos';
+  import { alCambiar } from '../../scripts/v4/estado';
+  import { enlaceWhatsApp, type Diagnostico } from '../../lib/diagnostico';
+  import { cierre } from '../../data/v4';
+
+  const sec = document.querySelector<HTMLElement>('[data-ci]')!;
+  const titulo = sec.querySelector<HTMLElement>('[data-ci-title]')!;
+  const diag = sec.querySelector<HTMLElement>('[data-ci-diag]')!;
+  const piezas = sec.querySelector<HTMLElement>('[data-ci-piezas]')!;
+  const wa = sec.querySelector<HTMLAnchorElement>('[data-ci-wa]')!;
+  const sints = gsap.utils.toArray<HTMLElement>('[data-ci-s]', sec);
+  const mods = gsap.utils.toArray<HTMLElement>('[data-ci-m]', sec);
+
+  // Texto, lista, íconos y enlace según lo marcado.
+  const pintar = (d: Diagnostico) => {
+    const ids: readonly string[] = d.ids;
+    const ms: readonly string[] = d.modulos;
+    titulo.textContent = ids.length ? cierre.con : cierre.sin;
+    diag.hidden = !ids.length;
+    sints.forEach((li) => { li.hidden = !ids.includes(li.dataset.ciS!); });
+    piezas.hidden = !ms.length;
+    mods.forEach((li) => { li.hidden = !ms.includes(li.dataset.ciM!); });
+    wa.href = enlaceWhatsApp(d.ids);
+  };
+
+  if (reduceMotion) {
+    // Con «menos movimiento», los íconos quedan armados y quietos.
+    alCambiar(pintar);
+  } else {
+    // Cada glifo tiene una sola timeline, creada la primera vez que se muestra (así toma su forma
+    // final como destino). «Preparar» la deja al inicio; «reproducir» las corre en orden, una tras otra.
+    const tls = new Map<HTMLElement, gsap.core.Timeline>();
+    let llamadas: gsap.core.Tween[] = [];
+    let pendiente = false;
+
+    const visibles = () => mods.filter((li) => !li.hidden);
+    const timeline = (li: HTMLElement) => {
+      if (!tls.has(li)) {
+        const tl = glifoTl(li.querySelector<SVGSVGElement>('svg'));
+        if (tl) tls.set(li, tl);
+      }
+      return tls.get(li);
+    };
+    const preparar = () => {
+      llamadas.forEach((c) => c.kill());
+      llamadas = [];
+      visibles().forEach((li) => timeline(li)?.pause(0));
+    };
+    const reproducir = () => {
+      pendiente = false;
+      llamadas.forEach((c) => c.kill());
+      llamadas = visibles().map((li, k) => gsap.delayedCall(0.15 + k * 0.12, () => { timeline(li)?.play(0); }));
+    };
+    const enVista = () => {
+      const r = piezas.getBoundingClientRect();
+      return r.height > 0 && r.top < window.innerHeight && r.bottom > 0;
+    };
+
+    // Recalcular posiciones una sola vez después de varios cambios seguidos (la lista cambia de alto).
+    const refresh = (() => { let t = 0; return () => { clearTimeout(t); t = window.setTimeout(() => ScrollTrigger.refresh(true), 200); }; })();
+
+    let primera = true;
+    alCambiar((d) => {
+      pintar(d);
+      preparar();
+      // Si el cierre se ve, se animan ya; si no, al entrar en pantalla.
+      if (!primera && enVista()) reproducir();
+      else pendiente = visibles().length > 0;
+      if (!primera) refresh();
+      primera = false;
+    });
+
+    ScrollTrigger.create({
+      trigger: piezas,
+      start: 'top 88%',
+      onEnter: () => { if (pendiente) reproducir(); },
+      onEnterBack: () => { if (pendiente) reproducir(); },
+    });
+  }
+</script>

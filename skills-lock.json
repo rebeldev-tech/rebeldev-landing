@@ -13,6 +13,12 @@
       "skillPath": "skills/copywriting/SKILL.md",
       "computedHash": "b7ad458352da7e0f962bb285fdfb15daabbd2b354fc903548bf68ca7d973a8f3"
     },
+    "design-taste-frontend": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/taste-skill/SKILL.md",
+      "computedHash": "53590ee9325bee34d7888bf0d81bd3941a108b1e7850df46802d93104e3f2b90"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",

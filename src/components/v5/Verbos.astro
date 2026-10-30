@@ -1,0 +1,35 @@
+---
+// «One verb at a time»: cuatro paneles a pantalla completa. Cada verbo se queda en el centro mientras su
+// foto pasa detrás, y el siguiente lo empuja. Los verbos, leídos en orden, son el proceso.
+import { verbos, fotos } from '../../data/v5';
+---
+<div class="vb" id="como">
+  {verbos.map((p) => {
+    const f = fotos[p.foto];
+    return (
+      <section class="vb-panel" aria-labelledby={`vb-${p.v}`}>
+        <img class="vb-foto" src={f.src} width={f.w} height={f.h} alt={f.alt} loading="lazy" decoding="async" data-vb-foto />
+        <h2 id={`vb-${p.v}`} class="vb-verbo" data-vb-verbo>{p.v}</h2>
+        <p class="vb-texto" data-reveal>{p.t}</p>
+      </section>
+    );
+  })}
+</div>
+
+<style>
+  .vb-panel { position: relative; height: 100svh; overflow: clip; background: var(--c-bg); }
+  .vb-foto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) brightness(0.55) contrast(1.1); transform-origin: 50% 50%; }
+  .vb-verbo {
+    position: absolute; inset: 50% 0 auto; translate: 0 -50%;
+    text-align: center; white-space: nowrap; font-size: var(--t-xl); line-height: 0.9; letter-spacing: -0.045em; color: var(--c-ink);
+  }
+  .vb-texto {
+    position: absolute; left: var(--m); bottom: var(--m); max-width: 44ch; padding: 16px 20px;
+    background: rgb(11 10 14 / 0.86); color: var(--c-ink); font-size: 18px; line-height: 1.5;
+  }
+  @media (max-width: 767px) {
+    .vb-panel { height: 72svh; }
+    .vb-verbo { font-size: 17vw; }
+    .vb-texto { right: var(--m); max-width: none; }
+  }
+</style>
