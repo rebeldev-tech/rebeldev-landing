@@ -1,0 +1,146 @@
+---
+// Portada «Hoja con una celda de texto»: toda la pantalla es una hoja de piezas del producto en seis
+// columnas desfasadas, cada una con su franja de color y su título. En las columnas 3 y 4, un panel oscuro
+// hace de celda de texto: el nombre, el titular, una frase, la acción y tres enlaces.
+import Logo from '../Logo.astro';
+import Chat from './ui/Chat.astro';
+import Agenda from './ui/Agenda.astro';
+import Revision from './ui/Revision.astro';
+import Prueba from './ui/Prueba.astro';
+import Ficha from './ui/Ficha.astro';
+import { portada, hoja, tonos, type Cuadro } from '../../data/v6';
+import { contacto } from '../../data/contacto';
+
+const ui = { chat: Chat, agenda: Agenda, revision: Revision, prueba: Prueba, ficha: Ficha } as const;
+// Desfase de arriba de cada columna (px): así las filas nunca se alinean
+const desfase = [0, -90, 0, -130, -20, -70];
+const [arriba, ...abajo] = hoja[3];
+let n = 0; // contador para rotar el color de las franjas
+const tono = () => tonos[n++ % tonos.length];
+---
+<header class="pt" id="inicio">
+  <div class="pt-hoja">
+    {hoja.map((col, c) => c === 2 ? null : c === 3 ? (
+      <div class="pt-col pt-col--centro" style={`--y:${desfase[3]}px`}>
+        {[arriba].map((q: Cuadro) => (
+          <figure class={`pt-cuadro pt-solo-ancho t-${tono()}`} style={`--h:${q.alto}px`} data-pt-cuadro>
+            <div class={`pt-pieza pt-pieza--${q.foco}`} data-escala>{(() => { const U = ui[q.ui as keyof typeof ui]; return <U />; })()}</div>
+          </figure>
+        ))}
+        <div class="pt-panel bloque t-tinta">
+          <h1 class="pt-h1">{portada.titulo}</h1>
+          <p class="pt-frase">{portada.frase}</p>
+          <a class="b6 pt-boton" href={contacto.whatsappLink} target="_blank" rel="noopener">{portada.boton}</a>
+          <div class="pt-pie">
+            <ul class="pt-enlaces">
+              {portada.enlaces.map((e) => <li><a class="enlace6" href={e.href}>{e.t}</a></li>)}
+            </ul>
+            <Logo class="pt-logo" />
+          </div>
+        </div>
+        {abajo.map((q: Cuadro) => (
+          <figure class={`pt-cuadro pt-solo-ancho t-${tono()}`} style={`--h:${q.alto}px`} data-pt-cuadro>
+            <div class={`pt-pieza pt-pieza--${q.foco}`} data-escala>{(() => { const U = ui[q.ui as keyof typeof ui]; return <U />; })()}</div>
+            <figcaption class="pt-franja">{q.titulo}</figcaption>
+          </figure>
+        ))}
+      </div>
+    ) : (
+      <div class:list={['pt-col', { 'pt-solo-ancho': c >= 4 }]} style={`--y:${desfase[c]}px`} data-pt-col={c}>
+        {col.map((q, i) => (
+          <figure class={`pt-cuadro t-${tono()}`} style={`--h:${q.alto}px`} data-pt-cuadro data-pt-firma={c === 1 && i === 0 ? '' : undefined}>
+            {q.ui === 'video' ? (
+              <div class="pt-pieza pt-pieza--video">
+                <video src="/video/hero.mp4" muted loop playsinline preload="metadata" aria-label="Animación: un teléfono que recibe mensajes entre partículas rojas" data-pt-video></video>
+              </div>
+            ) : (
+              <div class={`pt-pieza pt-pieza--${q.foco}`} data-escala>{(() => { const U = ui[q.ui as keyof typeof ui]; return <U />; })()}</div>
+            )}
+            <figcaption class="pt-franja">{q.titulo}</figcaption>
+          </figure>
+        ))}
+      </div>
+    ))}
+  </div>
+</header>
+
+<style>
+  .pt { position: relative; height: 100svh; min-height: 720px; overflow: hidden; padding-inline: var(--m); }
+  .pt-hoja { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--gap); align-items: start; }
+  .pt-col { display: flex; flex-direction: column; gap: var(--gap); transform: translateY(var(--y)); }
+  .pt-col--centro { grid-column: 3 / span 2; }
+
+  /* Cada cuadro: la pieza recortada y, pegada abajo, su franja de color */
+  .pt-cuadro { margin: 0; border-radius: var(--r); overflow: hidden; background: var(--b); }
+  .pt-pieza { position: relative; height: var(--h); overflow: hidden; background: #141019; }
+  .pt-pieza > :global([data-ui]) { position: absolute; left: 0; width: 360px; transform-origin: 0 0; transform: scale(var(--k, 0.64)); }
+  .pt-pieza--arriba > :global([data-ui]) { top: 0; }
+  .pt-pieza--medio > :global([data-ui]) { top: 50%; translate: 0 -50%; }
+  .pt-pieza--abajo > :global([data-ui]) { bottom: 0; transform-origin: 0 100%; }
+  .pt-pieza--video video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pt-franja { display: flex; align-items: center; min-height: 32px; padding: 0 12px; color: var(--i); font-size: var(--t-note); font-weight: 600; }
+
+  /* La celda de texto */
+  .pt-panel { display: flex; flex-direction: column; align-items: flex-start; min-height: 430px; padding: 24px; }
+  .pt-logo { font-size: clamp(24px, 2vw, 30px); }
+  .pt-h1 { font-size: clamp(32px, 2.8vw, 40px); color: var(--i); }
+  .pt-frase { margin-top: 16px; max-width: 34ch; font-size: var(--t-3); line-height: 1.4; }
+  .pt-boton { margin-top: 24px; }
+  .pt-pie { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; width: 100%; margin-top: auto; padding-top: 24px; }
+  .pt-enlaces { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 0; padding: 0; list-style: none; font-size: var(--t-note); }
+
+  @media (max-width: 1023px) {
+    .pt-hoja { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .pt-col--centro { grid-column: 2 / span 2; grid-row: 1; }
+    [data-pt-col='1'], [data-pt-col='5'] { display: none; }
+  }
+
+  /* Teléfono: el panel primero a todo el ancho; debajo la hoja en dos columnas, la derecha más arriba */
+  @media (max-width: 639px) {
+    .pt { height: auto; min-height: 0; padding-bottom: 0; max-height: 165svh; }
+    .pt-hoja { grid-template-columns: 1fr 1fr; padding-top: var(--m); }
+    .pt-col { transform: none; }
+    .pt-col--centro { display: contents; }
+    .pt-panel { grid-column: 1 / -1; order: -1; min-height: 40svh; }
+    .pt-frase { font-size: var(--t-body); }
+    .pt-boton { width: 100%; }
+    .pt-solo-ancho { display: none; }
+    [data-pt-col='0'] { margin-top: 60px; }
+    [data-pt-col='1'] { display: flex; }
+    .pt-pieza { height: min(var(--h), 260px); }
+  }
+</style>
+
+<script>
+  import { gsap } from '../../scripts/motion';
+
+  // Las piezas están hechas a 360 px: se escalan al ancho de su cuadro
+  const escalar = () => {
+    document.querySelectorAll<HTMLElement>('.pt [data-escala]').forEach((c) => c.style.setProperty('--k', String(c.clientWidth / 360)));
+  };
+  escalar();
+  new ResizeObserver(escalar).observe(document.querySelector('.pt-hoja')!);
+
+  const videos = document.querySelectorAll<HTMLVideoElement>('[data-pt-video]');
+  const mm = gsap.matchMedia();
+  mm.add('(prefers-reduced-motion: no-preference)', () => {
+    videos.forEach((v) => { v.autoplay = true; v.play().catch(() => {}); });
+
+    // Firma: el cuadro principal se abre desde abajo con un recorte mientras la pieza se asienta
+    const firma = document.querySelector<HTMLElement>('[data-pt-firma]');
+    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+    tl.from('.pt-panel > *', { y: 24, autoAlpha: 0, duration: 0.9, stagger: 0.07 }, 0.1);
+    tl.from('[data-pt-cuadro]:not([data-pt-firma])', { y: 40, autoAlpha: 0, duration: 1, stagger: { each: 0.04, from: 'random' } }, 0);
+    if (firma) {
+      tl.fromTo(firma, { clipPath: 'inset(100% 0 0 0)' }, { clipPath: 'inset(0% 0 0 0)', duration: 1.1 }, 0.2);
+      tl.fromTo(firma.querySelector('video'), { scale: 1.12 }, { scale: 1, duration: 1.4 }, 0.2);
+    }
+
+    // Al bajar, cada columna sube a su ritmo: la hoja se desliza en capas
+    if (window.matchMedia('(min-width: 640px)').matches) {
+      document.querySelectorAll<HTMLElement>('.pt-col').forEach((col, i) => {
+        gsap.to(col, { yPercent: -6 - ((i * 7) % 5) * 3, ease: 'none', scrollTrigger: { trigger: '.pt', start: 'top top', end: 'bottom top', scrub: true } });
+      });
+    }
+  });
+</script>

@@ -1,0 +1,129 @@
+---
+// «Índice de preguntas, una respuesta»: a la izquierda el índice de preguntas; a la derecha, un bloque
+// negro fijo con la respuesta elegida (por hover, clic o foco). Cada pregunta es un botón con
+// aria-expanded que controla su respuesta, debajo de ella: el panel es solo la vista grande (aria-hidden).
+// Sin JS: todas las respuestas visibles bajo su pregunta. Teléfono: acordeón, una abierta a la vez.
+import { faq } from '../../data/v6';
+---
+<section id="preguntas" class="pr marco" aria-labelledby="pr-h2" data-pr>
+  <div class="rejilla pr-rej">
+    <div class="pr-lista">
+      <h2 id="pr-h2" class="pr-h2" data-reveal>{faq.titulo}</h2>
+      {faq.items.map((p, i) => (
+        <div class="pr-item" data-pr-item data-reveal>
+          <h3 class="pr-h3">
+            <button type="button" class="pr-q" id={`pr-q-${i}`} aria-expanded="true" aria-controls={`pr-a-${i}`} data-i={i}>
+              <span class="pr-punto" aria-hidden="true"></span>
+              <span>{p.q}</span>
+            </button>
+          </h3>
+          <div class="pr-a" id={`pr-a-${i}`} role="region" aria-labelledby={`pr-q-${i}`}>
+            <p>{p.a}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="pr-panel bloque t-tinta" aria-hidden="true" hidden data-pr-panel>
+      <div class="pr-panel-in" data-pr-in>
+        <p class="pr-panel-q" data-pr-pq>{faq.items[0].q}</p>
+        <p class="pr-panel-a" data-pr-pa>{faq.items[0].a}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pr { padding-top: var(--sec); }
+  .pr-rej { align-items: start; }
+  .pr-lista { grid-column: 1 / 6; }
+  .pr-h2 { font-size: 18px; line-height: 1.35; letter-spacing: -0.01em; color: var(--muted); padding-block: 9px; }
+  .pr-h3 { font-family: inherit; font-weight: inherit; letter-spacing: 0; line-height: inherit; margin: 0; }
+
+  .pr-q {
+    display: flex; align-items: baseline; gap: 14px; width: 100%; min-height: 44px; padding: 9px 0;
+    border: 0; background: none; color: var(--ink); text-align: left; cursor: pointer;
+    font-family: var(--font-instrument), sans-serif; font-weight: 400; font-size: 18px; line-height: 1.35; letter-spacing: 0;
+    transition: color 0.15s;
+  }
+  .pr-punto {
+    flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--muted);
+    transform: translateY(-2px); transition: background-color 0.15s, transform 0.2s var(--ease);
+  }
+  .pr-q:hover .pr-punto { transform: translateY(-2px) scale(1.4); }
+  .pr-q:active .pr-punto { transform: translateY(-2px) scale(0.8); }
+  .pr-a p { margin: 0; padding: 4px 0 18px 22px; max-width: 52ch; font-size: 17px; line-height: 1.5; }
+
+  .pr-panel { grid-column: 7 / 13; position: sticky; top: 120px; min-height: 300px; padding: 24px; }
+  .pr-panel-q { margin: 0 0 20px; font-size: 17px; line-height: 1.4; color: var(--i2); max-width: 40ch; }
+  .pr-panel-a { margin: 0; max-width: 30ch; font-size: clamp(24px, 2.2vw, 28px); font-weight: 400; line-height: 1.3; color: var(--i); }
+
+  /* Con JS: la pregunta elegida en tinta y punto rojo; las demás en gris */
+  .pr.is-js .pr-q { color: var(--muted); }
+  .pr.is-js .pr-q[aria-expanded='true'] { color: var(--ink); }
+  .pr.is-js .pr-q[aria-expanded='true'] .pr-punto { background: var(--rojo); }
+  .pr.is-js .pr-q:hover { color: var(--ink); }
+
+  @media (min-width: 900px) {
+    /* La respuesta se lee en el panel; bajo la pregunta queda solo para lectores de pantalla */
+    .pr.is-js .pr-a {
+      position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; /* taste-skill-ignore: solo para lectores de pantalla */
+      clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+  }
+
+  /* Teléfono y tablet: acordeón, sin panel ni sticky */
+  @media (max-width: 899px) {
+    .pr-lista { grid-column: 1 / -1; }
+    .pr-panel { display: none; }
+    .pr-a p { font-size: 19px; padding-left: 22px; }
+  }
+</style>
+
+<script>
+  import { gsap, reduceMotion } from '../../scripts/motion';
+
+  const raiz = document.querySelector<HTMLElement>('[data-pr]');
+  if (raiz) {
+    const botones = Array.from(raiz.querySelectorAll<HTMLButtonElement>('.pr-q'));
+    const panel = raiz.querySelector<HTMLElement>('[data-pr-panel]')!;
+    const dentro = raiz.querySelector<HTMLElement>('[data-pr-in]')!;
+    const pq = raiz.querySelector<HTMLElement>('[data-pr-pq]')!;
+    const pa = raiz.querySelector<HTMLElement>('[data-pr-pa]')!;
+    const ancho = window.matchMedia('(min-width: 900px)');
+    let actual = -1;
+
+    const elegir = (i: number) => {
+      if (i === actual) return;
+      actual = i;
+      botones.forEach((b, j) => {
+        const abierta = j === i;
+        b.setAttribute('aria-expanded', String(abierta));
+        document.getElementById(b.getAttribute('aria-controls')!)!.hidden = !abierta;
+      });
+      if (i < 0) return;
+      const b = botones[i];
+      pq.textContent = b.textContent?.trim() ?? '';
+      pa.textContent = document.getElementById(b.getAttribute('aria-controls')!)!.textContent?.trim() ?? '';
+      // Fundido corto del panel al cambiar de respuesta
+      if (!reduceMotion) gsap.fromTo(dentro, { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.15, ease: 'power1.out', overwrite: true });
+    };
+
+    raiz.classList.add('is-js');
+    panel.hidden = false;
+    elegir(0);
+
+    botones.forEach((b, i) => {
+      b.addEventListener('click', () => {
+        // En el teléfono, tocar la abierta la cierra; en el escritorio siempre queda una elegida
+        if (!ancho.matches && i === actual) elegir(-1);
+        else elegir(i);
+      });
+      b.addEventListener('focus', () => { if (ancho.matches) elegir(i); });
+      b.addEventListener('pointerenter', (e) => { if (ancho.matches && e.pointerType === 'mouse') elegir(i); });
+    });
+
+    // Al pasar al escritorio sin ninguna abierta, vuelve la primera
+    ancho.addEventListener('change', () => { if (ancho.matches && actual < 0) elegir(0); });
+  }
+</script>

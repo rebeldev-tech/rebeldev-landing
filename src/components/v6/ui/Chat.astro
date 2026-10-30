@@ -1,0 +1,124 @@
+---
+// Fragmento de interfaz: la conversación de WhatsApp con RebelBot, vista desde el teléfono del cliente.
+// Por defecto muestra rebelbot.conversacion entera; `n` corta a los primeros mensajes.
+// Sus estilos son globales (prefijo wa6-, siempre bajo [data-ui].wa6) para que «Pregúntale tú»
+// pueda armar burbujas con las mismas clases. Slot por defecto: más mensajes al final del registro.
+// Slot «pie»: reemplaza la barra de escribir (por ejemplo, con botones de respuesta).
+import { rebelbot } from '../../../data/v6';
+
+type Msg = { kind: string; text?: string; options?: string[]; selected?: number };
+
+interface Props {
+  n?: number;
+  mensajes?: Msg[];
+  /** Registro con aria-live: para un chat que cambia en vivo */
+  vivo?: boolean;
+  etiqueta?: string;
+}
+
+const { n, mensajes = rebelbot.conversacion as Msg[], vivo = false, etiqueta = 'Conversación de ejemplo en WhatsApp con RebelBot' } = Astro.props;
+const lista = typeof n === 'number' ? mensajes.slice(0, n) : mensajes;
+
+// Horas ilustrativas: de noche, para que se lea «a cualquier hora»
+const hora = (i: number) => {
+  const m = 23 * 60 + 14 + i;
+  return `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+};
+const quien: Record<string, string> = { in: 'Cliente', out: 'RebelBot', agent: 'Asesor' };
+const tienePie = Astro.slots.has('pie');
+---
+<div data-ui class="wa6" role="group" aria-label={etiqueta}>
+  <div class="wa6-cab">
+    <span class="wa6-avatar" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8.5 7.5 4 12l4.5 4.5" stroke="#F4F0E8" />
+        <path d="m15.5 7.5 4.5 4.5-4.5 4.5" stroke="#F4F0E8" />
+        <path d="M13.6 5.5 10.4 18.5" stroke="#E4121F" />
+      </svg>
+    </span>
+    <span class="wa6-quien-cab">
+      <span class="wa6-nombre">RebelBot</span>
+      <span class="wa6-estado">en línea</span>
+    </span>
+  </div>
+
+  <div class="wa6-log" role={vivo ? 'log' : undefined} aria-live={vivo ? 'polite' : undefined}>
+    {lista.map((m, i) => {
+      if (m.kind === 'system') return <p class="wa6-sis" data-msg="system">{m.text}</p>;
+      if (m.kind === 'buttons') return (
+        <div class="wa6-m wa6-m--out wa6-opciones" data-msg="buttons">
+          <span class="sr-only">Opciones de respuesta:</span>
+          {m.options?.map((o, j) => (
+            <span class:list={['wa6-op', { 'is-elegida': j === m.selected }]}>
+              {j === m.selected && <svg class="wa6-op-check" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="m3 8.5 3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>}
+              {o}{j === m.selected && <span class="sr-only"> (elegida)</span>}
+            </span>
+          ))}
+        </div>
+      );
+      return (
+        <div class={`wa6-m wa6-m--${m.kind}`} data-msg={m.kind}>
+          <p class="wa6-b">
+            {m.kind === 'agent' ? <span class="wa6-quien">Asesor</span> : <span class="sr-only">{quien[m.kind]}: </span>}
+            {m.text}
+            <span class="wa6-hora" aria-hidden="true">{hora(i)}{m.kind === 'in' && <svg viewBox="0 0 18 12" width="16" height="11"><path d="m1 6.5 3.5 3.5L11 3.5M7 9.5l.5.5L14 3.5" fill="none" stroke="#53bdeb" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>}</span>
+          </p>
+        </div>
+      );
+    })}
+    <slot />
+  </div>
+
+  {tienePie ? <slot name="pie" /> : (
+    <div class="wa6-pie" aria-hidden="true">
+      <span class="wa6-campo">Mensaje</span>
+      <span class="wa6-mic">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" /></svg>
+      </span>
+    </div>
+  )}
+</div>
+
+<style is:global>
+  /* WhatsApp en modo oscuro. Dentro del fragmento valen los radios propios de la app. */
+  [data-ui].wa6 {
+    position: relative; width: 100%; display: flex; flex-direction: column;
+    background: var(--wa); color: #E9EDEF; text-align: left;
+    font-family: var(--font-instrument), sans-serif; font-size: 15px; line-height: 1.38; letter-spacing: 0;
+  }
+  [data-ui].wa6 [hidden] { display: none; }
+  [data-ui] .wa6-cab { display: flex; align-items: center; gap: 0.7em; padding: 0.7em 0.9em; background: var(--wa-in); }
+  [data-ui] .wa6-avatar { flex: none; display: grid; place-items: center; width: 2.5em; height: 2.5em; border-radius: 50%; background: #0B0A0E; }
+  [data-ui] .wa6-quien-cab { display: flex; flex-direction: column; line-height: 1.2; }
+  [data-ui] .wa6-nombre { font-weight: 600; }
+  [data-ui] .wa6-estado { font-size: 0.8em; color: #AEBAC1; }
+
+  [data-ui] .wa6-log { display: flex; flex-direction: column; gap: 0.4em; padding: 0.9em 0.75em 1em; }
+  [data-ui] .wa6-m { display: flex; margin: 0; }
+  [data-ui] .wa6-m--in { justify-content: flex-end; }
+  [data-ui] .wa6-b { max-width: 84%; margin: 0; padding: 0.42em 0.65em 0.38em; border-radius: 0.6em; background: var(--wa-in); overflow-wrap: anywhere; }
+  [data-ui] .wa6-m--in .wa6-b { background: var(--wa-out); border-top-right-radius: 0.15em; }
+  [data-ui] .wa6-m--out .wa6-b, [data-ui] .wa6-m--agent .wa6-b { border-top-left-radius: 0.15em; }
+  [data-ui] .wa6-quien { display: block; margin-bottom: 0.1em; font-size: 0.8em; font-weight: 600; color: #53BDEB; }
+  [data-ui] .wa6-hora { float: right; display: inline-flex; align-items: center; gap: 0.25em; margin: 0.45em 0 -0.25em 0.8em; font-size: 0.7em; color: #AEBAC1; }
+
+  /* Botones de respuesta de WhatsApp (ya respondidos) */
+  [data-ui] .wa6-opciones { flex-direction: column; gap: 0.25em; width: 84%; }
+  [data-ui] .wa6-op { display: flex; align-items: center; justify-content: center; gap: 0.35em; padding: 0.55em 0.6em; border-radius: 0.6em; background: var(--wa-in); color: #53BDEB; font-weight: 600; }
+  [data-ui] .wa6-op.is-elegida { background: #233741; color: #E9EDEF; }
+
+  /* Aviso del sistema, como los de WhatsApp */
+  [data-ui] .wa6-sis { align-self: center; max-width: 88%; margin: 0.3em 0; padding: 0.35em 0.8em; border-radius: 0.5em; background: #182229; color: #FFD279; font-size: 0.82em; text-align: center; }
+
+  /* «Escribiendo…» */
+  [data-ui] .wa6-escribiendo { display: inline-flex; gap: 0.25em; padding: 0.75em 0.8em; border-radius: 0.6em; border-top-left-radius: 0.15em; background: var(--wa-in); }
+  [data-ui] .wa6-escribiendo i { width: 0.45em; height: 0.45em; border-radius: 50%; background: #AEBAC1; animation: wa6-punto 1s infinite ease-in-out; }
+  [data-ui] .wa6-escribiendo i:nth-child(2) { animation-delay: 0.15s; }
+  [data-ui] .wa6-escribiendo i:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes wa6-punto { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-0.25em); } }
+
+  /* Barra de escribir */
+  [data-ui] .wa6-pie { display: flex; align-items: center; gap: 0.5em; padding: 0.5em 0.6em 0.7em; }
+  [data-ui] .wa6-campo { flex: 1; padding: 0.6em 1em; border-radius: 1.4em; background: var(--wa-in); color: #AEBAC1; }
+  [data-ui] .wa6-mic { flex: none; display: grid; place-items: center; width: 2.6em; height: 2.6em; border-radius: 50%; background: #00A884; }
+</style>

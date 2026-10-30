@@ -1,0 +1,227 @@
+---
+// «El bloque de la acción»: la llamada final en un bloque rojo, entre dos bloques que se salen de la
+// pantalla (un recorte del chat y el ámbar liso). Pie «La marca, construida en grande»: Rebel</DEV>
+// armado con un bloque de color por carácter, que suben en orden al entrar. Después, enlaces y contacto.
+import Chat from './ui/Chat.astro';
+import { cierre, pie, portada } from '../../data/v6';
+import { contacto } from '../../data/contacto';
+
+// Un bloque por carácter: los signos siempre sobre rojo; las letras rotan crema, rojo, ámbar y hueso
+// (sin dos rojos juntos). «alto» es la parte de la banda que ocupa, entre 60 y 100 %.
+type Pieza = { c: string; tono: 'crema' | 'rojo' | 'ambar' | 'hueso'; alto: number };
+const filas: Pieza[][] = [
+  [
+    { c: 'R', tono: 'crema', alto: 100 },
+    { c: 'e', tono: 'rojo', alto: 72 },
+    { c: 'b', tono: 'ambar', alto: 88 },
+    { c: 'e', tono: 'hueso', alto: 64 },
+    { c: 'l', tono: 'crema', alto: 94 },
+  ],
+  [
+    { c: '<', tono: 'rojo', alto: 78 },
+    { c: '/', tono: 'rojo', alto: 100 },
+    { c: 'D', tono: 'hueso', alto: 84 },
+    { c: 'E', tono: 'ambar', alto: 68 },
+    { c: 'V', tono: 'crema', alto: 92 },
+    { c: '>', tono: 'rojo', alto: 74 },
+  ],
+];
+---
+<section id="cierre" class="ci" aria-labelledby="ci-h2">
+  <div class="marco">
+    <div class="rejilla ci-fila">
+      <div class="ci-lado ci-lado--izq bloque t-tinta" aria-hidden="true" data-ci-izq>
+        <div class="ci-chat"><Chat n={3} /></div>
+      </div>
+
+      <div class="ci-accion bloque t-rojo" data-ci-accion>
+        <div class="ci-texto">
+          <h2 id="ci-h2" class="ci-h2">{cierre.titulo}</h2>
+          <p class="ci-p">{cierre.texto}</p>
+          <a class="b6" href={contacto.whatsappLink} target="_blank" rel="noopener">{cierre.boton}</a>
+        </div>
+        <p class="ci-cifra" aria-hidden="true">30<span>minutos, gratis</span></p>
+      </div>
+
+      <div class="ci-lado ci-lado--der bloque t-ambar" aria-hidden="true" data-ci-der></div>
+    </div>
+  </div>
+</section>
+
+<footer class="pm marco">
+  <div class="pm-campo bloque t-tinta">
+    <div class="pm-marca" role="img" aria-label="RebelDEV" translate="no" data-pm-marca>
+      {filas.map((fila) => (
+        <div class="pm-fila" aria-hidden="true">
+          {fila.map((p) => (
+            <span class={`pm-pieza pm-${p.tono}`} style={`--alto:${p.alto}%`} data-pm-pieza>
+              <span class="pm-c">{p.c}</span>
+            </span>
+          ))}
+        </div>
+      ))}
+    </div>
+
+    <div class="pm-info">
+      <nav class="pm-nav" aria-label="Pie de página">
+        {pie.columnas.map((col) => (
+          <div class="pm-col">
+            <p class="pm-t">{col.t}</p>
+            <ul>
+              {col.links.map((l) => (
+                <li><a class="pm-a" href={l.href}>{l.t}</a></li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </nav>
+      <address class="pm-contacto">
+        <p class="pm-t">Contacto</p>
+        <a class="pm-a pm-a--grande" href={`mailto:${contacto.correo}`}>{contacto.correo}</a>
+        <a class="pm-a pm-a--grande" href={contacto.whatsappLink} target="_blank" rel="noopener">WhatsApp {contacto.whatsapp}</a>
+      </address>
+    </div>
+
+    <div class="pm-base">
+      <p class="pm-copy">© 2026 RebelDEV</p>
+      <a class="b6 pm-b" href={contacto.whatsappLink} target="_blank" rel="noopener">{portada.boton}</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  /* La fila de la acción: tres bloques de 360 px; los laterales se salen por los bordes de la pantalla */
+  .ci { padding-top: var(--sec); padding-bottom: 48px; }
+  .ci-fila { height: 360px; }
+  .ci-lado { position: relative; height: 100%; }
+  .ci-lado--izq { grid-column: 1 / 3; margin-left: calc(-1 * var(--m) - 48px); }
+  .ci-lado--der { grid-column: 11 / 13; margin-right: calc(-1 * var(--m) - 48px); }
+  /* Recorte del chat: anclado a la derecha, la pantalla le corta el lado izquierdo y el pie */
+  .ci-chat { position: absolute; top: 24px; right: 20px; width: 340px; border-radius: var(--r); overflow: hidden; }
+
+  .ci-accion { grid-column: 3 / 11; height: 100%; display: flex; align-items: center; padding: 40px; }
+  .ci-cifra { margin: 0 0 0 auto; align-self: flex-end; font-family: var(--font-bricolage), sans-serif; font-weight: 800; font-size: clamp(120px, 14vw, 220px); line-height: 0.8; letter-spacing: -0.05em; }
+  .ci-cifra span { display: block; margin-top: 12px; font-family: var(--font-instrument), sans-serif; font-size: var(--t-3); font-weight: 600; letter-spacing: 0; }
+  .ci-texto { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; max-width: 34rem; }
+  .ci-h2 { font-size: 40px; line-height: 1; }
+  .ci-p { margin: 0 0 8px; font-size: 17px; line-height: 1.5; color: var(--i); max-width: 44ch; }
+
+  /* Pie: la marca construida con bloques, con las bases alineadas */
+  .pm { margin-top: var(--gap); padding-bottom: var(--m); }
+  .pm-campo { padding: 24px; }
+  .pm-marca { display: flex; align-items: flex-end; gap: 4px; height: 34svh; min-height: 220px; padding-top: 12px; overflow: hidden; }
+  .pm-fila { display: flex; align-items: flex-end; gap: 4px; height: 100%; }
+  .pm-fila:first-child { flex: 5 1 0; }
+  .pm-fila:last-child { flex: 6 1 0; }
+  .pm-pieza {
+    flex: 1 1 0; display: flex; align-items: flex-end; height: var(--alto); min-width: 0;
+    padding: 0 0.08em 0.02em; border-radius: var(--r); color: var(--tinta);
+    font-family: var(--font-bricolage), sans-serif; font-weight: 800; letter-spacing: -0.04em; line-height: 0.8;
+    font-size: min(9.4vw, 19svh); transition: translate 0.35s var(--ease);
+  }
+  .pm-pieza:hover { translate: 0 -10px; }
+  .pm-crema { background: var(--bone); }
+  .pm-rojo { background: var(--rojo); }
+  .pm-ambar { background: var(--ambar); }
+  .pm-hueso { background: var(--hueso); }
+  .pm-c { display: block; }
+
+  .pm-info { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gap); margin-top: 56px; }
+  .pm-nav { grid-column: 1 / 9; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gap); }
+  .pm-contacto { grid-column: 9 / 13; display: flex; flex-direction: column; align-items: flex-start; font-style: normal; }
+  .pm-t { margin: 0 0 4px; font-size: 15px; color: var(--i2); }
+  .pm-nav ul { margin: 0; padding: 0; list-style: none; }
+  .pm-a {
+    display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; color: var(--i);
+    text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 0.25em;
+    transition: text-decoration-color 0.2s, color 0.2s;
+  }
+  .pm-a:hover { text-decoration-color: currentColor; color: #fff; }
+  .pm-a--grande { font-size: 17px; }
+
+  .pm-base { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 56px; }
+  .pm-copy { margin: 0; font-size: 15px; color: var(--i2); }
+  .pm-b { min-height: 44px; padding: 0 16px; font-size: 15px; }
+  .pm-b:hover { background: var(--bone); color: var(--ink); }
+
+  @media (max-width: 1023px) {
+    .pm-nav { grid-column: 1 / -1; }
+    .pm-contacto { grid-column: 1 / -1; margin-top: 24px; }
+  }
+
+  /* Teléfono: la acción a lo ancho y los laterales debajo; la marca en dos filas */
+  @media (max-width: 1023px) {
+    .ci-cifra { display: none; }
+    .ci-h2 { font-size: 34px; }
+  }
+  @media (max-width: 767px) {
+    /* Teléfono: el bloque rojo primero a todo el ancho; los laterales debajo, en pareja */
+    .ci-fila { height: auto; grid-template-columns: 1fr 1fr; }
+    .ci-accion { grid-column: 1 / -1; order: -1; min-height: 300px; padding: 28px; }
+    .ci-lado--izq, .ci-lado--der { grid-column: span 1; margin: 0; height: 120px; }
+    .ci-fila { height: auto; grid-template-columns: 1fr 1fr; }
+    .ci-accion { grid-column: 1 / -1; height: auto; min-height: 360px; padding: 28px 24px; }
+    .ci-h2 { font-size: 34px; }
+    .ci-lado { height: 180px; }
+    .ci-lado--izq { grid-column: 1; margin-left: 0; }
+    .ci-lado--der { grid-column: 2; margin-right: 0; }
+    .ci-chat { width: 300px; right: 12px; top: 16px; }
+
+    .pm-campo { padding: 16px; }
+    .pm-marca { flex-direction: column; align-items: stretch; height: auto; min-height: 0; }
+    .pm-fila { height: 22svh; min-height: 140px; flex: none; }
+    .pm-pieza { font-size: min(15vw, 15svh); }
+    .pm-nav { grid-template-columns: 1fr 1fr; row-gap: 24px; }
+    .pm-base { margin-top: 40px; }
+  }
+</style>
+
+<script>
+  import { gsap } from '../../scripts/motion';
+
+  const mm = gsap.matchMedia();
+  mm.add('(prefers-reduced-motion: no-preference)', () => {
+    const observadores: IntersectionObserver[] = [];
+    const alEntrar = (el: Element | null, fn: () => void, margen = '-12%') => {
+      if (!el) return;
+      const io = new IntersectionObserver(([e]) => {
+        if (!e.isIntersecting && e.boundingClientRect.top > 0) return;
+        io.disconnect();
+        fn();
+      }, { rootMargin: `0px 0px ${margen} 0px` });
+      io.observe(el);
+      observadores.push(io);
+    };
+
+    // La acción se abre desde el centro; los laterales entran desde fuera y el chat escribe en orden
+    const accion = document.querySelector('[data-ci-accion]');
+    const izq = document.querySelector('[data-ci-izq]');
+    const der = document.querySelector('[data-ci-der]');
+    const mensajes = izq ? Array.from(izq.querySelectorAll('.wa6-m, .wa6-sis')) : [];
+    const texto = accion ? Array.from(accion.querySelectorAll('.ci-texto > *')) : [];
+
+    gsap.set(accion, { clipPath: 'inset(0% 50% 0% 50% round 8px)' });
+    gsap.set(texto, { autoAlpha: 0, y: 20 });
+    gsap.set(izq, { autoAlpha: 0, x: -60 });
+    gsap.set(der, { autoAlpha: 0, x: 60 });
+    gsap.set(mensajes, { autoAlpha: 0, y: 14 });
+
+    alEntrar(accion, () => {
+      gsap.timeline({ defaults: { ease: 'power3.out' } })
+        .to(accion, { clipPath: 'inset(0% 0% 0% 0% round 8px)', duration: 0.9, ease: 'power3.inOut' })
+        .to([izq, der], { autoAlpha: 1, x: 0, duration: 0.8 }, 0.2)
+        .to(texto, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08 }, 0.5)
+        .to(mensajes, { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.5 }, 0.8);
+    });
+
+    // La marca: los bloques suben desde la base, uno tras otro, de la R al >
+    const marca = document.querySelector('[data-pm-marca]');
+    const piezas = gsap.utils.toArray<HTMLElement>('[data-pm-pieza]');
+    gsap.set(piezas, { yPercent: 110 });
+    alEntrar(marca, () => {
+      gsap.to(piezas, { yPercent: 0, duration: 0.9, ease: 'power4.out', stagger: 0.06 });
+    }, '-8%');
+
+    return () => observadores.forEach((io) => io.disconnect());
+  });
+</script>

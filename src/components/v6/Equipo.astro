@@ -1,0 +1,153 @@
+---
+// «Foto ancha, bloque de color, datos»: no hay foto de Fredy, así que la pieza ancha es el video de la
+// versión 2 (mensajes, partículas y una red; no es una persona) con la nota sobre la IA encima. A la
+// derecha, el isotipo </> en un bloque rojo que se dibuja al entrar, y debajo los datos en bloques.
+import { fredy } from '../../data/v6';
+import { MARK } from '../../lib/mark';
+
+const pad = MARK.stroke; // aire para que las puntas redondeadas no se corten
+const vb = `${-pad} ${-pad} ${MARK.width + pad * 2} ${MARK.height + pad * 2}`;
+---
+<section id="equipo" class="eq marco" aria-labelledby="eq-h2">
+  <div class="rejilla eq-cab">
+    <h2 id="eq-h2" class="eq-h2" data-reveal>{fredy.titulo}</h2>
+    <p class="eq-lead" data-reveal>{fredy.lead}</p>
+  </div>
+
+  <div class="rejilla eq-tablero">
+    <figure class="eq-video" data-reveal>
+      <video
+        class="eq-vid"
+        src="/video/hero.mp4#t=0.1"
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        aria-label="Animación ilustrativa: un teléfono recibe mensajes entre partículas rojas y una red. No es una imagen de Fredy ni del equipo."
+        data-eq-video
+      ></video>
+      <button class="eq-pausa" type="button" aria-label="Reproducir el video" data-eq-boton>
+        <svg class="eq-ico eq-ico--play" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor" /></svg>
+        <svg class="eq-ico eq-ico--pausa" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z" fill="currentColor" /></svg>
+      </button>
+      <figcaption class="eq-nota bloque t-hueso">{fredy.nota}</figcaption>
+    </figure>
+
+    <div class="eq-lado">
+      <div class="eq-rojo bloque t-rojo" data-reveal>
+        <svg class="eq-iso" viewBox={vb} fill="none" stroke-width={MARK.stroke} stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Isotipo de RebelDEV">
+          <path d={MARK.left} stroke="#F4F0E8" data-trazo />
+          <path d={MARK.right} stroke="#F4F0E8" data-trazo />
+          <path d={MARK.slash} stroke="#0B0A0E" data-trazo />
+        </svg>
+      </div>
+      <dl class="eq-datos">
+        {fredy.datos.map((d) => (
+          <div class="eq-dato bloque t-hueso" data-reveal>
+            <dt>{d.k}</dt>
+            <dd>{d.v}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .eq { padding-top: var(--sec); }
+  .eq-cab { row-gap: 24px; }
+  .eq-h2 { grid-column: 1 / -1; font-size: clamp(40px, 4vw, 60px); }
+  .eq-lead { grid-column: 1 / 7; font-size: 21px; line-height: 1.45; }
+
+  /* El tablero: video en 8 columnas; a la derecha, el bloque rojo (60 % del alto del video) y los datos */
+  .eq-tablero { margin-top: 72px; container-type: inline-size; align-items: start; }
+  .eq-video { position: relative; grid-column: 1 / 9; margin: 0; aspect-ratio: 16 / 10; border-radius: var(--r); overflow: hidden; background: var(--tinta); }
+  .eq-vid { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .eq-nota { position: absolute; top: 0; right: 0; width: 320px; max-width: 70%; padding: 20px; font-size: 16px; line-height: 1.5; border-radius: 0 0 0 var(--r); }
+
+  .eq-pausa {
+    position: absolute; left: 12px; bottom: 12px; display: grid; place-items: center; width: 44px; height: 44px;
+    border: 0; border-radius: var(--r); background: var(--tinta); color: var(--bone); cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, transform 0.2s var(--ease);
+  }
+  .eq-pausa:hover { background: var(--rojo); color: #fff; }
+  .eq-pausa:active { transform: scale(0.94); }
+  .eq-ico--pausa { display: none; }
+  .eq-pausa[data-sonando] .eq-ico--pausa { display: block; }
+  .eq-pausa[data-sonando] .eq-ico--play { display: none; }
+
+  .eq-lado { grid-column: 9 / 13; display: flex; flex-direction: column; gap: var(--gap); }
+  /* 60 % del alto del video: 8 columnas y 7 huecos, en 16:10 */
+  .eq-rojo { height: calc(0.6 * (8 * (100cqi - 11 * var(--gap)) / 12 + 7 * var(--gap)) / 1.6); display: grid; place-items: center; padding: 24px; }
+  .eq-iso { width: min(78%, 100%); height: 100%; max-height: 100%; overflow: visible; }
+
+  .eq-datos { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); margin: 0; }
+  .eq-dato { padding: 20px; }
+  .eq-dato dt { font-size: 15px; color: var(--i2); line-height: 1.3; }
+  .eq-dato dd { margin: 6px 0 0; font-size: 17px; line-height: 1.35; color: var(--i); }
+
+  /* Tablet: el video a todo el ancho; el bloque rojo y los datos, lado a lado debajo */
+  @media (max-width: 1099px) {
+    .eq-video { grid-column: 1 / -1; }
+    .eq-lado { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; }
+    .eq-rojo { height: auto; aspect-ratio: 3 / 2; }
+    .eq-lead { grid-column: 1 / 10; }
+  }
+
+  /* Teléfono: todo a lo ancho, la nota debajo del video como texto */
+  @media (max-width: 767px) {
+    .eq-h2 { font-size: 9vw; }
+    .eq-lead { grid-column: 1 / -1; font-size: 18px; }
+    .eq-tablero { margin-top: 40px; }
+    .eq-video { aspect-ratio: auto; overflow: visible; background: none; }
+    .eq-vid { aspect-ratio: 4 / 3; height: auto; border-radius: var(--r); background: var(--tinta); }
+    .eq-pausa { bottom: auto; top: 12px; }
+    .eq-nota { position: static; width: auto; max-width: none; padding: 16px 0 0; background: none; border-radius: 0; color: var(--ink); }
+    .eq-lado { display: flex; }
+    .eq-rojo { aspect-ratio: 3 / 2; }
+  }
+</style>
+
+<script>
+  import { gsap, reduceMotion } from '../../scripts/motion';
+
+  // Video: solo corre con el movimiento permitido y mientras se ve; el botón manda sobre todo lo demás
+  const video = document.querySelector<HTMLVideoElement>('[data-eq-video]');
+  const boton = document.querySelector<HTMLButtonElement>('[data-eq-boton]');
+  if (video && boton) {
+    let elegido = !reduceMotion; // con menos movimiento queda en el primer cuadro hasta que lo pidas
+    let visible = false;
+    const pintar = () => {
+      const sonando = !video.paused;
+      boton.toggleAttribute('data-sonando', sonando);
+      boton.setAttribute('aria-label', sonando ? 'Pausar el video' : 'Reproducir el video');
+    };
+    const aplicar = () => {
+      if (elegido && visible) video.play().catch(() => {});
+      else video.pause();
+    };
+    video.addEventListener('play', pintar);
+    video.addEventListener('pause', pintar);
+    boton.addEventListener('click', () => { elegido = video.paused; visible = true; aplicar(); });
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; aplicar(); }, { threshold: 0.2 }).observe(video);
+    pintar();
+  }
+
+  // El isotipo se dibuja trazo por trazo cuando el bloque rojo entra
+  const trazos = gsap.utils.toArray<SVGPathElement>('.eq-iso [data-trazo]');
+  const mm = gsap.matchMedia();
+  mm.add('(prefers-reduced-motion: no-preference)', () => {
+    gsap.set(trazos, { drawSVG: '0%' });
+    const iso = document.querySelector('.eq-iso');
+    if (!iso) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting && e.boundingClientRect.top > 0) return;
+      io.disconnect();
+      gsap.timeline({ delay: 0.25 })
+        .to(trazos.slice(0, 2), { drawSVG: '100%', duration: 0.9, ease: 'power2.inOut', stagger: 0.12 })
+        .to(trazos[2], { drawSVG: '100%', duration: 0.55, ease: 'power3.out' }, '-=0.35');
+    }, { rootMargin: '0px 0px -10% 0px' });
+    io.observe(iso);
+    return () => io.disconnect();
+  });
+</script>

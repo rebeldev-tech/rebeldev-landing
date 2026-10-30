@@ -1,0 +1,34 @@
+---
+// Fragmento de interfaz: la ficha del negocio de ejemplo, la base de la que RebelBot saca sus respuestas.
+// Un dato sin confirmar se marca en ámbar: de ese, RebelBot no responde.
+import { demo } from '../../../data/v6';
+---
+<div data-ui class="fi">
+  <div class="fi-cab">
+    <p class="fi-titulo">Base de conocimiento</p>
+    <p class="fi-sub">{demo.negocio}</p>
+  </div>
+  <dl class="fi-filas">
+    {demo.filas.map((f) => (
+      <div class:list={['fi-fila', { 'fi-sin': !f.on }]}>
+        <dt>{f.l}</dt>
+        <dd>{f.on ? f.v : 'Sin confirmar'}</dd>
+      </div>
+    ))}
+  </dl>
+</div>
+
+<style>
+  [data-ui].fi {
+    width: 100%; padding: 1.1em; background: var(--surface); color: var(--ink);
+    font-family: var(--font-instrument), sans-serif; font-size: 15px; line-height: 1.35; letter-spacing: 0; text-align: left;
+  }
+  [data-ui] .fi-cab p { margin: 0; }
+  [data-ui] .fi-titulo { font-weight: 600; font-size: 1.07em; }
+  [data-ui] .fi-cab .fi-sub { margin-top: 0.2em; color: var(--muted); font-size: 0.87em; }
+  [data-ui] .fi-filas { margin: 0.9em 0 0; display: grid; gap: 0.3em; font-size: 0.87em; }
+  [data-ui] .fi-fila { display: flex; justify-content: space-between; gap: 1em; padding: 0.7em 0.8em; border-radius: 0.4em; background: var(--surface-2); }
+  [data-ui] .fi-fila dt { color: var(--muted); }
+  [data-ui] .fi-fila dd { margin: 0; font-weight: 600; text-align: right; }
+  [data-ui] .fi-sin dd { color: var(--amber); }
+</style>

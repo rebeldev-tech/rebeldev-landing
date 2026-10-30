@@ -1,0 +1,72 @@
+---
+// Fragmento de interfaz: la agenda de visitas del panel. Solo se ofrecen los horarios libres;
+// el elegido («Sábado 11:30») queda reservado y deja de ofrecerse. Datos ilustrativos.
+const dias = ['Jueves', 'Viernes', 'Sábado', 'Domingo'];
+const horas = ['10:00', '11:30', '16:00', '17:30'];
+// l = libre, o = ocupado, e = elegido, c = cerrado (filas por hora, columnas por día)
+const estado = [
+  ['l', 'o', 'o', 'l'],
+  ['o', 'l', 'e', 'o'],
+  ['l', 'l', 'o', 'l'],
+  ['l', 'o', 'l', 'c'],
+];
+const texto: Record<string, string> = { l: 'Libre', o: 'Ocupado', e: 'Elegido', c: 'Cerrado' };
+---
+<div data-ui class="ag">
+  <div class="ag-cab">
+    <p class="ag-titulo">Visitas</p>
+    <p class="ag-sub">Esta semana</p>
+  </div>
+
+  <table class="ag-tabla">
+    <caption class="sr-only">Horarios de visita de esta semana: libres, ocupados y el elegido, sábado a las 11:30</caption>
+    <thead>
+      <tr>
+        <td></td>
+        {dias.map((d) => <th scope="col" class:list={{ 'is-dia': d === 'Sábado' }}><abbr title={d}>{d.slice(0, 3)}</abbr></th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {horas.map((h, i) => (
+        <tr>
+          <th scope="row">{h}</th>
+          {estado[i].map((s) => <td><span class={`ag-c ag-c--${s}`}>{texto[s]}</span></td>)}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <div class="ag-pie">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m3 8.5 3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    <p><strong>Sábado 11:30 reservado.</strong> Ese horario ya no se ofrece a nadie más.</p>
+  </div>
+</div>
+
+<style>
+  [data-ui].ag {
+    width: 100%; padding: 1.1em; background: var(--surface); color: var(--ink);
+    font-family: var(--font-instrument), sans-serif; font-size: 15px; line-height: 1.35; letter-spacing: 0; text-align: left;
+  }
+  [data-ui] .ag-cab { display: flex; align-items: baseline; justify-content: space-between; gap: 1em; margin-bottom: 0.9em; }
+  [data-ui] .ag-titulo { margin: 0; font-weight: 600; font-size: 1.07em; }
+  [data-ui] .ag-sub { margin: 0; color: var(--muted); font-size: 0.87em; }
+
+  [data-ui] .ag-tabla { border-collapse: separate; border-spacing: 0.3em; margin: -0.3em; width: calc(100% + 0.6em); table-layout: fixed; }
+  [data-ui] .ag-tabla th { font-weight: 400; font-size: 0.8em; color: var(--muted); text-align: center; }
+  [data-ui] .ag-tabla thead th { padding-bottom: 0.2em; }
+  [data-ui] .ag-tabla thead td, [data-ui] .ag-tabla tbody th { width: 3.4em; text-align: left; }
+  [data-ui] .ag-tabla abbr { text-decoration: none; }
+  [data-ui] .ag-tabla th.is-dia { color: var(--ink); font-weight: 600; }
+  [data-ui] .ag-tabla td { padding: 0; }
+
+  [data-ui] .ag-c { display: flex; align-items: center; justify-content: center; min-height: 2.6em; padding: 0 0.2em; border-radius: 0.4em; font-size: 0.74em; }
+  [data-ui] .ag-c--l { border: 1px solid #3A3342; color: var(--ink); }
+  [data-ui] .ag-c--o { background: var(--surface-2); color: var(--muted); }
+  [data-ui] .ag-c--e { background: var(--accent); color: #fff; font-weight: 600; }
+  [data-ui] .ag-c--c { color: var(--muted); }
+
+  [data-ui] .ag-pie { display: flex; align-items: flex-start; gap: 0.5em; margin-top: 1em; padding: 0.75em 0.85em; border-radius: 0.5em; background: var(--surface-2); font-size: 0.87em; }
+  [data-ui] .ag-pie svg { flex: none; margin-top: 0.15em; color: #25D366; }
+  [data-ui] .ag-pie p { margin: 0; }
+  [data-ui] .ag-pie strong { font-weight: 600; }
+</style>

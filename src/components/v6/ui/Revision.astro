@@ -1,0 +1,66 @@
+---
+// Fragmento de interfaz: la revisión de un cambio. La IA propone el código; las pruebas automáticas
+// pasan y un ingeniero senior lo aprueba. El cambio es ilustrativo (evitar dobles reservas).
+const lineas: { t: ' ' | '+' | '-'; c: string }[] = [
+  { t: ' ', c: 'Cita reservar(Cita cita) {' },
+  { t: '-', c: '  return citas.guardar(cita);' },
+  { t: '+', c: '  if (citas.ocupado(cita.horario()))' },
+  { t: '+', c: '    throw new HorarioOcupado();' },
+  { t: '+', c: '  return citas.guardar(cita);' },
+  { t: ' ', c: '}' },
+];
+---
+<div data-ui class="rv">
+  <div class="rv-cab">
+    <p class="rv-titulo">Evitar dobles reservas en la agenda</p>
+    <p class="rv-sub">Propuesto por la IA · Revisión de un ingeniero senior</p>
+  </div>
+
+  <div class="rv-archivo">
+    <p class="rv-nombre">AgendaService.java</p>
+    <pre><code>{lineas.map((l) => <span class:list={['rv-l', { 'rv-mas': l.t === '+', 'rv-menos': l.t === '-' }]}><span class="rv-signo" aria-hidden="true">{l.t}</span>{l.c}</span>)}</code></pre>
+  </div>
+
+  <ul class="rv-checks">
+    <li><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m3 8.5 3 3 7-7" /></svg>Pruebas automáticas<span>Pasaron</span></li>
+    <li><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m3 8.5 3 3 7-7" /></svg>Reglas de arquitectura<span>Pasaron</span></li>
+  </ul>
+
+  <div class="rv-aprueba">
+    <span class="rv-avatar" aria-hidden="true">IS</span>
+    <p><strong>Ingeniero senior</strong> revisó el cambio</p>
+    <span class="rv-sello">Aprobado</span>
+  </div>
+</div>
+
+<style>
+  [data-ui].rv {
+    width: 100%; padding: 1.1em; background: var(--surface); color: var(--ink);
+    font-family: var(--font-instrument), sans-serif; font-size: 15px; line-height: 1.35; letter-spacing: 0; text-align: left;
+  }
+  [data-ui] .rv-cab p { margin: 0; }
+  [data-ui] .rv-titulo { font-weight: 600; font-size: 1.07em; }
+  [data-ui] .rv-cab .rv-sub { margin-top: 0.2em; color: var(--muted); font-size: 0.87em; }
+
+  [data-ui] .rv-archivo { margin-top: 0.9em; border: 1px solid #2E2836; border-radius: 0.5em; overflow: hidden; }
+  [data-ui] .rv-nombre { margin: 0; padding: 0.45em 0.8em; background: var(--surface-2); color: var(--muted); font-size: 0.8em; }
+  [data-ui] .rv-archivo pre { margin: 0; padding: 0.5em 0; background: #0F0C13; overflow: hidden; }
+  [data-ui] .rv-archivo code { display: block; font-family: var(--font-jetbrains), monospace; font-size: 0.78em; line-height: 1.6; white-space: pre; color: #D8D2DA; }
+  [data-ui] .rv-l { display: block; padding-inline: 0.6em 0.8em; }
+  [data-ui] .rv-signo { display: inline-block; width: 1.4em; color: var(--muted); }
+  [data-ui] .rv-mas { background: #12301F; color: #C9F2D7; }
+  [data-ui] .rv-mas .rv-signo { color: #4BD37B; }
+  [data-ui] .rv-menos { background: #3A1418; color: #F6C9CD; }
+  [data-ui] .rv-menos .rv-signo { color: #FF6B76; }
+
+  [data-ui] .rv-checks { list-style: none; margin: 0.9em 0 0; padding: 0; display: grid; gap: 0.4em; font-size: 0.87em; }
+  [data-ui] .rv-checks li { display: flex; align-items: center; gap: 0.5em; }
+  [data-ui] .rv-checks svg { flex: none; padding: 2px; border-radius: 50%; background: #1F8A4C; fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  [data-ui] .rv-checks span { margin-left: auto; color: #4BD37B; }
+
+  [data-ui] .rv-aprueba { display: flex; align-items: center; gap: 0.6em; margin-top: 0.9em; padding: 0.7em 0.8em; border-radius: 0.5em; background: var(--surface-2); font-size: 0.87em; }
+  [data-ui] .rv-aprueba p { margin: 0; }
+  [data-ui] .rv-aprueba strong { font-weight: 600; }
+  [data-ui] .rv-avatar { flex: none; display: grid; place-items: center; width: 2.2em; height: 2.2em; border-radius: 50%; background: #2E2836; font-size: 0.85em; font-weight: 600; }
+  [data-ui] .rv-sello { margin-left: auto; padding: 0.3em 0.7em; border-radius: 0.4em; background: #17703D; color: #fff; font-weight: 600; }
+</style>

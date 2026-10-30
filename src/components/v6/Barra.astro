@@ -1,0 +1,123 @@
+---
+// «Las etapas como una sola barra»: el proceso de punta a punta, y cada tramo mide lo que dura de verdad
+// (peso). Al entrar, los tramos crecen de izquierda a derecha en orden y en el tramo largo aparecen las
+// revisiones de los días 30, 60 y 90. En el teléfono la barra se pone de pie.
+import { proceso } from '../../data/v6';
+
+const ultimo = proceso.tramos.length - 1;
+// Revisiones dentro del tramo de noventa días: su posición es proporcional al día
+const marcas = [30, 60, 90].map((dia) => ({ dia, f: dia / 90 }));
+---
+<section id="proceso" class="br marco" aria-labelledby="br-h2">
+  <h2 id="br-h2" class="br-h2" data-reveal>{proceso.titulo}</h2>
+
+  <ol data-ui class="br-barra" data-barra>
+    {proceso.tramos.map((t, i) => (
+      <li class={`br-tramo t-${t.tono}`} style={`--p:${t.peso}`}>
+        <div class="br-bloque">
+          <span class="br-fondo" data-fondo aria-hidden="true"></span>
+          <p class="br-dura" data-dura>{t.dura}</p>
+          {i === ultimo && (
+            <div class="br-marcas" aria-hidden="true">
+              {marcas.map((m) => (
+                <span class="br-marca" style={`--f:${m.f}`} data-marca>
+                  <i></i>
+                  <span class="br-dia">Día {m.dia}</span>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+        <p class="br-d" data-d>{t.d}</p>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .br { padding-top: var(--sec); }
+  .br-h2 { font-size: var(--t-1); max-width: 20ch; margin-bottom: 64px; }
+
+  /* La barra: una fila en las 12 columnas; cada tramo crece según su peso, con un mínimo legible */
+  [data-ui].br-barra { display: flex; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  [data-ui] .br-tramo { flex: var(--p) 1 0; min-width: 12%; display: flex; flex-direction: column; gap: 20px; }
+  [data-ui] .br-bloque { position: relative; height: max(22vh, 180px); border-radius: var(--r); overflow: hidden; }
+  [data-ui] .br-fondo { position: absolute; inset: 0; border-radius: var(--r); background: var(--b); transform-origin: left center; }
+  [data-ui] .br-dura {
+    position: relative; margin: 0; padding: 20px 20px 0; color: var(--i);
+    font-family: var(--font-bricolage), sans-serif; font-weight: 800; font-size: clamp(20px, 2vw, 30px);
+    line-height: 1.05; letter-spacing: -0.03em;
+  }
+  /* Debajo del tramo, en su borde izquierdo: sobre el crema, con la tinta de la marca */
+  [data-ui] .br-d { margin: 0; padding-right: 12px; max-width: min(22ch, 100%); font-size: 17px; line-height: 1.45; color: var(--tinta); }
+
+  /* Revisiones a los 30, 60 y 90 días: marcas cuadradas en su punto del tramo */
+  [data-ui] .br-marcas { position: absolute; left: 20px; right: 20px; bottom: 20px; height: 48px; }
+  [data-ui] .br-marca {
+    position: absolute; bottom: 0; left: calc(var(--f) * (100% - 12px));
+    display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+  }
+  /* «Día 90» queda pegado al borde derecho: su texto se alinea a la derecha de la marca */
+  [data-ui] .br-marca:last-child { left: auto; right: 0; align-items: flex-end; }
+  [data-ui] .br-marca i { order: 2; display: block; width: 12px; height: 12px; border-radius: 2px; background: var(--i); }
+  [data-ui] .br-dia { order: 1; font-size: 17px; font-weight: 600; line-height: 1; color: var(--i); white-space: nowrap; }
+
+  /* Tablet y teléfono: la barra de pie, tramos apilados a todo el ancho con alturas proporcionales */
+  @media (max-width: 899px) {
+    .br-h2 { margin-bottom: 40px; }
+    [data-ui].br-barra { flex-direction: column; min-height: 70svh; }
+    [data-ui] .br-tramo {
+      position: relative; flex: var(--p) 0 auto; min-width: 0; min-height: 72px; gap: 0;
+      padding: calc(20px + 22px * 1.05 + 10px) 20px 20px;
+    }
+    [data-ui] .br-tramo:last-child { padding-bottom: 88px; }
+    [data-ui] .br-bloque { position: absolute; inset: 0; height: auto; }
+    [data-ui] .br-fondo { transform-origin: center top; }
+    [data-ui] .br-dura { font-size: 22px; }
+    [data-ui] .br-d { position: relative; max-width: 36ch; padding-right: 0; font-size: 16px; color: var(--i); }
+  }
+  @media (max-width: 767px) {
+    .br-h2 { font-size: 8vw; }
+  }
+</style>
+
+<script>
+  import { gsap } from '../../scripts/motion';
+
+  const barra = document.querySelector<HTMLElement>('[data-barra]');
+  if (barra) {
+    const tramos = Array.from(barra.children) as HTMLElement[];
+    const mm = gsap.matchMedia();
+    mm.add(
+      { ancho: '(min-width: 900px) and (prefers-reduced-motion: no-preference)', alto: '(max-width: 899px) and (prefers-reduced-motion: no-preference)' },
+      (ctx) => {
+        const vertical = !!ctx.conditions?.alto;
+        const fondos = tramos.map((t) => t.querySelector('[data-fondo]'));
+        const textos = tramos.map((t) => [t.querySelector('[data-dura]'), t.querySelector('[data-d]')]);
+        const marcas = barra.querySelectorAll('[data-marca]');
+
+        gsap.set(fondos, vertical ? { scaleY: 0 } : { scaleX: 0 });
+        gsap.set(textos.flat(), { autoAlpha: 0, y: 18 });
+        gsap.set(marcas, { autoAlpha: 0, scale: 0.4 });
+
+        // Cada tramo crece después del anterior: la barra se lee de la primera llamada a producción
+        const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+        tramos.forEach((_, i) => {
+          const pos = i === 0 ? 0 : '-=0.3';
+          tl.to(fondos[i], { [vertical ? 'scaleY' : 'scaleX']: 1, duration: i === tramos.length - 1 ? 0.7 : 0.35, ease: 'power2.inOut' }, pos)
+            .to(textos[i], { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.06 }, '>');
+        });
+        tl.to(marcas, { autoAlpha: 1, scale: 1, duration: 0.4, stagger: 0.18, ease: 'back.out(2)' }, '-=0.3');
+
+        const io = new IntersectionObserver((entradas) => {
+          if (!entradas.some((e) => e.isIntersecting || e.boundingClientRect.top < 0)) return;
+          io.disconnect();
+          tl.play();
+        }, { rootMargin: '0px 0px -15% 0px' });
+        io.observe(barra);
+
+        return () => { io.disconnect(); tl.kill(); };
+      },
+    );
+  }
+</script>
