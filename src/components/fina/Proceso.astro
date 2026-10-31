@@ -1,0 +1,335 @@
+---
+// Proceso en ruta horizontal fija con riel y medidor de pago; sin JS, angosto o con «menos movimiento», estaciones apiladas.
+import { proceso } from '../../data/estudio';
+import { estaciones, medidor } from '../../data/fina';
+
+const CLAVE = 5;
+const LV = ['L', 'M', 'M', 'J', 'V'];
+---
+<section id="proceso" class="pr" aria-labelledby="pr-title" data-pr>
+  <div class="wrap pr-head">
+    <h2 id="pr-title" class="text-d2 max-w-[22ch]">Ocho pasos, con una semana a prueba antes de pagar.</h2>
+  </div>
+
+  <div class="pr-view">
+    <ol class="pr-track" data-pr-track>
+      {proceso.map((p, i) => {
+        const e = estaciones[i];
+        const m = e.marcas;
+        return (
+          <li class:list={['pr-st', { 'pr-key': i === CLAVE }]} data-pr-st data-escena={e.escena}>
+            <div class:list={['pr-pic', `es-${e.escena}`]} aria-hidden="true">
+              {e.escena === 'reloj' && <>
+                <svg class="es-svg" viewBox="0 0 120 120">
+                  <circle class="es-base" cx="60" cy="60" r="46" />
+                  <path class="es-red" data-a="arc" d="M60 14 A46 46 0 0 1 60 106" />
+                  <line class="es-ink" data-a="hand" x1="60" y1="60" x2="60" y2="26" />
+                  <circle class="es-hub" cx="60" cy="60" r="4.5" />
+                </svg>
+                <span class="es-big" data-a="big">{m[0]}</span>
+              </>}
+              {e.escena === 'vivo' && (
+                <div class="es-screen">
+                  <span class="es-live"><i></i>{m[0]}</span>
+                  <span class="es-row" data-a="row" style="--w: 86%"></span>
+                  <span class="es-row" data-a="row" style="--w: 64%"></span>
+                  <span class="es-row" data-a="row" style="--w: 74%"></span>
+                  <span class="es-cap" data-a="cap">{m[1]}</span>
+                </div>
+              )}
+              {e.escena === 'balanza' && <>
+                <svg class="es-svg" viewBox="0 0 160 100">
+                  <path class="es-base" d="M80 92V30M58 92h44" />
+                  <g data-a="beam">
+                    <path class="es-ink" d="M18 30h124M18 30v22M142 30v22" />
+                    <path class="es-red es-thick" d="M4 52h28" />
+                    <path class="es-ink es-thick" d="M128 52h28" />
+                  </g>
+                  <circle class="es-hub" cx="80" cy="30" r="4.5" />
+                </svg>
+                <span class="es-pair"><span class="es-cap es-capred">{m[0]}</span><span class="es-cap">{m[1]}</span></span>
+              </>}
+              {e.escena === 'base' && <>
+                <svg class="es-svg" viewBox="0 0 160 80">
+                  <polyline class="es-ink" data-a="line" points="4,58 22,44 38,52 56,34 74,48 92,40 110,47 128,32 156,42" />
+                  <line class="es-red" data-a="ref" x1="4" y1="44" x2="156" y2="44" />
+                </svg>
+                <span class="es-cap" data-a="cap">{m[0]}</span>
+              </>}
+              {e.escena === 'sprints' && <>
+                <div class="es-weeks">
+                  {m.slice(0, 3).map((w) => (
+                    <div class="es-week">
+                      <span class="es-cap">{w}</span>
+                      <span class="es-days">{LV.map((d, k) => <i data-a={k === 4 ? 'vie' : 'day'}>{d}</i>)}</span>
+                    </div>
+                  ))}
+                </div>
+                <span class="es-legend"><i></i>{m[3]}</span>
+              </>}
+              {e.escena === 'prueba' && <>
+                <span class="es-cap">{m[7]}</span>
+                <ul class="es-trial">{m.slice(0, 7).map((d) => <li data-a="day">{d}</li>)}</ul>
+                <span class="es-big" data-a="big">{m[8]}</span>
+              </>}
+              {e.escena === 'monitoreo' && <>
+                <span class="es-cap">{m[0]}</span>
+                <span class="es-grid">{Array.from({ length: 14 }, () => <i data-a="sq"></i>)}</span>
+                <span class="es-cap">{m[1]}</span>
+              </>}
+              {e.escena === 'revisiones' && (
+                <div class="es-rev">
+                  <span class="es-track"><span class="es-trackfill" data-a="fill"></span></span>
+                  {m.slice(0, 3).map((t, k) => <span class="es-mark" data-a="mark" style={`--x: ${18 + k * 22}%`}><i></i>{t}</span>)}
+                  <span class="es-month" data-a="month" style="--x: 82%"><i></i><i></i><i></i>{m[3]}</span>
+                </div>
+              )}
+            </div>
+
+            <span class="pr-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="pr-t">{p.t}</h3>
+            <p class="pr-d">{p.d}</p>
+            {i === CLAVE && <p class="pr-tag">{medidor.antes}</p>}
+            {i === CLAVE + 1 && <p class="pr-tag">{medidor.despues}</p>}
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+
+  <div class="wrap pr-hud" aria-hidden="true">
+    <div class="pr-rail">
+      <span class="pr-fill" data-pr-fill></span>
+      {proceso.map(() => <span class="pr-tick" data-pr-tick></span>)}
+      <span class="pr-mark" data-pr-mark></span>
+    </div>
+    <p class="pr-pay" data-pr-pay><span class="pr-pay-a">{medidor.antes}</span><span class="pr-pay-b"><i></i>{medidor.despues}</span></p>
+  </div>
+</section>
+
+<style>
+  .pr { position: relative; padding-block: clamp(6rem, 12vw, 10rem); }
+  .pr-view { margin-top: clamp(2.5rem, 5vw, 4rem); }
+  .pr-track {
+    list-style: none; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 3rem); max-width: 84rem;
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.75rem 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .pr-track { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pr-key { grid-column: 1 / -1; }
+  }
+  .pr-st { position: relative; display: flex; flex-direction: column; }
+  .pr-n { margin-top: 1.25rem; font-family: var(--font-display); font-weight: 800; font-size: 0.95rem; font-variant-numeric: tabular-nums; color: var(--color-red-text); }
+  .pr-t { margin: 0.35rem 0 0; font-size: clamp(1.3rem, 1.9vw, 1.6rem); line-height: 1.2; letter-spacing: -0.02em; }
+  .pr-d { margin: 0.55rem 0 0; max-width: 40ch; font-size: 1.0625rem; line-height: 1.6; color: var(--color-ash); }
+  .pr-tag {
+    align-self: flex-start; margin: 1rem 0 0; padding: 0.4rem 0.85rem; border-radius: 999px;
+    background: var(--color-red); color: #fff; font-size: 0.875rem; font-weight: 600;
+  }
+  .pr-key { padding: clamp(1.1rem, 2vw, 1.6rem); border-radius: 1.5rem; background: var(--color-amber); color: #0B0A0E; }
+  .pr-key .pr-n, .pr-key .pr-d { color: #0B0A0E; }
+  .pr-key .pr-t { font-size: clamp(1.7rem, 2.8vw, 2.4rem); line-height: 1.05; letter-spacing: -0.035em; }
+  .pr-key .pr-tag { background: #0B0A0E; color: #F4F0E8; }
+
+  .pr-pic {
+    position: relative; display: grid; place-items: center; align-content: center; gap: 0.6rem; height: 12.5rem; padding: 1.1rem;
+    border-radius: 1.1rem; background: var(--color-surface); color: var(--color-bone);
+  }
+  .pr-key .pr-pic { background: rgb(11 10 14 / 0.08); color: #0B0A0E; }
+  .es-svg { width: 100%; height: 100%; max-height: 8.5rem; overflow: visible; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .es-base { stroke: var(--color-line-strong); stroke-width: 3; }
+  .es-ink { stroke: var(--color-bone); stroke-width: 3; }
+  .es-red { stroke: var(--color-red); stroke-width: 4; }
+  .es-thick { stroke-width: 5; }
+  .es-hub { fill: var(--color-red); }
+  .es-cap { font-size: 0.875rem; line-height: 1.3; color: var(--color-ash); text-align: center; }
+  .es-capred { color: var(--color-red-text); font-weight: 600; }
+  .es-big { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; letter-spacing: -0.03em; line-height: 1; }
+
+  .es-reloj { grid-template-areas: "all"; }
+  .es-reloj > * { grid-area: all; }
+  .es-reloj .es-big { font-size: 1.15rem; transform: translateY(2.2rem); }
+
+  .es-screen { width: 100%; max-width: 15rem; display: grid; gap: 0.55rem; padding: 0.9rem; border-radius: 0.8rem; border: 1px solid var(--color-line-strong); }
+  .es-live { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.8rem; font-weight: 600; color: var(--color-red-text); }
+  .es-live i { width: 0.5rem; height: 0.5rem; border-radius: 99px; background: var(--color-red); animation: es-pulse 1.4s ease-in-out infinite; }
+  @keyframes es-pulse { 50% { opacity: 0.25; } }
+  .es-row { display: block; width: var(--w); height: 0.55rem; border-radius: 99px; background: var(--color-line-strong); transform-origin: 0 50%; }
+  .es-screen .es-cap { text-align: left; }
+
+  .es-pair { display: flex; justify-content: space-between; width: 100%; gap: 1rem; }
+
+  .es-weeks { display: grid; grid-template-columns: repeat(3, auto); gap: clamp(0.4rem, 2vw, 0.8rem); }
+  .es-week { display: grid; gap: 0.35rem; justify-items: center; }
+  .es-days { display: flex; gap: 0.2rem; }
+  .es-days i {
+    display: grid; place-items: center; width: clamp(0.95rem, 4.2vw, 1.25rem); height: 1.6rem; border-radius: 0.3rem; font-style: normal; font-size: 0.65rem;
+    background: var(--color-surface-2); color: var(--color-ash);
+  }
+  .es-days i[data-a="vie"] { background: var(--color-red); color: #fff; }
+  .es-legend { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--color-ash); }
+  .es-legend i { width: 0.6rem; height: 0.6rem; border-radius: 0.15rem; background: var(--color-red); }
+
+  .es-trial { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.3rem; width: 100%; max-width: 22rem; }
+  .es-trial li { display: grid; place-items: center; height: 2.4rem; border-radius: 0.45rem; background: #0B0A0E; color: var(--color-amber); font-size: 0.75rem; font-weight: 600; }
+  .es-prueba .es-cap { color: #0B0A0E; }
+  .es-prueba .es-big { font-size: clamp(1.4rem, 2.2vw, 1.9rem); }
+
+  .es-grid { display: grid; grid-template-columns: repeat(7, 1.3rem); gap: 0.3rem; }
+  .es-grid i { height: 1.3rem; border-radius: 0.3rem; background: var(--color-bone); }
+
+  .es-rev { position: relative; width: 100%; height: 6rem; }
+  .es-track { position: absolute; left: 0; right: 0; top: 2.2rem; height: 3px; border-radius: 3px; background: var(--color-line-strong); }
+  .es-trackfill { position: absolute; inset: 0; border-radius: inherit; background: var(--color-red); transform-origin: 0 50%; }
+  .es-mark, .es-month {
+    position: absolute; left: var(--x); top: 1.65rem; display: grid; justify-items: center; gap: 0.5rem; transform: translateX(-50%);
+    font-size: 0.8rem; color: var(--color-bone); white-space: nowrap;
+  }
+  .es-mark i { width: 0.9rem; height: 0.9rem; border-radius: 99px; background: var(--color-red); box-shadow: 0 0 0 4px var(--color-surface); }
+  .es-month { grid-auto-flow: row; color: var(--color-ash); }
+  .es-month i { display: none; }
+
+  .pr-hud { display: none; }
+
+  .pr.is-h { height: 100vh; height: 100svh; padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .pr.is-h .pr-head { flex: none; padding-top: clamp(5.5rem, 12vh, 7.5rem); }
+  .pr.is-h .pr-view { flex: 1; min-height: 0; margin: 0; display: flex; align-items: center; }
+  .pr.is-h .pr-track { display: flex; align-items: stretch; gap: clamp(1.25rem, 2.2vw, 2rem); width: max-content; max-width: none; margin: 0; padding-inline: max(clamp(1.25rem, 4vw, 3rem), calc((100vw - 84rem) / 2 + 3rem)); }
+  .pr.is-h .pr-st { width: clamp(17rem, 22vw, 21rem); }
+  .pr.is-h .pr-key { width: clamp(24rem, 32vw, 30rem); }
+  .pr.is-h .pr-pic { height: clamp(9rem, 22vh, 12.5rem); }
+  .pr.is-h .pr-key .pr-pic { height: clamp(10.5rem, 26vh, 14rem); }
+  /* Las pastillas del medidor quedan solo para lectores de pantalla: el riel las muestra */
+  .pr.is-h .pr-tag { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  .pr.is-h .pr-hud { flex: none; display: flex; align-items: center; gap: clamp(1.5rem, 4vw, 3.5rem); padding-block: 1.5rem clamp(1.5rem, 4vh, 2.5rem); }
+  .pr-rail { position: relative; flex: 1; height: 2px; background: var(--color-line-strong); }
+  .pr-fill { position: absolute; inset: 0; background: var(--color-red); transform-origin: 0 50%; transform: scaleX(0); }
+  .pr-tick {
+    position: absolute; top: 50%; width: 0.6rem; height: 0.6rem; margin: -0.3rem 0 0 -0.3rem; border-radius: 99px;
+    background: var(--color-ink); border: 2px solid var(--color-line-strong); transition: background-color 0.3s, border-color 0.3s;
+  }
+  .pr-tick.is-on { background: var(--color-red); border-color: var(--color-red); }
+  .pr-mark {
+    position: absolute; top: 50%; left: 0; width: 4px; height: 1.9rem; margin: -0.95rem 0 0 -2px; border-radius: 4px;
+    background: var(--color-red); transform: rotate(18deg);
+  }
+  .pr-pay { display: grid; margin: 0; min-width: 17rem; font-family: var(--font-display); font-weight: 800; font-size: clamp(1.05rem, 1.4vw, 1.3rem); letter-spacing: -0.02em; }
+  .pr-pay > span { grid-area: 1 / 1; display: inline-flex; align-items: center; gap: 0.55rem; transition: opacity 0.4s, transform 0.5s var(--ease-out-expo); }
+  .pr-pay-b { color: var(--color-red-text); opacity: 0; transform: translateY(0.6rem); }
+  .pr-pay-b i { width: 0.55rem; height: 0.55rem; border-radius: 99px; background: var(--color-red); }
+  .pr-pay.is-paid .pr-pay-a { opacity: 0; transform: translateY(-0.6rem); }
+  .pr-pay.is-paid .pr-pay-b { opacity: 1; transform: none; }
+
+  @media (max-height: 760px) {
+    .pr.is-h .pr-head :global(h2) { font-size: clamp(1.6rem, 2.8vw, 2.4rem); }
+    .pr.is-h .pr-d { font-size: 0.95rem; line-height: 1.5; }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion } from '../../scripts/motion';
+
+  const sec = document.querySelector<HTMLElement>('[data-pr]')!;
+  const track = sec.querySelector<HTMLElement>('[data-pr-track]')!;
+  const stations = Array.from(sec.querySelectorAll<HTMLElement>('[data-pr-st]'));
+  const fill = sec.querySelector<HTMLElement>('[data-pr-fill]')!;
+  const mark = sec.querySelector<HTMLElement>('[data-pr-mark]')!;
+  const ticks = Array.from(sec.querySelectorAll<HTMLElement>('[data-pr-tick]'));
+  const pay = sec.querySelector<HTMLElement>('[data-pr-pay]')!;
+  const PAGA = 6; // estación 7: la semana a prueba ya terminó
+
+  type Q = (a: string) => Element[];
+  const escenas: Record<string, (q: Q) => gsap.core.Timeline> = {
+    reloj: (q) => gsap.timeline({ paused: true, defaults: { ease: 'power2.inOut' } })
+      .fromTo(q('arc'), { drawSVG: '0% 0%' }, { drawSVG: '0% 100%', duration: 1.1 })
+      .fromTo(q('hand'), { rotation: 0, svgOrigin: '60 60' }, { rotation: 180, svgOrigin: '60 60', duration: 1.1 }, 0)
+      .fromTo(q('big'), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out' }, 0.75),
+    vivo: (q) => gsap.timeline({ paused: true })
+      .fromTo(q('row'), { scaleX: 0 }, { scaleX: 1, duration: 0.6, stagger: 0.15, ease: 'power3.out' })
+      .fromTo(q('cap'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, '-=0.2'),
+    balanza: (q) => gsap.timeline({ paused: true })
+      .fromTo(q('beam'), { rotation: 9, svgOrigin: '80 30' }, { rotation: -9, svgOrigin: '80 30', duration: 1.3, ease: 'elastic.out(1, 0.55)' }),
+    base: (q) => gsap.timeline({ paused: true })
+      .fromTo(q('line'), { drawSVG: '0% 0%' }, { drawSVG: '0% 100%', duration: 1, ease: 'power2.inOut' })
+      .fromTo(q('ref'), { drawSVG: '0% 0%' }, { drawSVG: '0% 100%', duration: 0.7, ease: 'power3.out' }, '-=0.15')
+      .fromTo(q('cap'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, '-=0.3'),
+    sprints: (q) => gsap.timeline({ paused: true })
+      .fromTo(q('day'), { autoAlpha: 0.2 }, { autoAlpha: 1, duration: 0.25, stagger: 0.04 })
+      .fromTo(q('vie'), { scale: 0.4, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.4, stagger: 0.25, ease: 'back.out(2.2)' }, 0.2),
+    prueba: (q) => gsap.timeline({ paused: true })
+      .fromTo(q('day'), { backgroundColor: 'rgba(11, 10, 14, 0.12)', color: 'rgba(11, 10, 14, 0.55)' }, { backgroundColor: '#0B0A0E', color: '#FF6A2C', duration: 0.3, stagger: 0.14 })
+      .fromTo(q('big'), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out' }, '-=0.1'),
+    monitoreo: (q) => gsap.timeline({ paused: true })
+      .fromTo(q('sq'), { scale: 0.3, autoAlpha: 0.15 }, { scale: 1, autoAlpha: 1, duration: 0.3, stagger: 0.06, ease: 'power2.out' }),
+    revisiones: (q) => gsap.timeline({ paused: true })
+      .fromTo(q('fill'), { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: 'power1.inOut' })
+      .fromTo(q('mark'), { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35, stagger: 0.28 }, 0.15)
+      .fromTo(q('month'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, '-=0.1'),
+  };
+  const sceneTl = (st: HTMLElement) => escenas[st.dataset.escena!]?.((a) => Array.from(st.querySelectorAll(`[data-a="${a}"]`))) ?? null;
+
+  if (!reduceMotion) {
+    document.fonts.ready.then(() => {
+      gsap.matchMedia().add({ desk: '(min-width: 1024px)', mob: '(max-width: 1023px)' }, (ctx) => {
+        if (ctx.conditions!.mob) {
+          stations.forEach((st) => {
+            const tl = sceneTl(st);
+            if (tl) ScrollTrigger.create({ trigger: st, start: 'top 80%', once: true, onEnter: () => tl.play() });
+          });
+          return;
+        }
+
+        sec.classList.add('is-h');
+        const dist = () => Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
+        const run = gsap.to(track, {
+          x: () => -dist(), ease: 'none', // lineal: el scroll y la posición deben coincidir
+          scrollTrigger: {
+            trigger: sec, start: 'top top', end: () => `+=${dist() * 1.15}`, pin: true, scrub: 0.6, invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              gsap.set(fill, { scaleX: self.progress });
+              gsap.set(mark, { left: `${self.progress * 100}%` });
+            },
+          },
+        });
+
+        // Cada marca del riel se ubica en el progreso exacto en que llega su estación.
+        // Las que ya se ven al fijarse (early) arman su dibujo mientras la sección sube.
+        const tls = stations.map(sceneTl);
+        const early: boolean[] = [];
+        ScrollTrigger.create({
+          trigger: sec, start: 'top 60%',
+          onEnter: () => tls.forEach((tl, i) => { if (early[i]) tl?.play(); }),
+          onLeaveBack: () => tls.forEach((tl, i) => { if (early[i]) tl?.reverse(); }),
+        });
+        stations.forEach((st, i) => {
+          const tl = tls[i];
+          ScrollTrigger.create({
+            trigger: st, containerAnimation: run, start: 'left 62%',
+            onToggle: (self) => {
+              if (self.isActive) tl?.play();
+              ticks[i].classList.toggle('is-on', self.isActive || self.progress === 1);
+            },
+            onEnter: () => { if (i === PAGA) pay.classList.add('is-paid'); },
+            onLeaveBack: () => { if (!early[i]) tl?.reverse(); ticks[i].classList.remove('is-on'); if (i === PAGA) pay.classList.remove('is-paid'); },
+            onRefresh: (self) => {
+              const main = run.scrollTrigger!;
+              const p = gsap.utils.clamp(0, 1, (self.start - main.start) / (main.end - main.start || 1));
+              ticks[i].style.left = `${p * 100}%`;
+              early[i] = p === 0;
+              if (self.progress > 0) ticks[i].classList.add('is-on');
+            },
+          });
+        });
+
+        return () => {
+          sec.classList.remove('is-h');
+          ticks.forEach((t) => { t.classList.remove('is-on'); t.style.removeProperty('left'); });
+          pay.classList.remove('is-paid');
+        };
+      });
+      ScrollTrigger.sort();
+      ScrollTrigger.refresh();
+    });
+  }
+</script>

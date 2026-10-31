@@ -1,0 +1,302 @@
+---
+// El corte de la v3 más piezas sueltas (mini pantallas sin texto) que al bajar caen hacia la sección siguiente.
+import { contacto } from '../../data/contacto';
+import { hero } from '../../data/v3';
+import { piezasHero } from '../../data/fina';
+import Mini from './Mini.astro';
+
+const especialidades = ['Software a medida', 'Automatización de procesos', 'Asistentes de WhatsApp', 'Plataformas web', 'Backend y APIs', 'Integraciones', 'Diseño UX/UI'];
+---
+<section id="inicio" class="hc" data-hc aria-labelledby="hc-title">
+  <div class="hc-line" data-hc-line aria-hidden="true"><span data-hc-draw></span></div>
+
+  <div class="hp-zone" data-hp-zone aria-hidden="true">
+    {piezasHero.map((p) => (
+      <span class="hp" data-hp data-x={p.x} data-y={p.y} data-z={p.z} data-r={p.r} data-movil={p.movil ? '1' : '0'}>
+        <span class="hp-m" data-hp-m>
+          <span class="hp-in"><Mini tipo={p.tipo} /></span>
+        </span>
+      </span>
+    ))}
+  </div>
+
+  <div class="wrap hc-body">
+    <div class="hc-tw" data-hc-tw>
+      <h1 id="hc-title" class="text-hero hc-title hc-a" data-hc-half>
+        <span class="hc-in">{hero.titulo.map((l) => <span class="hc-l">{l} </span>)}</span>
+      </h1>
+      <div class="text-hero hc-title hc-b" data-hc-half aria-hidden="true">
+        <span class="hc-in">{hero.titulo.map((l) => <span class="hc-l">{l} </span>)}</span>
+      </div>
+    </div>
+
+    <div class="hc-foot">
+      <p class="text-lead hc-bajada" data-hc-in>{hero.bajada}</p>
+      <div class="hc-ctas" data-hc-in>
+        <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary" data-magnetic>Agenda una demo</a>
+        <a href="#como" class="btn btn-ghost">Mira cómo trabajamos</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hc-tape" data-hc-in>
+    <ul class="sr-only">{especialidades.map((e) => <li>{e}</li>)}</ul>
+    <div class="hc-track" data-hc-track aria-hidden="true">
+      {[0, 1].map(() => (
+        <span class="hc-run">
+          {especialidades.map((e) => <><span>{e}</span><span class="hc-sl">/</span></>)}
+        </span>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hc {
+    position: relative; min-height: 100svh; display: flex; flex-direction: column; overflow: hidden; isolation: isolate;
+    background: var(--color-ink);
+  }
+  .hc-line {
+    position: absolute; z-index: 1; left: 64%; top: 46%; width: clamp(5px, 0.5vw, 8px); height: 260vh; border-radius: 99px;
+    transform: translate(-50%, -50%) rotate(18deg); pointer-events: none;
+  }
+  .hc-line span { display: block; width: 100%; height: 100%; border-radius: inherit; background: var(--color-red); }
+
+  .hc-body { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: clamp(2.5rem, 6vh, 4.5rem); padding-top: 8rem; padding-bottom: clamp(2rem, 5vh, 3.5rem); }
+  .hc-tw { position: relative; }
+  .hc-title { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(3rem, 8.2vw, 8.8rem); }
+  .hc-l { display: block; width: fit-content; }
+  .hc-in { display: block; }
+  .hc-b { display: none; }
+
+  .hc-foot { display: grid; gap: 1.75rem; }
+  .hc-bajada { margin: 0; max-width: 40ch; color: var(--color-ash); }
+  .hc-ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  @media (min-width: 900px) {
+    .hc-foot { grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 3rem; }
+  }
+
+  /* Fondo propio: la barra roja no cruza la cinta */
+  .hc-tape { position: relative; z-index: 2; border-top: 1px solid var(--color-line); overflow: hidden; padding-block: 1.1rem; background: var(--color-ink); }
+  .hc-track { display: flex; width: max-content; }
+  .hc-run { display: flex; align-items: baseline; flex: none; font-family: var(--font-display); font-weight: 800; font-size: clamp(1.25rem, 2.2vw, 1.9rem); letter-spacing: -0.03em; color: var(--color-ash); white-space: nowrap; }
+  .hc-sl { color: var(--color-red-text); padding-inline: 0.7em; }
+  .hc-run + .hc-run { display: none; }
+  .hc-run { flex-wrap: wrap; white-space: normal; padding-inline: clamp(1.25rem, 4vw, 3rem); }
+  :global(html.has-motion) .hc-run { flex-wrap: nowrap; white-space: nowrap; padding-inline: 0; }
+  :global(html.has-motion) .hc-run + .hc-run { display: flex; }
+
+  :global(html.has-motion) .hc-b { display: block; position: absolute; inset: 0; }
+  :global(html.has-motion) [data-hc-half], :global(html.has-motion) [data-hc-in], :global(html.has-motion) .hc-line { visibility: hidden; }
+
+  /* Piezas: decorativas, solo con JS. data-z = profundidad (0 lejos). */
+  .hp-zone { position: absolute; z-index: 0; inset: 0; pointer-events: none; display: none; }
+  .hc.has-pz .hp-zone { display: block; }
+  .hp { position: absolute; left: 0; top: 0; }
+  .hp-in {
+    --s: 1;
+    display: block; width: clamp(4.5rem, 7vw, 7rem); padding: 0.6rem; border-radius: 0.8rem;
+    background: var(--color-surface); border: 1px solid var(--color-line-strong); scale: var(--s); transform-origin: 0 50%;
+  }
+  .hp[data-z="0"] .hp-in { --s: 0.8; opacity: 0.45; }
+  .hp[data-z="1"] .hp-in { --s: 0.9; opacity: 0.72; }
+  /* translate no pisa los transform de GSAP */
+  .hc.is-floating .hp-in { animation: hp-float var(--dur, 5s) ease-in-out infinite alternate; animation-delay: var(--del, 0s); }
+  @keyframes hp-float { from { translate: 0 -6px; } to { translate: 0 6px; } }
+  @media (max-width: 639px) {
+    .hp-in { padding: 0.45rem; border-radius: 0.6rem; }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion, coarsePointer } from '../../scripts/motion';
+
+  const sec = document.querySelector<HTMLElement>('[data-hc]')!;
+  const line = sec.querySelector<HTMLElement>('[data-hc-line]')!;
+  const draw = line.querySelector<HTMLElement>('[data-hc-draw]')!;
+  const tw = sec.querySelector<HTMLElement>('[data-hc-tw]')!;
+  const [a, b] = gsap.utils.toArray<HTMLElement>('[data-hc-half]', sec);
+  const ins = [a, b].map((h) => h.querySelector<HTMLElement>('.hc-in')!);
+  const rise = sec.querySelectorAll<HTMLElement>('[data-hc-in]');
+  const pieces = gsap.utils.toArray<HTMLElement>('[data-hp]', sec);
+
+  // La barra va a 18° de la vertical, como la «/».
+  const ANG = (18 * Math.PI) / 180;
+  const TAN = Math.tan(ANG);
+  const down = { x: -Math.sin(ANG), y: Math.cos(ANG) };
+  const along = (d: number) => ({ x: down.x * d, y: down.y * d });
+  let cut = { x: 0, y: 0 };
+
+  function place(clip = true) {
+    const hr = sec.getBoundingClientRect();
+    const tr = tw.getBoundingClientRect();
+    const lines = a.querySelectorAll<HTMLElement>('.hc-l');
+    const maxW = Math.max(...Array.from(lines, (l) => l.offsetWidth));
+    const cx = tr.left - hr.left + maxW * 0.6;
+    const cy = tr.top - hr.top + tr.height * 0.5;
+    cut = { x: cx, y: cy };
+    gsap.set(line, { left: cx, top: cy });
+    if (!clip) return;
+
+    const ox = tr.left - hr.left, oy = tr.top - hr.top;
+    const xAt = (y: number) => cx - ox + (cy - oy - y) * TAN;
+    const L = 400, H = tr.height, W = tr.width;
+    const t = -L, bt = H + L;
+    a.style.clipPath = `polygon(${-L}px ${t}px, ${xAt(t)}px ${t}px, ${xAt(bt)}px ${bt}px, ${-L}px ${bt}px)`;
+    b.style.clipPath = `polygon(${xAt(t)}px ${t}px, ${W + L}px ${t}px, ${W + L}px ${bt}px, ${xAt(bt)}px ${bt}px)`;
+  }
+
+  // -1: a la izquierda de la barra; 1: a la derecha.
+  const side = new Map<HTMLElement, number>();
+  const narrow = () => window.innerWidth < 640;
+
+  // Cada pieza parte de su lugar preferido y, si pisa el titular, la barra u otra pieza, busca en espiral
+  // el hueco libre más cercano (arriba del titular o a su derecha). Si no hay, no se muestra.
+  const SCALE = [0.8, 0.9, 1];
+  function placePieces() {
+    const hr = sec.getBoundingClientRect();
+    const body = sec.querySelector<HTMLElement>('.hc-body')!;
+    const foot = sec.querySelector<HTMLElement>('.hc-foot')!;
+    const br = body.getBoundingClientRect(), twr = tw.getBoundingClientRect();
+    const pad = parseFloat(getComputedStyle(body).paddingLeft) || 24;
+    const left = br.left - hr.left + pad, right = br.right - hr.left - pad;
+    const top = 84, bottom = br.top - hr.top + foot.offsetTop - 24;
+    const m = narrow() ? 12 : 22;
+    const ox = twr.left - hr.left, oy = twr.top - hr.top;
+    type Box = { x: number; y: number; w: number; h: number };
+    // Un rectángulo por renglón visible (una línea del titular puede partirse en dos); relativo a la línea, sin el transform de la entrada.
+    const lines: Box[] = Array.from(a.querySelectorAll<HTMLElement>('.hc-l')).flatMap((l) => {
+      const lr = l.getBoundingClientRect(), range = document.createRange();
+      range.selectNodeContents(l);
+      return Array.from(range.getClientRects(), (r) => ({ x: ox + l.offsetLeft + r.left - lr.left - m, y: oy + l.offsetTop + r.top - lr.top - m, w: r.width + m * 2, h: r.height + m * 2 }));
+    });
+    const hit = (p: Box, q: Box) => p.x < q.x + q.w && p.x + p.w > q.x && p.y < q.y + q.h && p.y + p.h > q.y;
+    const xl = (y: number) => cut.x + (cut.y - y) * TAN;
+    const onBar = (q: Box) => q.x < xl(q.y) + 16 && q.x + q.w > xl(q.y + q.h) - 16;
+    const placed: Box[] = [];
+    const fits = (q: Box) => q.x >= left - 8 && q.x + q.w <= right + 8 && q.y >= top && q.y + q.h <= bottom
+      && !onBar(q) && !lines.some((l) => hit(q, l)) && !placed.some((o) => hit(q, o));
+
+    pieces.forEach((p) => {
+      p.style.display = narrow() && p.dataset.movil !== '1' ? 'none' : '';
+      if (p.style.display) return;
+      const k = SCALE[Number(p.dataset.z)] ?? 1;
+      const w = p.offsetWidth * k, h = p.offsetHeight * k;
+      const x0 = left + (Number(p.dataset.x) / 100) * (right - left - w);
+      const y0 = top + (Number(p.dataset.y) / 100) * Math.max(0, bottom - top - h);
+      let found: Box | null = null;
+      for (let r = 0; r <= 640 && !found; r += 24) {
+        const n = r ? Math.ceil((Math.PI * r) / 24) : 1;
+        for (let i = 0; i < n && !found; i++) {
+          const t = (i / n) * Math.PI * 2;
+          const q = { x: x0 + Math.cos(t) * r, y: y0 + Math.sin(t) * r * 0.6, w, h };
+          if (fits(q)) found = q;
+        }
+      }
+      if (!found) { p.style.display = 'none'; return; }
+      placed.push({ x: found.x - 12, y: found.y - 10, w: w + 24, h: h + 20 });
+      side.set(p, found.x + w / 2 < xl(found.y + h / 2) ? -1 : 1);
+      gsap.set(p, { left: found.x, top: found.y });
+    });
+  }
+
+  if (!reduceMotion) {
+    gsap.set(line, { xPercent: -50, yPercent: -50, x: 0, y: 0, rotation: 18 });
+
+    const tape = sec.querySelector<HTMLElement>('[data-hc-track]')!;
+    const loop = gsap.to(tape, { xPercent: -50, duration: 38, ease: 'none', repeat: -1, paused: true });
+
+    let started = false, visible = true, held = false;
+    const tapeBox = sec.querySelector<HTMLElement>('.hc-tape')!;
+    const sync = () => { if (started && visible && !held) loop.play(); else loop.pause(); };
+    tapeBox.addEventListener('pointerenter', () => { held = true; sync(); });
+    tapeBox.addEventListener('pointerleave', () => { held = false; sync(); });
+    ScrollTrigger.create({
+      trigger: sec, start: 'top bottom', end: 'bottom top',
+      onToggle: (self) => { visible = self.isActive; sync(); sec.classList.toggle('is-floating', self.isActive); },
+    });
+
+    let dir = 1;
+    ScrollTrigger.create({
+      trigger: sec, start: 'top top', end: 'bottom top',
+      onUpdate: (self) => {
+        dir = self.direction;
+        const boost = 1 + Math.min(6, Math.abs(self.getVelocity()) / 260);
+        gsap.to(loop, { timeScale: dir * boost, duration: 0.2, overwrite: true, onComplete: () => { gsap.to(loop, { timeScale: dir, duration: 1.2, ease: 'power2.out' }); } });
+      },
+    });
+
+    document.fonts.ready.then(() => {
+      place();
+      sec.classList.add('has-pz', 'is-floating');
+      placePieces();
+      pieces.forEach((p, i) => {
+        const inner = p.querySelector<HTMLElement>('.hp-in')!;
+        inner.style.setProperty('--dur', `${4.2 + (i % 4) * 0.8}s`);
+        inner.style.setProperty('--del', `${-i * 0.7}s`);
+      });
+      const d = Math.max(window.innerHeight * 0.55, 380);
+      const fromA = along(-d), fromB = along(d);
+
+      gsap.set([a, b, line], { visibility: 'visible' });
+      gsap.set(pieces, { autoAlpha: 0 });
+      gsap.timeline({ delay: 0.15 })
+        .fromTo(draw, { scaleY: 0, transformOrigin: '50% 0%' }, { scaleY: 1, duration: 1.1, ease: 'expo.inOut' })
+        .fromTo(a, { x: fromA.x, y: fromA.y, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: 1.4, ease: 'expo.out' }, 0.55)
+        .fromTo(b, { x: fromB.x, y: fromB.y, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: 1.4, ease: 'expo.out' }, 0.62)
+        .fromTo(pieces, { y: -50, rotation: (i, el: HTMLElement) => Number(el.dataset.r) - 14, autoAlpha: 0 }, {
+          y: 0, rotation: (i, el: HTMLElement) => Number(el.dataset.r), autoAlpha: 1,
+          duration: 1, ease: 'expo.out', stagger: { each: 0.07, from: 'random' },
+        }, 1.0)
+        .fromTo(rise, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out', stagger: 0.12 }, 1.25)
+        .add(() => { started = true; if (visible && !held) loop.play(); }, 1.4)
+        .add(() => {
+          const out = along(window.innerHeight * 0.4);
+          const fall = gsap.timeline({ scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom top', scrub: 0.5, invalidateOnRefresh: true } })
+            .to(a, { x: -out.x, y: -out.y, ease: 'none' }, 0)
+            .to(b, { x: out.x, y: out.y, ease: 'none' }, 0)
+            .to(line, { scaleX: 4, ease: 'none' }, 0)
+            .to(sec.querySelector('.hc-foot'), { autoAlpha: 0, y: -40, ease: 'none', duration: 0.6 }, 0);
+          pieces.forEach((p) => {
+            const z = Number(p.dataset.z), r = Number(p.dataset.r);
+            fall.to(p, {
+              y: () => window.innerHeight * (0.55 + z * 0.3), x: () => (side.get(p) ?? 1) * window.innerWidth * 0.03 * (z + 1),
+              rotation: r + (r < 0 ? -1 : 1) * (10 + z * 6), ease: 'power1.in',
+            }, 0);
+          });
+        });
+
+      if (!coarsePointer) {
+        const moves = ins.map((el) => ({ x: gsap.quickTo(el, 'x', { duration: 0.9, ease: 'power3.out' }), y: gsap.quickTo(el, 'y', { duration: 0.9, ease: 'power3.out' }) }));
+        const pmoves = pieces.map((p) => {
+          const m = p.querySelector<HTMLElement>('[data-hp-m]')!;
+          return { p, x: gsap.quickTo(m, 'x', { duration: 1.1, ease: 'power3.out' }), y: gsap.quickTo(m, 'y', { duration: 1.1, ease: 'power3.out' }), k: 0.5 + Number(p.dataset.z) * 0.45 };
+        });
+        sec.addEventListener('pointermove', (e) => {
+          const k = (e.clientX / window.innerWidth - 0.5) * 36;
+          moves.forEach((m, i) => { const pt = along(i ? k : -k); m.x(pt.x); m.y(pt.y); });
+          pmoves.forEach((m) => { const pt = along((side.get(m.p) ?? 1) * k * 1.4 * m.k); m.x(pt.x); m.y(pt.y); });
+        });
+        sec.addEventListener('pointerleave', () => {
+          moves.forEach((m) => { m.x(0); m.y(0); });
+          pmoves.forEach((m) => { m.x(0); m.y(0); });
+        });
+      }
+    });
+  }
+
+  document.fonts.ready.then(() => {
+    if (!reduceMotion) return;
+    place(false);
+    sec.classList.add('has-pz');
+    placePieces();
+    pieces.forEach((p) => gsap.set(p, { rotation: Number(p.dataset.r) }));
+  });
+  let w = window.innerWidth;
+  window.addEventListener('resize', () => {
+    if (window.innerWidth === w) return;
+    w = window.innerWidth;
+    place(!reduceMotion);
+    if (sec.classList.contains('has-pz')) placePieces();
+  });
+</script>

@@ -1,0 +1,61 @@
+---
+// Escena «Automatización» (animación en src/scripts/fina/escenas.ts); sin JS se ve el estado final.
+const nodos = ['Pedido nuevo', 'Registro', 'Factura', 'Aviso'];
+const tareas = ['Copiar el pedido a la hoja', 'Hacer la factura', 'Actualizar el inventario'];
+const avisos = [['A tu cliente, por WhatsApp', 'Tu pedido está confirmado.'], ['A tu equipo', 'Pedido listo para despachar.']];
+const bitacora = [['10:02', 'Pedido recibido por la web'], ['10:02', 'Registrado'], ['10:02', 'Factura emitida'], ['10:03', 'Cliente y equipo avisados']];
+---
+<div class="esc au" data-escena="auto" aria-hidden="true">
+  <div class="au-flujo">
+    <span class="au-linea" data-e="linea"></span>
+    {nodos.map((n) => (
+      <div class="au-nodo" data-e="nodo">
+        <span class="au-circ"><span class="au-ok" data-e="ok">✓</span></span>
+        <span class="au-nom">{n}</span>
+      </div>
+    ))}
+    <span class="au-ficha" data-e="ficha">Pedido</span>
+  </div>
+
+  <div class="au-abajo">
+    <ul class="au-tareas esc-card" data-e="tareas">
+      <li class="au-tit">Tareas a mano</li>
+      {tareas.map((t) => <li data-e="tarea"><span>{t}</span><i data-e="raya"></i></li>)}
+    </ul>
+    <div class="au-avisos" data-e="avisos">
+      {avisos.map(([a, b]) => <p class="au-aviso esc-card" data-e="aviso"><b>{a}</b>{b}</p>)}
+    </div>
+    <ol class="au-bitacora esc-card" data-e="bitacora">
+      <li class="au-tit">Registro</li>
+      {bitacora.map(([h, t]) => <li data-e="log"><time>{h}</time>{t}</li>)}
+    </ol>
+  </div>
+</div>
+
+<style>
+  .au { display: grid; grid-template-rows: auto 1fr; gap: 1.4em; padding: 1.2em 0.4em 0.4em; }
+  .au-flujo { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .au-linea { position: absolute; left: 12.5%; right: 12.5%; top: 1.3em; height: 2px; background: var(--color-line-strong); }
+  .au-nodo { position: relative; display: grid; justify-items: center; gap: 0.5em; text-align: center; font-size: 0.88em; }
+  .au-circ { position: relative; display: grid; place-items: center; width: 2.9em; height: 2.9em; border-radius: 99px; background: var(--color-surface); border: 2px solid var(--color-line-strong); }
+  .au-ok { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 99px; background: var(--color-red); color: #fff; font-weight: 700; }
+  .au-nom { color: var(--color-ash); }
+  /* La ficha va con left en % porque recorre las cuatro columnas del flujo */
+  .au-ficha {
+    position: absolute; left: 87.5%; top: -0.9em; translate: -50% 0; padding: 0.2em 0.6em; border-radius: 99px;
+    background: var(--color-bone); color: var(--color-ink); font-size: 0.75em; font-weight: 700; white-space: nowrap;
+  }
+
+  .au-abajo { display: grid; min-height: 0; }
+  .au-tareas, .au-avisos, .au-bitacora { grid-area: 1 / 1; align-self: start; }
+  .au-tareas, .au-avisos { visibility: hidden; opacity: 0; }
+  .au-tareas, .au-bitacora { list-style: none; margin: 0; padding: 0.9em 1.1em; display: grid; gap: 0.15em; }
+  .au-tit { font-weight: 600; margin-bottom: 0.35em; }
+  .au-tareas li:not(.au-tit) { position: relative; width: fit-content; padding: 0.4em 0; color: var(--color-ash); }
+  .au-tareas i { position: absolute; left: -0.2em; right: -0.2em; top: 50%; height: 2px; background: var(--color-red-text); transform-origin: 0 50%; }
+  .au-avisos { display: grid; gap: 0.7em; }
+  .au-aviso { margin: 0; padding: 0.9em 1.1em; display: grid; gap: 0.25em; }
+  .au-aviso b { font-size: 0.8em; color: var(--color-ash); font-weight: 600; }
+  .au-bitacora li:not(.au-tit) { display: flex; gap: 0.9em; padding: 0.42em 0; border-top: 1px solid var(--color-line); font-size: 0.9em; }
+  .au-bitacora time { color: var(--color-red-text); font-variant-numeric: tabular-nums; }
+</style>

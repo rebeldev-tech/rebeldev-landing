@@ -154,6 +154,7 @@ uniform float uFromDust;  // 1 = se arma desde el polvo; 0 = desde el </> peque√
 uniform vec3 uStart;
 uniform float uStartScale;
 uniform float uVortex;    // 0 = armado, 1 = hecho polvo (lo controla el scroll)
+uniform float uSpread;    // cu√°nto se abre la nube de polvo a lo ancho y alto
 uniform float uPointerStrength;
 uniform vec3 uPointer;
 uniform float uLight;     // 1 = modo claro
@@ -183,7 +184,7 @@ void main() {
   }
 
   // Polvo que gira alrededor.
-  vec3 s = aScatter;
+  vec3 s = aScatter * vec3(uSpread, uSpread, 1.0);
   float vt = smoothstep(aRand.w * 0.55, aRand.w * 0.55 + 0.45, uVortex);
   s.xz = rot(uTime * (0.015 + aRand.x * 0.03) + (1.0 - vt) * (2.5 + aRand.y * 2.0)) * s.xz;
   vec3 ph = aRand.xyz * 6.2831;
@@ -261,7 +262,8 @@ export class ParticleMark {
   private running = false; private visible = true;
   private clock = 0; private last = 0; private formT0 = -1;
 
-  constructor(private canvas: HTMLCanvasElement, private slot: HTMLElement, private opts: { interactive: boolean; still: boolean }) {
+  // formado: empieza armado, sin la entrada de build(). polvo: escala de la nube (1 = la de la v1).
+  constructor(private canvas: HTMLCanvasElement, private slot: HTMLElement, private opts: { interactive: boolean; still: boolean; formado?: boolean; polvo?: number }) {
     this.renderer = new WebGLRenderer({ canvas, alpha: true, antialias: false, premultipliedAlpha: true, powerPreference: 'high-performance' });
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
@@ -270,8 +272,8 @@ export class ParticleMark {
     const count = window.innerWidth < 768 ? 9000 : 16000;
     this.u = {
       uTime: { value: 0 }, uSize: { value: 30 }, uPixelRatio: { value: this.renderer.getPixelRatio() },
-      uForm: { value: opts.still ? 1 : 0 }, uFromDust: { value: 1 }, uStart: { value: new Vector3() }, uStartScale: { value: 1 },
-      uVortex: { value: 0 }, uPointerStrength: { value: 0 }, uPointer: { value: new Vector3(0, 0, 999) }, uLight: { value: 0 },
+      uForm: { value: opts.still || opts.formado ? 1 : 0 }, uFromDust: { value: 1 }, uStart: { value: new Vector3() }, uStartScale: { value: 1 },
+      uVortex: { value: 0 }, uSpread: { value: opts.polvo ?? 1 }, uPointerStrength: { value: 0 }, uPointer: { value: new Vector3(0, 0, 999) }, uLight: { value: 0 },
     };
     this.mat = new ShaderMaterial({
       vertexShader: VERTEX, fragmentShader: FRAGMENT, uniforms: this.u,

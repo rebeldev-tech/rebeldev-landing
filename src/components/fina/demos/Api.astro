@@ -1,0 +1,62 @@
+---
+// Escena «Backend y APIs» (animación en src/scripts/fina/escenas.ts); sin JS se ve el estado final.
+// Coordenadas en el viewBox 400 × 300; la escena mide 4:3, así que el SVG y el HTML coinciden en %.
+const canales = [
+  { t: 'Tu web', y: 55 },
+  { t: 'Tu app', y: 115 },
+  { t: 'WhatsApp', y: 175 },
+  { t: 'App nueva', y: 245, nueva: true },
+];
+const via = (y: number) => `M112 ${y} C165 ${y} 160 150 205 150`;
+const pct = (v: number, t: number) => `${(v / t) * 100}%`;
+---
+<div class="esc api" data-escena="api" aria-hidden="true">
+  <svg viewBox="0 0 400 300" class="api-svg">
+    {canales.map((c) => <path class:list={['api-via', { 'api-nueva-via': c.nueva }]} d={via(c.y)} data-e={c.nueva ? 'via-nueva' : 'via'} />)}
+    {canales.map((c) => <path class="api-pkt" d={via(c.y)} data-e="pkt" />)}
+  </svg>
+
+  {canales.map((c) => (
+    <span class:list={['api-canal esc-card', { 'is-nueva': c.nueva }]} style={`top:${pct(c.y, 300)}`} data-e={c.nueva ? 'canal-nuevo' : 'canal'}>{c.t}</span>
+  ))}
+
+  <div class="api-base esc-card" data-e="base">
+    <p class="api-base-t">La base</p>
+    <p class="api-fila">Reglas<span class="api-ok" data-e="guardado">✓ Guardado</span></p>
+    <div class="api-fila api-datos">
+      Datos
+      <div class="api-boveda" data-e="boveda">
+        <span class="api-tel">+51 9•• ••• •00</span>
+        <span class="api-candado"><i></i>Claves en la bóveda</span>
+      </div>
+    </div>
+  </div>
+
+  <span class="api-x" data-e="x">✕</span>
+  <span class="api-nota" data-e="nota">Falta la dirección</span>
+  <span class="api-pruebas" data-e="pruebas">✓ Pruebas automáticas: pasaron</span>
+</div>
+
+<style>
+  .api-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .api-via { fill: none; stroke: var(--color-line-strong); stroke-width: 2; }
+  .api-pkt { fill: none; stroke: var(--color-red-text); stroke-width: 3.5; stroke-linecap: round; visibility: hidden; }
+
+  .api-canal { position: absolute; left: 2%; width: 24%; translate: 0 -50%; padding: 0.55em 0.4em; text-align: center; font-size: 0.85em; font-weight: 600; }
+  .api-canal.is-nueva { border-color: var(--color-red-text); }
+
+  .api-base { position: absolute; left: 51.25%; top: 20%; width: 35%; height: 60%; padding: 0.8em; display: grid; align-content: start; gap: 0.5em; }
+  .api-base-t { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 1.1em; }
+  .api-fila { position: relative; margin: 0; padding: 0.5em 0.6em; border-radius: 0.5em; background: var(--color-surface-2); font-size: 0.85em; color: var(--color-ash); }
+  .api-ok { position: absolute; right: 0.6em; color: var(--color-red-text); font-weight: 600; }
+  .api-boveda { overflow: hidden; display: grid; gap: 0.3em; margin-top: 0.45em; color: var(--color-bone); }
+  .api-tel { font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+  .api-candado { display: flex; align-items: center; gap: 0.45em; font-size: 0.9em; }
+  .api-candado i { position: relative; width: 0.8em; height: 0.65em; margin-top: 0.3em; border-radius: 0.15em; background: var(--color-red-text); }
+  .api-candado i::before { content: ''; position: absolute; left: 0.14em; right: 0.14em; bottom: 100%; height: 0.4em; border: 2px solid var(--color-red-text); border-bottom: 0; border-radius: 0.4em 0.4em 0 0; }
+
+  .api-x, .api-nota { position: absolute; visibility: hidden; opacity: 0; }
+  .api-x { left: 46%; top: 44%; translate: -50% -50%; display: grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 99px; background: var(--color-red); color: #fff; font-size: 0.9em; font-weight: 700; }
+  .api-nota { left: 30%; top: 30%; padding: 0.3em 0.7em; border-radius: 0.4em; background: var(--color-bone); color: var(--color-ink); font-size: 0.78em; font-weight: 600; white-space: nowrap; }
+  .api-pruebas { position: absolute; left: 51.25%; top: 6%; padding: 0.35em 0.75em; border-radius: 99px; background: color-mix(in srgb, var(--color-red) 16%, transparent); color: var(--color-bone); font-size: 0.78em; font-weight: 600; white-space: nowrap; }
+</style>

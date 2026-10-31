@@ -1,0 +1,341 @@
+---
+// Servicios (Versión Fina): el índice de la v3; un clic abre debajo una demo de 4 pasos. El panel queda fijo y, al bajar,
+// cada paso reemplaza al anterior en el mismo lugar mientras la escena avanza.
+import Glifo from '../Glifo.astro';
+import Medida from './demos/Medida.astro';
+import Auto from './demos/Auto.astro';
+import WhatsApp from './demos/WhatsApp.astro';
+import Web from './demos/Web.astro';
+import Api from './demos/Api.astro';
+import Integraciones from './demos/Integraciones.astro';
+import Ux from './demos/Ux.astro';
+import { servicios } from '../../data/estudio';
+import { demos } from '../../data/fina';
+import { pasos as pasosWa } from '../../data/rebelbot';
+import { contacto } from '../../data/contacto';
+
+const componentes: Record<string, any> = { medida: Medida, auto: Auto, wa: WhatsApp, web: Web, api: Api, int: Integraciones, ux: Ux };
+const filas = servicios.map((s) => ({
+  ...s,
+  demo: demos[s.g],
+  pasos: s.g === 'wa' ? pasosWa.map((p) => ({ t: p.titulo, d: p.texto })) : demos[s.g].pasos,
+  Escena: componentes[s.g],
+}));
+---
+<section id="servicios" class="wrap fina-sec sv" aria-labelledby="sv-title" data-sv>
+  <h2 id="sv-title" class="text-d2 max-w-[18ch]">Lo que construimos, pieza por pieza.</h2>
+  <p class="sv-hint text-note text-ash" data-sv-hint></p>
+
+  <ul class="sv-list">
+    {filas.map(({ Escena, ...f }) => (
+      <li class="sv-row" data-sv-row data-g={f.g}>
+        <div class="sv-head" data-sv-head>
+          <h3 class="sv-h">
+            <button type="button" class="sv-btn" aria-expanded="true" aria-controls={`sv-p-${f.g}`} data-sv-btn><span class="sv-name">{f.t}</span></button>
+          </h3>
+          <p class="sv-desc text-body text-ash">{f.d}</p>
+          <span class="sv-plus" aria-hidden="true"></span>
+        </div>
+
+        <div class="sv-panel" id={`sv-p-${f.g}`} data-sv-panel>
+          <div class="sv-track" data-sv-track style={`--n: ${f.pasos.length}`}>
+            <div class="sv-panel-in">
+              <div class="sv-copy">
+                <p class="sv-tit">{f.demo.titulo}</p>
+                {f.demo.bajada && <p class="sv-bajada text-body text-ash">{f.demo.bajada}</p>}
+                <ol class="sv-pasos">
+                  {f.pasos.map((p, k) => (
+                    <li class="sv-paso" data-sv-paso>
+                      <p class="sv-paso-t"><span class="sv-paso-n" aria-hidden="true">{k + 1}</span>{p.t}</p>
+                      <p class="sv-paso-d">{p.d}</p>
+                    </li>
+                  ))}
+                </ol>
+                <div class="sv-prog" aria-hidden="true">{f.pasos.map(() => <i data-sv-barra></i>)}</div>
+              </div>
+              <div class="sv-escena"><Escena /></div>
+            </div>
+          </div>
+        </div>
+      </li>
+    ))}
+    <li class="sv-row sv-otro">
+      <div class="sv-head">
+        <h3 class="sv-h"><span class="sv-name">¿Algo más?</span></h3>
+        <p class="sv-desc text-body text-ash">Si implica software, probablemente podemos construirlo. <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="sv-link">Conversemos</a></p>
+      </div>
+    </li>
+  </ul>
+
+  <div class="sv-float" data-sv-float aria-hidden="true">
+    {servicios.map((s) => <div class="sv-float-g" data-sv-fg={s.g}><Glifo id={s.g} /></div>)}
+  </div>
+</section>
+
+<style>
+  .sv { position: relative; }
+  .sv-hint { margin: 1rem 0 0; }
+  .sv-hint:empty { display: none; }
+  .sv-list { list-style: none; margin: clamp(2.5rem, 5vw, 4rem) 0 0; padding: 0; border-bottom: 1px solid var(--color-line); }
+  .sv-row { border-top: 1px solid var(--color-line); }
+
+  .sv-head { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 1.25rem; align-items: center; }
+  .sv-h { margin: 0; font-size: clamp(2rem, 5.4vw, 5rem); line-height: 1; letter-spacing: -0.04em; }
+  .sv-btn { all: unset; display: block; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  /* El botón cubre toda la cabecera: se abre tocando o haciendo clic en cualquier parte de la fila */
+  .sv-btn::after { content: ''; position: absolute; inset: 0; border-radius: 4px; }
+  .sv-btn:focus-visible::after { outline: 2px solid var(--color-red-text); outline-offset: -2px; }
+  .sv-name { display: inline-flex; align-items: baseline; padding-block: clamp(1.1rem, 2.4vw, 1.9rem); transition: color 0.4s; }
+  .sv-name::before {
+    content: '/'; display: inline-block; width: 0; overflow: hidden; color: var(--color-red-text); opacity: 0;
+    transition: width 0.6s var(--ease-out-expo), opacity 0.3s;
+  }
+  .sv-row.is-open .sv-name::before { width: 0.62em; opacity: 1; }
+  .sv-desc { grid-column: 1; margin: -0.5rem 0 1.4rem; max-width: 46ch; }
+  .sv-plus { grid-column: 2; grid-row: 1; position: relative; width: 1.1rem; height: 1.1rem; }
+  .sv-plus::before, .sv-plus::after {
+    content: ''; position: absolute; left: 0; top: 50%; width: 100%; height: 2px; margin-top: -1px; border-radius: 2px; background: var(--color-bone);
+    transition: transform 0.4s var(--ease-out-expo), background-color 0.3s;
+  }
+  .sv-plus::after { transform: rotate(90deg); }
+  .sv-row.is-open .sv-plus::after { transform: rotate(0deg); }
+  .sv-row.is-open .sv-plus::before { background: var(--color-red-text); }
+  .sv:not(.is-live) .sv-plus { display: none; }
+  .sv-link { position: relative; color: var(--color-red-text); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+
+  @media (min-width: 900px) {
+    .sv-head { grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem) 1.1rem; column-gap: 3rem; }
+    .sv-desc { grid-column: 2; grid-row: 1; margin: 0; }
+    .sv-plus { grid-column: 3; }
+  }
+
+  /* clip y no hidden: hidden rompería el sticky de la escena */
+  .sv.is-live .sv-panel { overflow: clip; }
+  .sv-panel-in { display: grid; gap: 2rem; padding: 0.5rem 0 clamp(2.5rem, 5vw, 4rem); }
+  .sv-escena { container-type: inline-size; width: 100%; max-width: 36rem; justify-self: center; }
+
+  .sv-tit { margin: 0; max-width: 22ch; font-family: var(--font-display); font-weight: 800; font-size: clamp(1.4rem, 2.2vw, 1.9rem); line-height: 1.1; letter-spacing: -0.03em; }
+  .sv-bajada { margin: 0.75rem 0 0; max-width: 44ch; }
+  .sv-pasos { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; }
+  .sv-paso { padding-block: 1rem; }
+  .sv-paso-t {
+    display: flex; gap: 0.75rem; align-items: baseline; margin: 0; color: var(--color-bone);
+    font-family: var(--font-display); font-weight: 700; font-size: clamp(1.15rem, 1.6vw, 1.45rem); line-height: 1.25; letter-spacing: -0.02em;
+  }
+  .sv-paso-n { min-width: 1ch; font-variant-numeric: tabular-nums; color: var(--color-red-text); }
+  .sv-paso-d { margin: 0.45rem 0 0 calc(1ch + 0.75rem); max-width: 42ch; font-size: 1.0625rem; line-height: 1.6; color: var(--color-ash); }
+
+  /* Con JS: el panel es un tramo alto y lo de adentro queda fijo; cada paso aparece en el lugar del anterior */
+  .sv.is-live .sv-track { height: calc(100svh + var(--n) * 55svh); }
+  .sv.is-live .sv-panel-in { position: sticky; top: 0; height: 100svh; padding-block: 5rem 2rem; align-content: center; }
+  .sv.is-live .sv-pasos { grid-template-areas: "paso"; }
+  .sv.is-live .sv-paso {
+    grid-area: paso; visibility: hidden; opacity: 0; transform: translateY(1.25rem);
+    transition: opacity 0.35s, transform 0.5s var(--ease-out-expo), visibility 0s 0.35s;
+  }
+  .sv.is-live .sv-paso.is-pasado { transform: translateY(-1.25rem); }
+  .sv.is-live .sv-paso.is-on {
+    visibility: visible; opacity: 1; transform: none;
+    transition: opacity 0.5s 0.15s, transform 0.7s 0.15s var(--ease-out-expo), visibility 0s;
+  }
+  .sv-prog { display: none; }
+  .sv.is-live .sv-prog { display: flex; gap: 0.4rem; max-width: 12rem; margin: 0.5rem 0 0 calc(1ch + 0.75rem); }
+  .sv-prog i { flex: 1; height: 3px; border-radius: 3px; background: var(--color-line-strong); transition: background-color 0.4s; }
+  .sv-prog i.is-hecho { background: var(--color-ash-dim); }
+  .sv-prog i.is-on { background: var(--color-red); }
+
+  @media (min-width: 1024px) {
+    .sv-panel-in { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); column-gap: clamp(2.5rem, 5vw, 5rem); align-items: center; }
+    .sv-escena { justify-self: end; }
+  }
+  @media (max-width: 1023px) {
+    .sv-escena { order: -1; }
+    .sv.is-live .sv-panel-in { align-content: start; gap: 1.25rem; padding-top: 4.75rem; }
+    .sv.is-live .sv-escena { max-width: 24rem; }
+  }
+  @media (max-width: 1023px) and (max-height: 760px) {
+    .sv.is-live .sv-bajada { display: none; }
+  }
+
+  .sv.is-desk .sv-list:has(.is-open) .sv-row:not(.is-open):not(.is-hot) .sv-name { color: var(--color-ash-dim); }
+
+  /* Base común de las escenas de demos/ (se dibujan en em y escalan con el ancho del panel) */
+  :global(.esc) { position: relative; width: 100%; aspect-ratio: 4 / 3; min-height: 0; font-size: clamp(9px, 2.7cqw, 15px); line-height: 1.3; color: var(--color-bone); user-select: none; }
+  :global(.esc *) { box-sizing: border-box; }
+  :global(.esc-card) { background: var(--color-surface); border: 1px solid var(--color-line-strong); border-radius: 0.9em; }
+  :global(.esc-dots) { display: flex; gap: 0.35em; }
+  :global(.esc-dots i) { width: 0.55em; height: 0.55em; border-radius: 99px; background: var(--color-line-strong); }
+  :global(.esc svg) { overflow: visible; }
+
+  .sv-float { display: none; }
+  .sv.is-desk .sv-float { display: block; position: absolute; left: 0; top: 0; z-index: 2; width: 0; height: 0; pointer-events: none; }
+  .sv-float-g {
+    position: absolute; left: 1.5rem; top: -4.5rem; width: 7rem; height: 7rem; display: grid; place-items: center;
+    border-radius: 1.5rem; background: var(--color-surface-2); border: 1px solid var(--color-line-strong); visibility: hidden;
+  }
+  .sv-float :global(svg.glifo) { width: 4rem; height: 4rem; }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion, lenis } from '../../scripts/motion';
+  import { glifoTl } from '../../scripts/glifos';
+  import { escenas } from '../../scripts/fina/escenas';
+
+  type Demo = { iniciar(): void; parar(): void };
+  type Fila = { el: HTMLElement; g: string; head: HTMLElement; btn: HTMLButtonElement; panel: HTMLElement; escena: HTMLElement; pasos: HTMLElement[]; demo: Demo | null };
+
+  const sec = document.querySelector<HTMLElement>('[data-sv]')!;
+  const float = sec.querySelector<HTMLElement>('[data-sv-float]')!;
+  const hint = sec.querySelector<HTMLElement>('[data-sv-hint]')!;
+
+  const filas: Fila[] = Array.from(sec.querySelectorAll<HTMLElement>('[data-sv-row][data-g]'), (el) => ({
+    el,
+    g: el.dataset.g!,
+    head: el.querySelector<HTMLElement>('[data-sv-head]')!,
+    btn: el.querySelector<HTMLButtonElement>('[data-sv-btn]')!,
+    panel: el.querySelector<HTMLElement>('[data-sv-panel]')!,
+    escena: el.querySelector<HTMLElement>('[data-escena]')!,
+    pasos: Array.from(el.querySelectorAll<HTMLElement>('[data-sv-paso]')),
+    demo: null,
+  }));
+
+  sec.classList.add('is-live');
+  // La compensación al cerrar un panel de arriba la hace el script; el anclaje del navegador la duplicaría.
+  document.documentElement.style.overflowAnchor = 'none';
+
+  // Cada paso lleva la escena hasta su etiqueta (p1–p4); el paso sale del avance dentro del tramo.
+  function crearDemo(f: Fila): Demo {
+    const tl = escenas[f.g]?.(f.escena) ?? null;
+    let triggers: ScrollTrigger[] = [];
+    let salto: gsap.core.Animation | null = null;
+    let k = -1;
+    const track = f.el.querySelector<HTMLElement>('[data-sv-track]')!;
+    const barras = Array.from(f.el.querySelectorAll<HTMLElement>('[data-sv-barra]'));
+    const n = f.pasos.length;
+
+    function ir(i: number) {
+      if (i === k) return;
+      k = i;
+      f.pasos.forEach((p, j) => { p.classList.toggle('is-on', j === i); p.classList.toggle('is-pasado', j < i); });
+      barras.forEach((b, j) => { b.classList.toggle('is-on', j === i); b.classList.toggle('is-hecho', j < i); });
+      if (!tl) return;
+      salto?.kill();
+      const etiqueta = `p${i + 1}`;
+      if (reduceMotion) { tl.seek(etiqueta); return; }
+      const atras = tl.time() - tl.labels[etiqueta];
+      salto = tl.tweenTo(etiqueta, atras > 0 ? { duration: Math.min(0.6, atras) } : {});
+    }
+
+    return {
+      iniciar() {
+        k = -1;
+        tl?.pause(0);
+        ir(0);
+        triggers = [ScrollTrigger.create({
+          trigger: track, start: 'top top', end: 'bottom bottom',
+          onUpdate: (self) => ir(Math.min(n - 1, Math.floor(self.progress * n))),
+        })];
+      },
+      parar() {
+        triggers.forEach((t) => t.kill());
+        triggers = [];
+        salto?.kill();
+      },
+    };
+  }
+
+  let abierta: Fila | null = null;
+
+  function expandir(f: Fila) {
+    f.panel.hidden = false;
+    f.btn.setAttribute('aria-expanded', 'true');
+    f.el.classList.add('is-open');
+    (f.demo ??= crearDemo(f)).iniciar();
+    const listo = () => {
+      ScrollTrigger.refresh();
+      // La fila sube hasta arriba para que la demo empiece a la vista.
+      if (lenis) lenis.scrollTo(f.head, { offset: -72, duration: reduceMotion ? 0 : 1.1 });
+      else f.head.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+    };
+    if (reduceMotion) listo();
+    else gsap.fromTo(f.panel, { height: 0 }, { height: 'auto', duration: 0.7, ease: 'expo.out', overwrite: true, onComplete: () => { gsap.set(f.panel, { clearProps: 'height' }); listo(); } });
+  }
+
+  function cerrar(f: Fila, ya = false) {
+    f.btn.setAttribute('aria-expanded', 'false');
+    f.el.classList.remove('is-open');
+    f.demo?.parar();
+    const fin = () => { f.panel.hidden = true; gsap.set(f.panel, { clearProps: 'height' }); ScrollTrigger.refresh(); };
+    if (ya || reduceMotion) { gsap.killTweensOf(f.panel); fin(); }
+    else gsap.to(f.panel, { height: 0, duration: 0.45, ease: 'power3.out', overwrite: true, onComplete: fin });
+  }
+
+  function alternar(f: Fila) {
+    if (abierta === f) { cerrar(f); abierta = null; return; }
+    const prev = abierta;
+    if (prev) {
+      // El panel abierto se cierra al instante; si estaba arriba, el scroll compensa lo que encoge.
+      const antes = f.head.getBoundingClientRect().top;
+      cerrar(prev, true);
+      const dy = f.head.getBoundingClientRect().top - antes;
+      if (dy) {
+        const y = window.scrollY + dy;
+        if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
+        else window.scrollTo(0, y);
+      }
+    }
+    abierta = f;
+    expandir(f);
+  }
+
+  filas.forEach((f) => {
+    f.panel.hidden = true;
+    f.btn.setAttribute('aria-expanded', 'false');
+    f.btn.addEventListener('click', () => alternar(f));
+  });
+
+  // Con ratón: el glifo del servicio sigue al cursor sobre la cabecera (de la v3).
+  gsap.matchMedia().add({
+    desk: '(min-width: 900px) and (hover: hover) and (pointer: fine)',
+    tactil: '(max-width: 899px), (hover: none), (pointer: coarse)',
+  }, (ctx) => {
+    const desk = !!ctx.conditions!.desk;
+    hint.textContent = desk ? 'Haz clic en un servicio para verlo funcionar.' : 'Toca un servicio para verlo funcionar.';
+    if (!desk) return;
+    sec.classList.add('is-desk');
+
+    const fx = gsap.quickTo(float, 'x', { duration: 0.6, ease: 'power3.out' });
+    const fy = gsap.quickTo(float, 'y', { duration: 0.6, ease: 'power3.out' });
+    const tls = new Map<string, gsap.core.Timeline | null>();
+    float.querySelectorAll<HTMLElement>('[data-sv-fg]').forEach((g) => tls.set(g.dataset.svFg!, glifoTl(g.querySelector('svg'))));
+    let visto: HTMLElement | null = null;
+    const glifo = (g: string | null) => {
+      const sig = g ? float.querySelector<HTMLElement>(`[data-sv-fg="${g}"]`) : null;
+      if (sig === visto) return;
+      if (visto) gsap.to(visto, { autoAlpha: 0, scale: 0.85, duration: 0.25, overwrite: true });
+      if (sig) {
+        gsap.fromTo(sig, { autoAlpha: 0, scale: 0.85 }, { autoAlpha: 1, scale: 1, duration: 0.45, overwrite: true });
+        if (!reduceMotion) tls.get(g!)?.restart();
+      }
+      visto = sig;
+    };
+
+    const quitar: (() => void)[] = [];
+    const on = <K extends keyof HTMLElementEventMap>(t: HTMLElement, tipo: K, fn: (e: HTMLElementEventMap[K]) => void) => {
+      t.addEventListener(tipo, fn);
+      quitar.push(() => t.removeEventListener(tipo, fn));
+    };
+    on(sec, 'pointermove', (e) => { const r = sec.getBoundingClientRect(); fx(e.clientX - r.left); fy(e.clientY - r.top); });
+    filas.forEach((f) => {
+      on(f.head, 'pointerenter', () => { f.el.classList.add('is-hot'); glifo(f.g); });
+      on(f.head, 'pointerleave', () => { f.el.classList.remove('is-hot'); glifo(null); });
+    });
+
+    return () => {
+      quitar.forEach((q) => q());
+      glifo(null);
+      filas.forEach((f) => f.el.classList.remove('is-hot'));
+      sec.classList.remove('is-desk');
+    };
+  });
+</script>

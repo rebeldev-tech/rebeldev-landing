@@ -1,0 +1,67 @@
+---
+// Escena «Software a medida» (animación en src/scripts/fina/escenas.ts); sin JS se ve el estado final.
+const notas = ['Llega el pedido', 'Alguien lo revisa', 'Se entrega'];
+const piezas = ['Pedidos', 'Clientes', 'Reportes'];
+const filas = [['Pedido 1041', 'Entregado'], ['Pedido 1042', 'En camino'], ['Pedido 1043', 'Por revisar'], ['Pedido 1044', 'Nuevo']];
+---
+<div class="esc md" data-escena="medida" aria-hidden="true">
+  <div class="md-notas" data-e="notas">
+    {notas.map((n, i) => <>
+      {i > 0 && <span class="md-flecha" data-e="flecha"></span>}
+      <span class:list={['md-nota', { 'md-lenta': i === 1 }]} data-e="nota">{n}{i === 1 && <em data-e="lento">Aquí se pierde tiempo</em>}</span>
+    </>)}
+  </div>
+
+  <div class="md-piezas" data-e="piezas">
+    {piezas.map((p) => <span class="md-pieza esc-card" data-e="pieza"><i></i>{p}</span>)}
+  </div>
+
+  <div class="md-app esc-card" data-e="app">
+    <div class="md-barra"><span class="esc-dots"><i></i><i></i><i></i></span><span class="md-viernes" data-e="viernes">Demo del viernes</span></div>
+    <div class="md-cuerpo">
+      <ul class="md-menu">
+        {piezas.map((p, i) => <li class:list={{ 'is-on': i === 0 }} data-e="menu">{p}</li>)}
+        <li class="md-nuevo" data-e="nuevo">Inventario</li>
+      </ul>
+      <div class="md-tabla">
+        <p class="md-tabla-t">Pedidos de hoy</p>
+        {filas.map(([a, b]) => <p class="md-fila" data-e="fila"><span>{a}</span><span class="md-estado">{b}</span></p>)}
+        <p class="md-sigue" data-e="sigue">Lo demás sigue igual</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .md-notas, .md-piezas { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 0.7em; visibility: hidden; opacity: 0; }
+  .md-nota {
+    position: relative; width: 7.4em; padding: 0.8em 0.7em; border-radius: 0.3em; background: var(--color-surface-2);
+    border: 1px solid var(--color-line-strong); font-size: 0.95em; line-height: 1.25; box-shadow: 0 0.6em 1.4em -0.8em rgb(0 0 0 / 0.5);
+  }
+  .md-lenta { border-color: var(--color-red-text); }
+  .md-nota em {
+    position: absolute; left: 50%; top: calc(100% + 0.6em); translate: -50% 0; white-space: nowrap; padding: 0.25em 0.6em; border-radius: 99px;
+    background: var(--color-red); color: #fff; font-style: normal; font-size: 0.78em; font-weight: 600;
+  }
+  .md-flecha { width: 1.6em; height: 2px; background: var(--color-ash-dim); position: relative; }
+  .md-flecha::after { content: ''; position: absolute; right: -1px; top: -3px; border: 4px solid transparent; border-left-color: var(--color-ash-dim); border-right: 0; }
+
+  .md-pieza { display: flex; align-items: center; gap: 0.55em; padding: 1em 1.2em; font-weight: 600; font-size: 1.05em; }
+  .md-pieza i { width: 0.6em; height: 0.6em; border-radius: 99px; background: var(--color-red-text); }
+
+  .md-app { position: absolute; inset: 5% 3%; display: flex; flex-direction: column; overflow: hidden; }
+  .md-barra { display: flex; align-items: center; justify-content: space-between; padding: 0.7em 0.9em; border-bottom: 1px solid var(--color-line); }
+  .md-viernes { padding: 0.3em 0.75em; border-radius: 99px; background: var(--color-red); color: #fff; font-size: 0.8em; font-weight: 600; }
+  .md-cuerpo { flex: 1; display: grid; grid-template-columns: 30% 1fr; min-height: 0; }
+  .md-menu { list-style: none; margin: 0; padding: 0.8em 0.6em; display: grid; align-content: start; gap: 0.3em; border-right: 1px solid var(--color-line); }
+  .md-menu li { padding: 0.55em 0.7em; border-radius: 0.5em; color: var(--color-ash); font-size: 0.92em; }
+  .md-menu li.is-on { background: var(--color-surface-2); color: var(--color-bone); }
+  .md-nuevo { color: var(--color-bone) !important; box-shadow: inset 3px 0 0 var(--color-red); background: color-mix(in srgb, var(--color-red) 14%, transparent); }
+  .md-tabla { padding: 0.8em 1em; display: grid; align-content: start; gap: 0.15em; }
+  .md-tabla p { margin: 0; }
+  .md-tabla-t { font-weight: 600; margin-bottom: 0.5em !important; }
+  .md-fila { display: flex; justify-content: space-between; padding: 0.55em 0; border-top: 1px solid var(--color-line); font-size: 0.9em; }
+  .md-estado { color: var(--color-ash); }
+  .md-sigue { margin-top: 0.8em !important; font-size: 0.82em; color: var(--color-ash); }
+  .md-sigue::before { content: '✓'; color: var(--color-red-text); margin-right: 0.4em; font-weight: 700; }
+</style>

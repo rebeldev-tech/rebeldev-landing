@@ -1,0 +1,88 @@
+---
+// Mini pantalla sin texto para las piezas sueltas del hero: el dibujo de una herramienta del día a día.
+interface Props { tipo: 'chat' | 'hoja' | 'agenda' | 'correo' | 'factura' | 'caja' | 'cuaderno' | 'grafico' | 'pago' }
+const { tipo } = Astro.props;
+const dias = Array.from({ length: 14 }, (_, i) => i);
+---
+<svg class="mini" viewBox="0 0 96 64" aria-hidden="true">
+  {tipo === 'chat' && (
+    <g>
+      <rect class="m-soft" x="6" y="8" width="52" height="16" rx="8" />
+      <rect class="m-red" x="38" y="30" width="52" height="16" rx="8" />
+      <rect class="m-soft" x="6" y="52" width="28" height="8" rx="4" />
+      <circle class="m-dot" cx="86" cy="10" r="5" />
+    </g>
+  )}
+  {tipo === 'hoja' && (
+    <g>
+      <rect class="m-line" x="6" y="6" width="84" height="52" rx="4" />
+      <path class="m-line" d="M6 19h84M6 32h84M6 45h84M30 6v52M54 6v52M72 6v52" />
+      <rect class="m-red" x="54" y="32" width="18" height="13" />
+    </g>
+  )}
+  {tipo === 'agenda' && (
+    <g>
+      <rect class="m-line" x="8" y="6" width="80" height="52" rx="5" />
+      <path class="m-soft-s" d="M8 18h80" />
+      {dias.map((i) => <circle class={i === 9 ? 'm-dot' : 'm-pt'} cx={18 + (i % 7) * 10} cy={30 + Math.floor(i / 7) * 14} r={i === 9 ? 3.6 : 2.4} />)}
+    </g>
+  )}
+  {tipo === 'correo' && (
+    <g>
+      <rect class="m-line" x="10" y="10" width="76" height="46" rx="5" />
+      <path class="m-line" d="M10 14l38 24 38-24" />
+      <circle class="m-dot" cx="84" cy="12" r="6" />
+    </g>
+  )}
+  {tipo === 'factura' && (
+    <g>
+      <path class="m-line" d="M22 4h52v56l-6-4-7 4-7-4-7 4-7-4-7 4-6-4z" />
+      <path class="m-soft-s" d="M31 16h34M31 25h22M31 34h28" />
+      <path class="m-red-s" d="M31 46h34" />
+    </g>
+  )}
+  {tipo === 'caja' && (
+    <g>
+      <rect class="m-line" x="12" y="30" width="34" height="28" rx="3" />
+      <rect class="m-line" x="50" y="30" width="34" height="28" rx="3" />
+      <rect class="m-line" x="31" y="4" width="34" height="26" rx="3" />
+      <path class="m-red-s" d="M42 4v9M60 30v9" />
+    </g>
+  )}
+  {tipo === 'cuaderno' && (
+    <g>
+      <rect class="m-line" x="16" y="4" width="66" height="56" rx="4" />
+      <path class="m-soft-s" d="M28 18h44M28 29h44M28 40h30" />
+      {[12, 24, 36, 48].map((y) => <circle class="m-pt" cx="16" cy={y} r="3" />)}
+      <path class="m-red-s" d="M28 51h18" />
+    </g>
+  )}
+  {tipo === 'grafico' && (
+    <g>
+      <path class="m-line" d="M8 58h80" />
+      <rect class="m-soft" x="14" y="38" width="12" height="20" rx="2" />
+      <rect class="m-soft" x="32" y="28" width="12" height="30" rx="2" />
+      <rect class="m-soft" x="50" y="34" width="12" height="24" rx="2" />
+      <rect class="m-red" x="68" y="12" width="12" height="46" rx="2" />
+    </g>
+  )}
+  {tipo === 'pago' && (
+    <g>
+      <rect class="m-line" x="8" y="10" width="80" height="46" rx="6" />
+      <rect class="m-soft" x="16" y="20" width="16" height="12" rx="2" />
+      <path class="m-soft-s" d="M16 44h24M46 44h12" />
+      <circle class="m-dot" cx="70" cy="26" r="6" />
+    </g>
+  )}
+</svg>
+
+<style>
+  .mini { display: block; width: 100%; height: auto; overflow: visible; }
+  .m-line { fill: none; stroke: var(--color-ash); stroke-width: 2; stroke-linejoin: round; }
+  .m-soft { fill: var(--color-line-strong); }
+  .m-soft-s { fill: none; stroke: var(--color-line-strong); stroke-width: 4; stroke-linecap: round; }
+  .m-red { fill: var(--color-red); }
+  .m-red-s { fill: none; stroke: var(--color-red); stroke-width: 4; stroke-linecap: round; }
+  .m-dot { fill: var(--color-red); }
+  .m-pt { fill: var(--color-line-strong); }
+</style>

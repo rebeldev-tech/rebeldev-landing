@@ -2,10 +2,10 @@
 import Logo from './Logo.astro';
 import { contacto } from '../data/contacto';
 
-interface Props { conRebelBot?: boolean }
+interface Props { conRebelBot?: boolean; links?: { href: string; label: string }[] }
 const { conRebelBot = true } = Astro.props;
 
-const links = [
+const links = Astro.props.links ?? [
   ...(conRebelBot ? [{ href: '#rebelbot', label: 'RebelBot' }] : []),
   { href: '#servicios', label: 'Servicios' },
   { href: '#como-trabajamos', label: 'Cómo trabajamos' },

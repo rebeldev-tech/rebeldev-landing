@@ -1,0 +1,84 @@
+---
+// Escena «Plataformas web» (animación en src/scripts/fina/escenas.ts); sin JS se ve el estado final.
+const opciones = ['Consulta', 'Visita', 'Seguimiento'];
+const reservas = [['Sábado 11:30', 'Visita', 'Nueva'], ['Viernes 16:00', 'Consulta', 'Confirmada'], ['Viernes 10:00', 'Seguimiento', 'Confirmada']];
+---
+<div class="esc web" data-escena="web" aria-hidden="true">
+  <div class="web-win esc-card" data-e="win">
+    <div class="web-barra"><span class="esc-dots"><i></i><i></i><i></i></span><span class="web-url">tunegocio.example</span></div>
+    <div class="web-vista">
+      <div class="web-pub" data-e="pub">
+        <div class="web-menu" data-e="menu"><b></b><span></span><span></span><span></span></div>
+        <div class="web-hero" data-e="hero">
+          <p class="web-h">Agenda tu visita</p>
+          <span class="web-sub"></span>
+        </div>
+        <div class="web-tarjetas">
+          {opciones.map((o) => <div class="web-tarjeta" data-e="tarjeta"><span class="web-img"></span><b>{o}</b><span class="web-btn" data-e="reservar">Reservar</span></div>)}
+        </div>
+        <span class="web-cursor" data-e="cursor"></span>
+        <span class="web-toast" data-e="toast">Reserva confirmada</span>
+      </div>
+
+      <div class="web-adm" data-e="adm">
+        <p class="web-adm-t">Panel del equipo<span>Reservas</span></p>
+        {reservas.map(([d, o, e], i) => <p class:list={['web-fila', { 'is-nueva': i === 0 }]} data-e="fila"><span>{d}</span><span>{o}</span><span class="web-est">{e}</span></p>)}
+      </div>
+    </div>
+  </div>
+
+  <div class="web-movil" data-e="movil">
+    <div class="web-movil-in">
+      <span class="web-m-menu"><b></b><i></i></span>
+      <p class="web-h">Agenda tu visita</p>
+      <span class="web-sub"></span>
+      <div class="web-tarjeta"><span class="web-img"></span><b>Visita</b><span class="web-btn">Reservar</span></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .web-win { position: absolute; left: 0; top: 4%; width: 80%; height: 90%; display: flex; flex-direction: column; overflow: hidden; transform-origin: 0% 50%; }
+  .web-barra { display: flex; align-items: center; gap: 0.8em; padding: 0.6em 0.8em; border-bottom: 1px solid var(--color-line); }
+  .web-url { flex: 1; padding: 0.25em 0.8em; border-radius: 99px; background: var(--color-surface-2); color: var(--color-ash); font-size: 0.75em; }
+  .web-vista { position: relative; flex: 1; display: grid; min-height: 0; }
+  .web-pub, .web-adm { grid-area: 1 / 1; padding: 0.9em 1em; }
+  .web-pub { visibility: hidden; opacity: 0; display: grid; align-content: start; gap: 0.9em; }
+
+  .web-menu { display: flex; align-items: center; gap: 0.6em; }
+  .web-menu b { width: 2.4em; height: 0.8em; border-radius: 0.3em; background: var(--color-red); margin-right: auto; }
+  .web-menu span { width: 2.6em; height: 0.45em; border-radius: 99px; background: var(--color-line-strong); }
+  .web-h { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 1.35em; letter-spacing: -0.03em; }
+  .web-sub { display: block; width: 70%; height: 0.5em; margin-top: 0.4em; border-radius: 99px; background: var(--color-line-strong); }
+  .web-tarjetas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6em; }
+  .web-tarjeta { display: grid; gap: 0.4em; padding: 0.5em; border-radius: 0.6em; background: var(--color-surface-2); font-size: 0.85em; }
+  .web-img { height: 3.4em; border-radius: 0.4em; background: color-mix(in srgb, var(--color-bone) 10%, transparent); }
+  .web-btn { justify-self: start; padding: 0.3em 0.7em; border-radius: 99px; background: var(--color-red); color: #fff; font-size: 0.85em; font-weight: 600; }
+  .web-cursor {
+    position: absolute; left: 60%; top: 82%; width: 1.1em; height: 1.1em; border-radius: 0 50% 50% 50%;
+    background: var(--color-bone); border: 2px solid var(--color-ink); rotate: -12deg;
+  }
+  .web-toast {
+    position: absolute; right: 1em; top: 0.9em; padding: 0.45em 0.8em; border-radius: 0.5em; background: var(--color-bone); color: var(--color-ink);
+    font-size: 0.8em; font-weight: 600;
+  }
+  .web-toast::before { content: '✓ '; color: var(--color-red); }
+
+  .web-adm { display: grid; align-content: start; gap: 0.1em; }
+  .web-adm-t { margin: 0 0 0.6em; display: flex; justify-content: space-between; font-weight: 600; }
+  .web-adm-t span { color: var(--color-ash); font-weight: 400; font-size: 0.85em; }
+  .web-fila { margin: 0; display: grid; grid-template-columns: 1.2fr 1fr auto; gap: 0.6em; padding: 0.6em 0.5em; border-top: 1px solid var(--color-line); font-size: 0.88em; }
+  .web-est { color: var(--color-ash); }
+  .web-fila.is-nueva { border-radius: 0.4em; background: color-mix(in srgb, var(--color-red) 14%, transparent); }
+  .web-fila.is-nueva .web-est { color: var(--color-red-text); font-weight: 600; }
+
+  .web-movil {
+    position: absolute; right: 1%; bottom: 0; width: 31%; height: 86%; padding: 0.35em; border-radius: 1.3em;
+    background: var(--color-surface-2); border: 1px solid var(--color-line-strong); box-shadow: 0 1.5em 3em -1.5em rgb(0 0 0 / 0.55);
+  }
+  .web-movil-in { height: 100%; display: grid; align-content: start; gap: 0.6em; padding: 0.8em 0.6em; border-radius: 1em; background: var(--color-surface); font-size: 0.8em; overflow: hidden; }
+  .web-m-menu { display: flex; justify-content: space-between; align-items: center; }
+  .web-m-menu b { width: 2.2em; height: 0.8em; border-radius: 0.3em; background: var(--color-red); }
+  .web-m-menu i { width: 1.1em; height: 0.7em; border-block: 2px solid var(--color-ash); }
+  .web-movil .web-h { font-size: 1.2em; }
+</style>

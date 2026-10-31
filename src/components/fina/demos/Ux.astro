@@ -1,0 +1,74 @@
+---
+// Escena «Diseño UX/UI» (animación en src/scripts/fina/escenas.ts); sin JS se ve el estado final.
+const lio = ['Cód. cliente', 'Tipo', 'Subtipo', 'Fecha (dd/mm/aaaa)', 'Franja', 'Obs.'];
+const marcas = [{ t: '¿Qué va aquí?', x: 30, y: 22 }, { t: '¿Cuál elijo?', x: 72, y: 40 }, { t: '¿Y ahora?', x: 66, y: 84 }];
+---
+<div class="esc ux" data-escena="ux" aria-hidden="true">
+  <div class="ux-card esc-card">
+    <div class="ux-capa ux-lio" data-e="lio">
+      <p class="ux-lio-t">Formulario de solicitud de cita v2</p>
+      <div class="ux-lio-campos">{lio.map((c) => <span><small>{c}</small><i></i></span>)}</div>
+      <span class="ux-lio-btn">Procesar</span>
+      {marcas.map((m) => <span class="ux-marca" style={`left:${m.x}%;top:${m.y}%`} data-e="marca">{m.t}</span>)}
+    </div>
+
+    <div class="ux-capa ux-boceto" data-e="boceto">
+      <span class="ux-b ux-b-t" data-e="b"></span>
+      <span class="ux-b" data-e="b"></span>
+      <span class="ux-b" data-e="b"></span>
+      <span class="ux-b" data-e="b"></span>
+      <span class="ux-b ux-b-btn" data-e="b"></span>
+    </div>
+
+    <div class="ux-capa ux-final" data-e="final">
+      <p class="ux-t" data-e="f">Pide tu cita</p>
+      <label class="ux-campo" data-e="f"><small>Tu nombre</small><span><b data-e="nombre">Ana</b></span></label>
+      <div class="ux-grupo" data-e="f"><small>Día</small><span class="ux-chip">Viernes</span><span class="ux-chip">Sábado<i data-e="sel"></i></span></div>
+      <div class="ux-grupo" data-e="f"><small>Hora</small><span class="ux-chip">10:00</span><span class="ux-chip">11:30<i data-e="sel"></i></span></div>
+      <span class="ux-btn" data-e="f">Pedir cita</span>
+      <span class="ux-hecho" data-e="hecho">✓ Cita pedida</span>
+      <span class="ux-cursor" data-e="cursor"></span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ux { display: grid; place-items: center; }
+  .ux-card { position: relative; width: 74%; height: 94%; display: grid; overflow: hidden; }
+  .ux-capa { grid-area: 1 / 1; position: relative; padding: 1em 1.2em; }
+  .ux-lio, .ux-boceto { visibility: hidden; opacity: 0; }
+
+  .ux-lio { display: grid; align-content: start; gap: 0.5em; font-size: 0.8em; }
+  .ux-lio-t { margin: 0; font-size: 0.85em; font-weight: 700; color: var(--color-ash); text-transform: uppercase; letter-spacing: 0.04em; }
+  .ux-lio-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45em; }
+  .ux-lio-campos span { display: grid; gap: 0.15em; }
+  .ux-lio-campos small { font-size: 0.75em; color: var(--color-ash-dim); }
+  .ux-lio-campos i { height: 1.6em; border: 1px solid var(--color-line-strong); border-radius: 0.2em; }
+  .ux-lio-btn { justify-self: end; padding: 0.3em 0.8em; border: 1px solid var(--color-line-strong); color: var(--color-ash); font-size: 0.85em; }
+  .ux-marca {
+    position: absolute; translate: -50% -50%; padding: 0.3em 0.6em; border-radius: 99px; border: 2px solid var(--color-red-text);
+    background: color-mix(in srgb, var(--color-red) 18%, var(--color-surface)); color: var(--color-bone); font-size: 0.95em; font-weight: 600; white-space: nowrap;
+  }
+
+  .ux-boceto { display: grid; align-content: start; gap: 0.8em; }
+  .ux-b { height: 2.3em; border-radius: 0.5em; border: 2px dashed var(--color-line-strong); transform-origin: 0 50%; }
+  .ux-b-t { width: 55%; height: 1.6em; }
+  .ux-b-btn { width: 45%; height: 2.4em; }
+
+  .ux-final { display: grid; align-content: start; gap: 0.7em; }
+  .ux-t { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 1.35em; letter-spacing: -0.03em; }
+  .ux-campo, .ux-grupo { display: grid; gap: 0.3em; font-size: 0.9em; }
+  .ux-grupo { grid-template-columns: repeat(2, auto) 1fr; align-items: center; column-gap: 0.4em; }
+  .ux-grupo small { grid-column: 1 / -1; }
+  .ux-campo small, .ux-grupo small { color: var(--color-ash); }
+  .ux-campo span { padding: 0.55em 0.7em; border-radius: 0.5em; background: var(--color-surface-2); border: 1px solid var(--color-line-strong); }
+  .ux-campo b { font-weight: 500; }
+  .ux-chip { position: relative; padding: 0.4em 0.8em; border-radius: 99px; border: 1px solid var(--color-line-strong); overflow: hidden; isolation: isolate; }
+  .ux-chip i { position: absolute; inset: 0; z-index: -1; background: color-mix(in srgb, var(--color-red) 28%, transparent); }
+  .ux-btn { justify-self: start; padding: 0.6em 1.3em; border-radius: 99px; background: var(--color-red); color: #fff; font-weight: 600; font-size: 0.95em; }
+  .ux-hecho { position: absolute; right: 1.2em; bottom: 1.2em; padding: 0.35em 0.75em; border-radius: 0.5em; background: var(--color-bone); color: var(--color-ink); font-size: 0.82em; font-weight: 600; }
+  .ux-cursor {
+    position: absolute; left: 22%; top: 90%; width: 1.1em; height: 1.1em; border-radius: 0 50% 50% 50%;
+    background: var(--color-bone); border: 2px solid var(--color-ink); rotate: -12deg; visibility: hidden; opacity: 0;
+  }
+</style>

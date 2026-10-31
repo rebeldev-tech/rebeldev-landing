@@ -1,0 +1,77 @@
+---
+// Escena «Asistentes de WhatsApp»: el chat de RebelBot (rebelbot.ts) y la ficha que se llena en el sistema de ventas.
+import Chat from '../../Chat.astro';
+import { pasos } from '../../../data/rebelbot';
+
+// paso: en qué paso del chat se llena cada dato (sale de la conversación de ejemplo).
+const ficha = [
+  { k: 'Busca', v: 'Departamento de 2 dormitorios', paso: 0 },
+  { k: 'Para', v: 'Vivir', paso: 1 },
+  { k: 'Plazo', v: 'Unos tres meses', paso: 1 },
+  { k: 'Pago', v: 'Con crédito', paso: 1 },
+  { k: 'Visita', v: 'Sábado 11:30', paso: 2 },
+  { k: 'Estado', v: 'Con un asesor', paso: 3 },
+];
+---
+<div class="esc wa" data-escena="wa" aria-hidden="true">
+  <div class="wa-tel">
+    <div class="wa-cab">
+      <span class="wa-av">TN</span>
+      <span class="wa-quien"><b>Tu negocio</b><span class="wa-est"><span data-e="enlinea">en línea</span><span class="wa-escribe" data-e="escribe">escribiendo…</span></span></span>
+      <span class="wa-tag">Ejemplo</span>
+    </div>
+    <div class="wa-cuerpo">
+      {pasos.map((p) => <div class="wa-paso" data-e="paso"><Chat msgs={p.chat} estilo="burbujas" /></div>)}
+      <div class="wa-typing" data-e="typing"><i></i><i></i><i></i></div>
+    </div>
+    <div class="wa-pie"><span>Escribe un mensaje</span></div>
+  </div>
+
+  <div class="wa-ficha esc-card">
+    <p class="wa-ficha-t">Tu sistema de ventas</p>
+    <dl>
+      {ficha.map((f) => <div data-e="dato" data-paso={f.paso}><dt>{f.k}</dt><dd>{f.v}</dd></div>)}
+    </dl>
+  </div>
+</div>
+
+<style>
+  .wa { display: grid; grid-template-columns: 48% 1fr; grid-template-rows: minmax(0, 1fr); gap: 4%; align-items: center; }
+
+  /* El teléfono es oscuro en los dos temas: dentro se fijan los colores del tema oscuro */
+  .wa-tel {
+    --color-bone: #F4F0E8; --color-ash: #A7A0A8; --color-ash-dim: #8E8791; --color-red-text: #FF2D3F;
+    --color-surface-2: var(--color-wa-in); --color-line: rgb(244 240 232 / 0.1); --color-line-strong: rgb(244 240 232 / 0.24);
+    color: var(--color-bone); color-scheme: dark;
+    height: 100%; min-height: 0; display: flex; flex-direction: column; border-radius: 1.7em; padding: 0.4em;
+    background: linear-gradient(160deg, #2a2430, #121016); border: 1px solid rgb(244 240 232 / 0.12);
+    box-shadow: 0 2em 4em -2em rgb(228 18 31 / 0.35);
+  }
+  .wa-cab, .wa-cuerpo, .wa-pie { background: var(--color-wa); }
+  .wa-cab { display: flex; align-items: center; gap: 0.55em; padding: 0.8em 0.75em 0.6em; border-radius: 1.35em 1.35em 0 0; border-bottom: 1px solid rgb(255 255 255 / 0.06); }
+  .wa-av { display: grid; place-items: center; flex: none; width: 2em; height: 2em; border-radius: 99px; background: #2b3a42; font-size: 0.75em; font-weight: 600; }
+  .wa-quien { display: grid; line-height: 1.2; font-size: 0.85em; }
+  .wa-est { display: grid; font-size: 0.82em; color: var(--color-ash); }
+  .wa-est > * { grid-area: 1 / 1; }
+  .wa-escribe { visibility: hidden; opacity: 0; color: #25d366; }
+  .wa-tag { margin-left: auto; padding: 0.15em 0.5em; border-radius: 99px; border: 1px solid rgb(255 255 255 / 0.14); font-size: 0.62em; color: #8696a0; }
+  .wa-cuerpo { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 0.4em 0.55em; font-size: 0.78em; }
+  .wa-cuerpo :global(.chat) { gap: 0.4em; }
+  .wa-cuerpo :global(.chat > *) { overflow: hidden; }
+  .wa-paso + .wa-paso { margin-top: 0.4em; }
+  .wa-typing { display: none; gap: 0.25em; width: fit-content; margin-top: 0.4em; padding: 0.65em 0.75em; border-radius: 0.9em; background: var(--color-wa-in); }
+  .wa-typing i { width: 0.4em; height: 0.4em; border-radius: 99px; background: #8696a0; animation: wa-blink 1s infinite; }
+  .wa-typing i:nth-child(2) { animation-delay: 0.15s; }
+  .wa-typing i:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes wa-blink { 0%, 80%, 100% { opacity: 0.3; } 40% { opacity: 1; } }
+  .wa-pie { padding: 0.5em 0.6em 0.8em; border-radius: 0 0 1.35em 1.35em; }
+  .wa-pie span { display: block; border-radius: 99px; background: var(--color-wa-in); padding: 0.5em 0.9em; font-size: 0.72em; color: #8696a0; }
+
+  .wa-ficha { padding: 1em 1.1em; }
+  .wa-ficha-t { margin: 0 0 0.6em; font-weight: 600; }
+  .wa-ficha dl { margin: 0; display: grid; }
+  .wa-ficha dl > div { display: grid; gap: 0.1em; padding: 0.5em 0; border-top: 1px solid var(--color-line); }
+  .wa-ficha dt { font-size: 0.75em; color: var(--color-ash); }
+  .wa-ficha dd { margin: 0; font-size: 0.92em; }
+  .wa-ficha dl > div:last-child dd { color: var(--color-red-text); font-weight: 600; }
+</style>

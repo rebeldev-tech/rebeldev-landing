@@ -1,0 +1,58 @@
+---
+// Escena «Integraciones» (animación en src/scripts/fina/escenas.ts); sin JS se ve el estado final.
+// Coordenadas en el viewBox 400 × 300; la escena mide 4:3, así que el SVG y el HTML coinciden en %.
+const nodos = [
+  { id: 'wa', t: 'WhatsApp', x: 68, y: 80 },
+  { id: 'correo', t: 'Correo', x: 68, y: 220 },
+  { id: 'ventas', t: 'Sistema de ventas', x: 332, y: 62, nuevo: true },
+  { id: 'fact', t: 'Facturación', x: 340, y: 150, nuevo: true },
+  { id: 'hoja', t: 'Hoja de cálculo', x: 332, y: 238, nuevo: true },
+];
+const pct = (v: number, t: number) => `${(v / t) * 100}%`;
+const via = (n: { x: number; y: number }) => `M200 150 L${n.x} ${n.y}`;
+const fact = nodos.find((n) => n.id === 'fact')!;
+---
+<div class="esc int" data-escena="int" aria-hidden="true">
+  <svg viewBox="0 0 400 300" class="int-svg">
+    {nodos.map((n) => <path class="int-via" d={via(n)} data-e="via" />)}
+    <path class="int-alerta" d={via(fact)} data-e="alerta" />
+    {nodos.map((n) => <path class="int-pkt" d={via(n)} data-e={`pkt-${n.id}`} />)}
+  </svg>
+
+  <span class="int-hub" data-e="hub">/</span>
+
+  {nodos.map((n) => (
+    <span class="int-nodo esc-card" style={`left:${pct(n.x, 400)};top:${pct(n.y, 300)}`} data-e="nodo">
+      {n.t}
+      {n.nuevo && <em class="int-tag" data-e="tag">Cliente nuevo</em>}
+    </span>
+  ))}
+
+  <span class="int-mano" data-e="mano">Copiado a mano</span>
+  <span class="int-nota" data-e="reintenta">No respondió, se reintenta</span>
+  <span class="int-nota int-listo" data-e="listo">✓ Reintento: listo</span>
+</div>
+
+<style>
+  .int-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .int-via { fill: none; stroke: var(--color-line-strong); stroke-width: 2; }
+  .int-alerta { fill: none; stroke: var(--color-amber); stroke-width: 3; visibility: hidden; }
+  .int-pkt { fill: none; stroke: var(--color-red-text); stroke-width: 4; stroke-linecap: round; visibility: hidden; }
+
+  .int-hub {
+    position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: grid; place-items: center; width: 3.4em; height: 3.4em; border-radius: 99px;
+    background: var(--color-ink); border: 2px solid var(--color-red); color: var(--color-red-text); font-family: var(--font-display); font-weight: 800; font-size: 1.15em;
+  }
+  .int-nodo { position: absolute; translate: -50% -50%; padding: 0.55em 0.75em; font-size: 0.82em; font-weight: 600; white-space: nowrap; text-align: center; }
+  .int-tag {
+    position: absolute; left: 50%; top: calc(100% + 0.35em); translate: -50% 0; padding: 0.15em 0.55em; border-radius: 99px;
+    background: var(--color-red); color: #fff; font-style: normal; font-size: 0.8em; white-space: nowrap;
+  }
+  .int-mano {
+    position: absolute; left: 83%; top: 79%; translate: -50% -50%; padding: 0.3em 0.65em; border-radius: 0.4em;
+    background: var(--color-bone); color: var(--color-ink); font-size: 0.75em; font-weight: 600; white-space: nowrap; visibility: hidden; opacity: 0;
+  }
+  .int-nota { position: absolute; left: 67%; top: 40%; translate: -50% -50%; padding: 0.3em 0.65em; border-radius: 0.4em; font-size: 0.75em; font-weight: 600; white-space: nowrap; }
+  .int-nota:not(.int-listo) { background: var(--color-amber); color: var(--color-ink); visibility: hidden; opacity: 0; }
+  .int-listo { background: var(--color-surface-2); color: var(--color-bone); }
+</style>

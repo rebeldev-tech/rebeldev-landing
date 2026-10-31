@@ -1,5 +1,6 @@
 // Versiones del landing para revisar. Para agregar una: crear su página en src/pages y sumarla aquí.
 export const versiones = [
+  { id: 'fina', nombre: 'Versión Fina', href: '/fina', desc: 'La que eligió el equipo: lo mejor de la v1 y la v3, con una demo por servicio y partículas en el cierre.' },
   { id: 'v1', nombre: 'Versión 1', href: '/v1', desc: 'La publicada: partículas en el hero y RebelBot en un teléfono fijo.' },
   { id: 'v2', nombre: 'Versión 2', href: '/', desc: 'Portada en video que avanza al bajar; RebelBot destacado como producto propio.' },
   { id: 'v3', nombre: 'Versión 3', href: '/v3', desc: 'El estudio completo: la barra que corta, del caos al sistema y servicios en índice.' },

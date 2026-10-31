@@ -1,0 +1,118 @@
+---
+// Fredy: nombre enorme, foto recortada y texto a la izquierda; a la derecha, su trayectoria como lista de roles.
+import { cita, fundador } from '../../data/estudio';
+import { aportes, fredy } from '../../data/fina';
+
+const roles = fundador.trayectoria;
+const ultima = roles.length - 1;
+---
+<section id="nosotros" class="wrap fina-sec fr" aria-labelledby="fr-name" data-fr>
+  <header>
+    <h2 id="fr-name" class="fr-name" data-fr-name>Fredy Ramos</h2>
+    <p class="mt-4 text-lead text-red-text">{fundador.cargo}</p>
+  </header>
+
+  <div class="fr-grid">
+    <div class="fr-left">
+      <figure class="fr-photo">
+        <img src={fredy.foto} alt="" width="900" height="1117" loading="lazy" decoding="async" />
+        <figcaption class="fr-nota">{fredy.fotoNota}</figcaption>
+      </figure>
+      <div class="fr-text">
+        <p class="text-body text-ash">{fundador.formacion}</p>
+        <p class="text-lead text-bone">{fredy.credencial}</p>
+        <blockquote class="fr-quote"><p class="text-d3">{cita}</p></blockquote>
+      </div>
+    </div>
+
+    <div class="fr-right">
+      <p class="fr-cimas text-note"><i aria-hidden="true"></i>{fredy.cimas}</p>
+      <ol class="fr-roles" aria-label="Trayectoria de Fredy">
+        {roles.map((t, i) => (
+          <li class="fr-item">
+            <button type="button" class="fr-btn" aria-pressed={i === ultima ? 'true' : 'false'} data-fr-btn>
+              <span class="fr-mask"><span class="fr-rol" data-fr-rol><span class="fr-sl" aria-hidden="true">/</span>{t}</span></span>
+              <span class="fr-ap">{aportes[i]}</span>
+            </button>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .fr-name { margin: 0; font-size: clamp(3.4rem, 12.5vw, 11.5rem); line-height: 0.86; letter-spacing: -0.05em; text-wrap: wrap; }
+  .fr-grid { display: grid; gap: clamp(3rem, 6vw, 5rem); margin-top: clamp(3rem, 6vw, 5rem); }
+  @media (min-width: 1024px) { .fr-grid { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: end; } }
+
+  /* Foto recortada (fondo transparente): se desvanece abajo para no cortar la camiseta en seco */
+  .fr-photo { position: relative; margin: 0; width: min(100%, 26rem); }
+  .fr-photo img { display: block; width: 100%; height: auto; -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent); mask-image: linear-gradient(to bottom, #000 70%, transparent); }
+  .fr-nota { position: absolute; left: 0; bottom: 0.75rem; padding: 0.3rem 0.7rem; border-radius: 999px; background: #0B0A0E; color: #F4F0E8; font-size: 0.75rem; font-weight: 600; }
+  .fr-text { margin-top: 1.75rem; max-width: 44ch; }
+  .fr-text p { margin: 0; }
+  .fr-text > p + p { margin-top: 1rem; }
+  .fr-quote { margin: 1.75rem 0 0; padding-left: 1rem; border-left: 3px solid var(--color-red); }
+  .fr-quote p { color: var(--color-bone); font-family: var(--font-display); font-weight: 800; }
+
+  .fr-cimas { display: flex; align-items: center; gap: 0.6rem; margin: 0 0 1.25rem; color: var(--color-red-text); }
+  .fr-cimas i { width: 1.6rem; height: 2px; background: var(--color-red); }
+
+  .fr-roles { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--color-line); }
+  .fr-item { border-bottom: 1px solid var(--color-line); }
+  .fr-btn {
+    all: unset; box-sizing: border-box; display: grid; gap: 0.35rem 2rem; width: 100%; cursor: pointer;
+    padding-block: clamp(1rem, 1.8vw, 1.4rem); color: var(--color-ash);
+  }
+  .fr-btn:focus-visible { outline: 2px solid var(--color-red-text); outline-offset: 4px; border-radius: 4px; }
+  .fr-mask { display: block; overflow: hidden; }
+  .fr-rol {
+    display: block; font-family: var(--font-display); font-weight: 800; font-size: clamp(1.6rem, 3vw, 2.6rem);
+    line-height: 1.1; letter-spacing: -0.03em; transition: color 0.4s;
+  }
+  .fr-sl { display: inline-block; width: 0; overflow: hidden; vertical-align: bottom; color: var(--color-red); transition: width 0.45s var(--ease-out-expo); }
+  .fr-ap { font-size: 1.0625rem; line-height: 1.5; color: var(--color-bone); }
+  .fr-btn[aria-pressed="true"] .fr-rol { color: var(--color-bone); }
+  .fr-btn[aria-pressed="true"] .fr-sl { width: 0.75em; }
+
+  /* Con ratón, el aporte aparece al lado del rol activo; en táctil se leen todos */
+  @media (hover: hover) and (min-width: 768px) {
+    .fr-btn { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; }
+    .fr-ap { opacity: 0; transform: translateX(-0.75rem); transition: opacity 0.4s, transform 0.5s var(--ease-out-expo); }
+    .fr-btn[aria-pressed="true"] .fr-ap { opacity: 1; transform: none; }
+  }
+  @media (hover: none), (max-width: 767px) {
+    .fr-ap { color: var(--color-ash); }
+  }
+</style>
+
+<script>
+  import { gsap, SplitText, reduceMotion } from '../../scripts/motion';
+
+  const sec = document.querySelector<HTMLElement>('[data-fr]')!;
+  const btns = Array.from(sec.querySelectorAll<HTMLButtonElement>('[data-fr-btn]'));
+
+  const activate = (k: number) => btns.forEach((b, i) => b.setAttribute('aria-pressed', String(i === k)));
+  btns.forEach((b, i) => {
+    b.addEventListener('pointerenter', () => activate(i));
+    b.addEventListener('focus', () => activate(i));
+    b.addEventListener('click', () => activate(i));
+  });
+
+  if (!reduceMotion) {
+    document.fonts.ready.then(() => {
+      const name = sec.querySelector<HTMLElement>('[data-fr-name]')!;
+      const split = SplitText.create(name, { type: 'chars', mask: 'chars' });
+      gsap.from(split.chars, {
+        yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: 0.035,
+        scrollTrigger: { trigger: name, start: 'top 82%', once: true },
+      });
+    });
+
+    gsap.from(sec.querySelectorAll('[data-fr-rol]'), {
+      yPercent: 110, duration: 1, ease: 'expo.out', stagger: 0.08,
+      scrollTrigger: { trigger: sec.querySelector('.fr-roles'), start: 'top 80%', once: true },
+    });
+  }
+</script>
