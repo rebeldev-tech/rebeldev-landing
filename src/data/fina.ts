@@ -123,7 +123,9 @@ export const aportes = [
 ];
 
 export const fredy = {
-  credencial: 'Ha liderado sistemas de WhatsApp usados por millones de personas.',
+  // «Chatbots e IA» ya se ve sobre la lista de roles: aquí, el recorrido y la credencial.
+  recorrido: 'Ingeniero de Sistemas que recorrió todo el camino del software, del código al producto.',
+  credencial: 'Lideró sistemas de WhatsApp que usan millones de personas.',
   cimas: 'Chatbots e IA en cada etapa',
   // TEMPORAL: foto de referencia que pasó el usuario (no es Fredy). Cambiar antes de publicar.
   foto: '/fina/fredy-referencia.webp',
