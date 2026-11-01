@@ -58,6 +58,27 @@ const ficha = [
   .wa-cuerpo { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 0.4em 0.55em; font-size: 0.78em; }
   .wa-cuerpo :global(.chat) { gap: 0.4em; }
   .wa-cuerpo :global(.chat > *) { overflow: hidden; }
+  /* Chat.astro mide en rem (lo usan otras versiones): aquí pasa a em para escalar con la escena.
+     Equivalencias con la escena a 15 px (chat a 11,7 px), así en escritorio se ve igual que antes; dentro de la tarjeta, la letra es 1.2em. */
+  .wa-cuerpo :global(.chat-who) { font-size: 0.985em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-msg) { padding: 0.82em 1.23em; border-radius: 1.5em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-in) { border-bottom-left-radius: 0.41em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-out), .wa-cuerpo :global(.chat-burbujas .chat-agent) { border-bottom-right-radius: 0.41em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-sys) { gap: 0.56em; padding: 0.44em 0.94em; border-radius: 0.75em; font-size: 1.09em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-dot) { width: 0.56em; height: 0.56em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-chips) { gap: 0.55em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-chip) { padding: 0.47em 1em; border-radius: 0.82em; font-size: 1.16em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-card) { width: 84%; padding: 0.91em; border-radius: 1.25em; border-bottom-right-radius: 0.34em; font-size: 1.2em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-slots) { margin-top: 0.57em; gap: 0.28em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-slot) { gap: 0.63em; padding: 0.46em 0.57em; border-radius: 0.63em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-radio) { width: 0.97em; height: 0.97em; border-width: 0.14em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-slot.is-on .chat-radio) { box-shadow: inset 0 0 0 0.14em var(--color-surface-2), inset 0 0 0 0.43em var(--color-red-text); }
+  .wa-cuerpo :global(.chat-burbujas .chat-cta) { margin-top: 0.68em; padding-top: 0.63em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-loc) { padding: 0; }
+  .wa-cuerpo :global(.chat-burbujas .chat-loc .chat-card-title) { padding: 0.68em 0.91em 0; }
+  .wa-cuerpo :global(.chat-burbujas .chat-loc-sub) { padding: 0.11em 0.91em 0.8em; font-size: 0.89em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-map) { height: 5.7em; }
+  .wa-cuerpo :global(.chat-burbujas .chat-pin) { width: 1.14em; height: 1.14em; }
   .wa-paso + .wa-paso { margin-top: 0.4em; }
   .wa-typing { display: none; gap: 0.25em; width: fit-content; margin-top: 0.4em; padding: 0.65em 0.75em; border-radius: 0.9em; background: var(--color-wa-in); }
   .wa-typing i { width: 0.4em; height: 0.4em; border-radius: 99px; background: #8696a0; animation: wa-blink 1s infinite; }

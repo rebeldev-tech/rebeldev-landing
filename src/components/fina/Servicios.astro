@@ -151,10 +151,23 @@ const filas = servicios.map((s) => ({
   @media (max-width: 1023px) {
     .sv-escena { order: -1; }
     .sv.is-live .sv-panel-in { align-content: start; gap: 1.25rem; padding-top: 4.75rem; }
-    .sv.is-live .sv-escena { max-width: 24rem; }
+    /* --copia: alto del texto de esta demo (lo mide el script). La escena se achica lo justo para que el texto entre en la pantalla. */
+    .sv.is-live .sv-escena { max-width: min(26rem, max(12rem, calc(100svh - var(--copia, 20rem) - 7.5rem))); }
   }
+  /* En pantallas bajas no entran: se ocultan a la vista, pero el lector de pantalla los sigue leyendo */
   @media (max-width: 1023px) and (max-height: 760px) {
-    .sv.is-live .sv-bajada { display: none; }
+    .sv.is-live .sv-bajada { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  }
+  @media (max-width: 1023px) and (max-height: 640px) {
+    .sv.is-live .sv-tit { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  }
+  @media (max-width: 1023px) and (max-height: 600px) {
+    .sv.is-live .sv-paso-d { font-size: 0.95rem; line-height: 1.5; }
+  }
+  /* Celular en horizontal: uno debajo del otro no entra; texto a la izquierda y la escena (cuadrada) del alto de la pantalla a la derecha */
+  @media (max-width: 1023px) and (max-height: 520px) and (orientation: landscape) {
+    .sv.is-live .sv-panel-in { grid-template-columns: minmax(0, 1fr) auto; column-gap: 2rem; align-content: center; align-items: center; padding-block: 4.75rem 1rem; }
+    .sv.is-live .sv-escena { order: 0; width: calc(100svh - 6rem); max-width: 26rem; }
   }
 
   .sv.is-desk .sv-list:has(.is-open) .sv-row:not(.is-open):not(.is-hot) .sv-name { color: var(--color-ash-dim); }
@@ -166,6 +179,10 @@ const filas = servicios.map((s) => ({
   :global(.esc-dots) { display: flex; gap: 0.35em; }
   :global(.esc-dots i) { width: 0.55em; height: 0.55em; border-radius: 99px; background: var(--color-line-strong); }
   :global(.esc svg) { overflow: visible; }
+  /* Bajo 1024 px la escena es cuadrada y con letra más grande: en el celular sobra alto y falta ancho */
+  @media (max-width: 1023px) {
+    :global(.esc) { aspect-ratio: 1 / 1; font-size: clamp(8px, 3.6cqw, 15px); }
+  }
 
   .sv-float { display: none; }
   .sv.is-desk .sv-float { display: block; position: absolute; left: 0; top: 0; z-index: 2; width: 0; height: 0; pointer-events: none; }
@@ -246,8 +263,15 @@ const filas = servicios.map((s) => ({
 
   let abierta: Fila | null = null;
 
+  // En celular la escena se achica según lo que mide el texto de su demo (ver --copia en el CSS).
+  const medirCopia = (f: Fila) => {
+    const copia = f.el.querySelector<HTMLElement>('.sv-copy');
+    if (copia) f.el.style.setProperty('--copia', `${copia.offsetHeight}px`);
+  };
+
   function expandir(f: Fila) {
     f.panel.hidden = false;
+    medirCopia(f);
     f.btn.setAttribute('aria-expanded', 'true');
     f.el.classList.add('is-open');
     (f.demo ??= crearDemo(f)).iniciar();
@@ -287,6 +311,13 @@ const filas = servicios.map((s) => ({
     abierta = f;
     expandir(f);
   }
+
+  let ancho = window.innerWidth;
+  window.addEventListener('resize', () => {
+    if (window.innerWidth === ancho) return;
+    ancho = window.innerWidth;
+    if (abierta) medirCopia(abierta);
+  });
 
   filas.forEach((f) => {
     f.panel.hidden = true;

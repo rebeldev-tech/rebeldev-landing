@@ -1,6 +1,6 @@
 ---
 // Escena «Integraciones» (animación en src/scripts/fina/escenas.ts); sin JS se ve el estado final.
-// Coordenadas en el viewBox 400 × 300; la escena mide 4:3, así que el SVG y el HTML coinciden en %.
+// Coordenadas en el viewBox 400 × 300 y en % para el HTML; el SVG se estira (preserveAspectRatio none) para coincidir también cuando la escena es cuadrada (celular).
 const nodos = [
   { id: 'wa', t: 'WhatsApp', x: 68, y: 80 },
   { id: 'correo', t: 'Correo', x: 68, y: 220 },
@@ -13,7 +13,7 @@ const via = (n: { x: number; y: number }) => `M200 150 L${n.x} ${n.y}`;
 const fact = nodos.find((n) => n.id === 'fact')!;
 ---
 <div class="esc int" data-escena="int" aria-hidden="true">
-  <svg viewBox="0 0 400 300" class="int-svg">
+  <svg viewBox="0 0 400 300" preserveAspectRatio="none" class="int-svg">
     {nodos.map((n) => <path class="int-via" d={via(n)} data-e="via" />)}
     <path class="int-alerta" d={via(fact)} data-e="alerta" />
     {nodos.map((n) => <path class="int-pkt" d={via(n)} data-e={`pkt-${n.id}`} />)}

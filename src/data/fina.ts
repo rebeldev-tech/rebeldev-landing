@@ -18,7 +18,6 @@ export const piezasHero = [
 // nuevas: una por capa, en la columna libre de cada fila.
 export const caos = {
   avisos: { 'Mensajes que llegan de noche': '3 sin leer', 'Inventario «a ojo»': '!' } as Record<string, string>,
-  fantasma: { de: 'clientes_final_v3.xlsx', t: 'clientes_final_v4.xlsx' },
   etiquetas: { pantallas: 'Pantalla', reglas: 'Regla', datos: 'Dato', conexiones: 'Conexión' } as Record<string, string>,
   pulso: ['WhatsApp que responde', 'Pedidos', 'Clientes', 'Sistema de ventas'],
   nuevas: [

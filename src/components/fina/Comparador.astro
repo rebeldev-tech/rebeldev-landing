@@ -150,6 +150,8 @@ const them = lineas.agencia.marcas;
   .cmp.is-live .cmp-vis { position: absolute; top: clamp(1.4rem, 3vw, 2.4rem); bottom: clamp(1.4rem, 3vw, 2.4rem); width: 44%; margin: 0; align-content: center; }
   .cmp.is-live .cv-them { right: clamp(1.4rem, 3vw, 2.4rem); }
   .cmp.is-live .cv-us { left: clamp(1.4rem, 3vw, 2.4rem); }
+  /* Con la barra al medio no se ve nada del dibujo (la barra inclinada destapa un poco arriba); aparece apenas se empieza a descubrir */
+  .cmp.is-live .cmp-vis { opacity: min(1, calc(var(--k) * 5)); }
   @media (max-width: 899px) {
     .cv-row { grid-template-columns: 1fr; gap: 0.35rem; }
     .cv-grid { left: 0; }

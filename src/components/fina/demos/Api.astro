@@ -1,6 +1,6 @@
 ---
 // Escena «Backend y APIs» (animación en src/scripts/fina/escenas.ts); sin JS se ve el estado final.
-// Coordenadas en el viewBox 400 × 300; la escena mide 4:3, así que el SVG y el HTML coinciden en %.
+// Coordenadas en el viewBox 400 × 300 y en % para el HTML; el SVG se estira (preserveAspectRatio none) para coincidir también cuando la escena es cuadrada (celular).
 const canales = [
   { t: 'Tu web', y: 55 },
   { t: 'Tu app', y: 115 },
@@ -11,7 +11,7 @@ const via = (y: number) => `M112 ${y} C165 ${y} 160 150 205 150`;
 const pct = (v: number, t: number) => `${(v / t) * 100}%`;
 ---
 <div class="esc api" data-escena="api" aria-hidden="true">
-  <svg viewBox="0 0 400 300" class="api-svg">
+  <svg viewBox="0 0 400 300" preserveAspectRatio="none" class="api-svg">
     {canales.map((c) => <path class:list={['api-via', { 'api-nueva-via': c.nueva }]} d={via(c.y)} data-e={c.nueva ? 'via-nueva' : 'via'} />)}
     {canales.map((c) => <path class="api-pkt" d={via(c.y)} data-e="pkt" />)}
   </svg>
@@ -59,4 +59,8 @@ const pct = (v: number, t: number) => `${(v / t) * 100}%`;
   .api-x { left: 46%; top: 44%; translate: -50% -50%; display: grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 99px; background: var(--color-red); color: #fff; font-size: 0.9em; font-weight: 700; }
   .api-nota { left: 30%; top: 30%; padding: 0.3em 0.7em; border-radius: 0.4em; background: var(--color-bone); color: var(--color-ink); font-size: 0.78em; font-weight: 600; white-space: nowrap; }
   .api-pruebas { position: absolute; left: 51.25%; top: 6%; padding: 0.35em 0.75em; border-radius: 99px; background: color-mix(in srgb, var(--color-red) 16%, transparent); color: var(--color-bone); font-size: 0.78em; font-weight: 600; white-space: nowrap; }
+  /* Escena cuadrada (celular): la base crece hacia la derecha para que «Reglas» y «✓ Guardado» no choquen */
+  @media (max-width: 1023px) {
+    .api-base { width: 44%; }
+  }
 </style>

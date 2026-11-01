@@ -80,8 +80,8 @@ const LV = ['L', 'M', 'M', 'J', 'V'];
               {e.escena === 'revisiones' && (
                 <div class="es-rev">
                   <span class="es-track"><span class="es-trackfill" data-a="fill"></span></span>
-                  {m.slice(0, 3).map((t, k) => <span class="es-mark" data-a="mark" style={`--x: ${18 + k * 22}%`}><i></i>{t}</span>)}
-                  <span class="es-month" data-a="month" style="--x: 82%"><i></i><i></i><i></i>{m[3]}</span>
+                  {m.slice(0, 3).map((t, k) => <span class="es-mark" data-a="mark" style={`--x: ${14 + k * 21}%`}><i></i>{t}</span>)}
+                  <span class="es-month" data-a="month"><i></i><i></i><i></i>{m[3]}</span>
                 </div>
               )}
             </div>
@@ -148,7 +148,8 @@ const LV = ['L', 'M', 'M', 'J', 'V'];
 
   .es-reloj { grid-template-areas: "all"; }
   .es-reloj > * { grid-area: all; }
-  .es-reloj .es-big { font-size: 1.15rem; transform: translateY(2.2rem); }
+  /* Arriba del centro: la aguja termina apuntando abajo. Con top y no transform ni translate, que GSAP pisa en la entrada. */
+  .es-reloj .es-big { position: relative; top: -1.9rem; font-size: 1.15rem; }
 
   .es-screen { width: 100%; max-width: 15rem; display: grid; gap: 0.55rem; padding: 0.9rem; border-radius: 0.8rem; border: 1px solid var(--color-line-strong); }
   .es-live { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.8rem; font-weight: 600; color: var(--color-red-text); }
@@ -186,7 +187,8 @@ const LV = ['L', 'M', 'M', 'J', 'V'];
     font-size: 0.8rem; color: var(--color-bone); white-space: nowrap;
   }
   .es-mark i { width: 0.9rem; height: 0.9rem; border-radius: 99px; background: var(--color-red); box-shadow: 0 0 0 4px var(--color-surface); }
-  .es-month { grid-auto-flow: row; color: var(--color-ash); }
+  /* Sin punto, el texto deja el mismo espacio que «30 días» para quedar bajo la línea; pegado al final para no chocar con «90 días» en tarjetas angostas */
+  .es-month { left: auto; right: 0; transform: none; grid-auto-flow: row; padding-top: 1.4rem; color: var(--color-ash); }
   .es-month i { display: none; }
 
   .pr-hud { display: none; }

@@ -2,8 +2,9 @@
 import Logo from './Logo.astro';
 import { contacto } from '../data/contacto';
 
-interface Props { conRebelBot?: boolean; links?: { href: string; label: string }[] }
-const { conRebelBot = true } = Astro.props;
+// menu: bajo 900 px los enlaces pasan a un panel desplegable (lo usa la Versión Fina); sin él, bajo 900 px no hay enlaces.
+interface Props { conRebelBot?: boolean; links?: { href: string; label: string }[]; menu?: boolean }
+const { conRebelBot = true, menu = false } = Astro.props;
 
 const links = Astro.props.links ?? [
   ...(conRebelBot ? [{ href: '#rebelbot', label: 'RebelBot' }] : []),
@@ -13,27 +14,53 @@ const links = Astro.props.links ?? [
 ];
 ---
 <header class="nav fixed inset-x-0 top-0 z-50" data-nav>
-  <div class="wrap flex h-[4.5rem] items-center justify-between gap-4 sm:gap-6">
+  <div class="wrap flex h-[4.5rem] items-center justify-between gap-2 min-[375px]:gap-4 sm:gap-6">
     <a href="#inicio" class="text-[1.35rem] text-bone" aria-label="RebelDEV, ir al inicio"><Logo /></a>
-    <nav aria-label="Principal" class="hidden items-center gap-8 md:flex">
-      {links.map((l) => <a href={l.href} class="nav-link text-[0.95rem] text-ash transition-colors hover:text-bone">{l.label}</a>)}
+    <nav aria-label="Principal" class="hidden items-center gap-8 min-[900px]:flex">
+      {links.map((l) => <a href={l.href} class="nav-link whitespace-nowrap text-[0.95rem] text-ash transition-colors hover:text-bone">{l.label}</a>)}
     </nav>
     <div class="flex items-center gap-2 sm:gap-3">
-      <button type="button" class="theme-btn" data-theme-toggle aria-label="Cambiar a modo claro">
+      <button type="button" class:list={['theme-btn', menu ? 'max-[899px]:!hidden' : 'max-[359px]:!hidden']} data-theme-toggle aria-label="Cambiar a modo claro">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <g class="sun"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" /></g>
           <path class="moon" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
         </svg>
       </button>
-      <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary whitespace-nowrap !px-4 !py-2.5 text-[0.95rem] max-[400px]:!px-3.5 max-[400px]:text-[0.875rem]">Agenda<span class="max-[400px]:hidden"> una</span> demo</a>
+      <a href={contacto.whatsappLink} target="_blank" rel="noopener" class:list={['btn btn-primary whitespace-nowrap !px-4 !py-2.5 text-[0.95rem] max-[420px]:!px-3.5 max-[420px]:text-[0.875rem]', { 'max-[359px]:!hidden': menu }]}>Agenda<span class="max-[420px]:hidden"> una</span> demo</a>
+      {menu && (
+        <button type="button" class="menu-btn min-[900px]:!hidden" aria-expanded="false" aria-controls="nav-menu" aria-label="Abrir menú" data-menu-btn>
+          <span></span><span></span>
+        </button>
+      )}
     </div>
   </div>
+
+  {menu && (
+    <div id="nav-menu" class="nav-menu min-[900px]:!hidden" hidden data-menu data-lenis-prevent>
+      <nav aria-label="Secciones" class="wrap">
+        <ul class="menu-list">
+          {links.map((l) => <li><a href={l.href} class="menu-link" data-menu-link><span class="menu-sl" aria-hidden="true">/</span>{l.label}</a></li>)}
+        </ul>
+        <div class="menu-foot">
+          <span class="text-note text-ash">Tema</span>
+          <button type="button" class="theme-btn" data-theme-toggle aria-label="Cambiar a modo claro">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <g class="sun"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" /></g>
+              <path class="moon" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
+            </svg>
+          </button>
+        </div>
+        <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary menu-cta min-[360px]:!hidden" data-menu-link>Agenda una demo</a>
+      </nav>
+    </div>
+  )}
 </header>
 
 <style>
   .nav { transition: background-color .4s, border-color .4s, transform .5s var(--ease-out-expo); border-bottom: 1px solid transparent; }
   .nav.is-solid { background: color-mix(in srgb, var(--color-ink) 72%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-color: var(--color-line); }
   .nav.is-hidden { transform: translateY(-100%); }
+  .nav.is-open { background: var(--color-ink); border-color: var(--color-line); }
 
   /* Botón de tema: en oscuro muestra el sol (pasar a claro); en claro, la luna. */
   .theme-btn {
@@ -47,28 +74,79 @@ const links = Astro.props.links ?? [
   .theme-btn .moon { opacity: 0; transform: rotate(-60deg) scale(.5); }
   :global(:root.light) .theme-btn .sun { opacity: 0; transform: rotate(90deg) scale(.5); }
   :global(:root.light) .theme-btn .moon { opacity: 1; transform: none; }
+
+  /* Menú: dos rayas que se cruzan en una X; la segunda se pone roja, como la barra de la marca. */
+  .menu-btn {
+    position: relative; width: 2.6rem; height: 2.6rem; border-radius: 999px; flex: none;
+    border: 1px solid var(--color-line-strong); color: var(--color-bone); cursor: pointer; transition: border-color .3s;
+  }
+  .menu-btn:hover { border-color: var(--color-bone); }
+  .menu-btn span {
+    position: absolute; left: 50%; top: 50%; width: 1.05rem; height: 2px; margin: -1px 0 0 -0.525rem; border-radius: 2px;
+    background: currentColor; transition: transform .45s var(--ease-out-expo), background-color .3s;
+  }
+  .menu-btn span:first-child { transform: translateY(-3.5px); }
+  .menu-btn span:last-child { transform: translateY(3.5px); }
+  .menu-btn[aria-expanded="true"] span:first-child { transform: rotate(45deg); }
+  .menu-btn[aria-expanded="true"] span:last-child { transform: rotate(-45deg); background: var(--color-red-text); }
+
+  .nav-menu { max-height: calc(100dvh - 4.5rem); overflow-y: auto; overscroll-behavior: contain; border-top: 1px solid var(--color-line); background: var(--color-ink); }
+  .nav-menu:not([hidden]) { animation: menu-in .4s var(--ease-out-expo); }
+  @keyframes menu-in { from { opacity: 0; transform: translateY(-0.75rem); } }
+  .menu-list { list-style: none; margin: 0; padding: 0.5rem 0 0; }
+  .menu-link {
+    display: flex; align-items: baseline; padding-block: 0.85rem; border-bottom: 1px solid var(--color-line);
+    font-family: var(--font-display); font-weight: 800; font-size: clamp(1.6rem, 7vw, 2.2rem); line-height: 1.1; letter-spacing: -0.03em; color: var(--color-bone);
+  }
+  .menu-sl { display: inline-block; width: 0; overflow: hidden; color: var(--color-red-text); transition: width .45s var(--ease-out-expo); }
+  .menu-link:hover .menu-sl, .menu-link:focus-visible .menu-sl { width: 0.62em; }
+  .menu-foot { display: flex; align-items: center; justify-content: space-between; padding-block: 1rem; }
+  .menu-cta { justify-content: center; width: 100%; margin-bottom: 1.25rem; }
 </style>
 
 <script>
-  // Fondo al bajar; se esconde al bajar rápido y vuelve al subir.
+  // Fondo al bajar; se esconde al bajar rápido y vuelve al subir (no mientras el menú está abierto).
   const nav = document.querySelector<HTMLElement>('[data-nav]')!;
+  const menuBtn = nav.querySelector<HTMLButtonElement>('[data-menu-btn]');
+  const menu = nav.querySelector<HTMLElement>('[data-menu]');
+  let open = false;
   let last = window.scrollY;
   const onScroll = () => {
     const y = window.scrollY;
     nav.classList.toggle('is-solid', y > 40);
-    nav.classList.toggle('is-hidden', y > 500 && y > last + 4);
+    if (!open) nav.classList.toggle('is-hidden', y > 500 && y > last + 4);
     if (y < last - 4) nav.classList.remove('is-hidden');
     last = y;
   };
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
+  // Menú (solo si la página lo pide): se cierra con un enlace, con Escape, tocando fuera o al pasar a pantalla ancha.
+  if (menuBtn && menu) {
+    const setMenu = (v: boolean, volverAlBoton = false) => {
+      open = v;
+      menu.hidden = !v;
+      menuBtn.setAttribute('aria-expanded', String(v));
+      menuBtn.setAttribute('aria-label', v ? 'Cerrar menú' : 'Abrir menú');
+      nav.classList.toggle('is-open', v);
+      if (v) {
+        nav.classList.remove('is-hidden');
+        menu.querySelector<HTMLElement>('[data-menu-link]')?.focus();
+      } else if (volverAlBoton) menuBtn.focus();
+    };
+    menuBtn.addEventListener('click', () => setMenu(!open));
+    menu.querySelectorAll('[data-menu-link]').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+    document.addEventListener('keydown', (e) => { if (open && e.key === 'Escape') setMenu(false, true); });
+    document.addEventListener('pointerdown', (e) => { if (open && !nav.contains(e.target as Node)) setMenu(false); });
+    window.matchMedia('(min-width: 900px)').addEventListener('change', (e) => { if (e.matches && open) setMenu(false); });
+  }
+
   // Cambio de tema. Con View Transitions, la página nueva entra en diagonal (ver global.css);
-  // sin soporte o con «menos movimiento», cambia al instante.
+  // sin soporte o con «menos movimiento», cambia al instante. Puede haber dos botones (barra y menú).
   const root = document.documentElement;
-  const btn = document.querySelector<HTMLButtonElement>('[data-theme-toggle]')!;
+  const btns = document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]');
   const meta = document.querySelector<HTMLMetaElement>('[data-theme-color]');
-  const syncLabel = () => btn.setAttribute('aria-label', root.classList.contains('light') ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro');
+  const syncLabel = () => btns.forEach((b) => b.setAttribute('aria-label', root.classList.contains('light') ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'));
   syncLabel();
 
   function applyTheme(light: boolean) {
@@ -79,12 +157,12 @@ const links = Astro.props.links ?? [
     window.dispatchEvent(new Event('rd:theme'));
   }
 
-  btn.addEventListener('click', () => {
+  btns.forEach((btn) => btn.addEventListener('click', () => {
     const next = !root.classList.contains('light');
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!document.startViewTransition || reduce) { applyTheme(next); return; }
     root.classList.add('theme-anim');
     const t = document.startViewTransition(() => applyTheme(next));
     t.finished.finally(() => root.classList.remove('theme-anim'));
-  });
+  }));
 </script>
