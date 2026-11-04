@@ -1,408 +1,112 @@
 ---
-// Versión 2 «Recorrido»: abre con un video que avanza al bajar (HeroCine, al estilo de Terminal
-// Industries) y cada bloque se mueve para explicar algo: los íconos cuentan qué hace cada servicio,
-// RebelBot escribe en cada paso del recorrido horizontal, el proceso se llena en orden y la columna
-// de RebelDEV se enciende en la comparación. El cierre es el único bloque de color sólido.
+// Landing de RebelDEV (la Versión Fina, elegida por el equipo el 31 oct 2026).
 import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
 import Logo from '../components/Logo.astro';
-import Chat from '../components/Chat.astro';
-import HeroCine from '../components/HeroCine.astro';
-import Glifo from '../components/Glifo.astro';
-import Versiones from '../components/Versiones.astro';
+import Preguntas from '../components/Preguntas.astro';
+import Hero from '../components/fina/Hero.astro';
+import Caos from '../components/fina/Caos.astro';
+import Servicios from '../components/fina/Servicios.astro';
+import Proceso from '../components/fina/Proceso.astro';
+import Comparador from '../components/fina/Comparador.astro';
+import Fredy from '../components/fina/Fredy.astro';
+import Cierre from '../components/fina/Cierre.astro';
 import { contacto } from '../data/contacto';
-import { pasos } from '../data/rebelbot';
-import { servicios, proceso, garantias, comparacion, hechos, stack, fundador, cita, preguntas } from '../data/estudio';
+
+const links = [
+  { href: '#como', label: 'Cómo trabajamos' },
+  { href: '#servicios', label: 'Servicios' },
+  { href: '#proceso', label: 'Proceso' },
+  { href: '#preguntas', label: 'Preguntas' },
+];
 ---
 <Base
-  title="RebelDEV · Versión 2"
-  description="Estudio de desarrollo de software. Creamos soluciones a medida según lo que necesita cada empresa: plataformas web, automatización, integraciones, backend y asistentes de WhatsApp."
+  title="RebelDEV · Ingeniería para empresas rebeldes"
+  description="RebelDEV es un estudio de desarrollo de software. Creamos soluciones a medida según lo que necesita cada empresa: plataformas web, automatización, backend, APIs, integraciones y asistentes de WhatsApp."
 >
-  <header class="b-nav">
-    <a href="#inicio" class="b-logo" aria-label="RebelDEV, ir al inicio"><Logo /></a>
-    <nav class="b-links" aria-label="Principal">
-      <a href="#servicios">Servicios</a>
-      <a href="#rebelbot">RebelBot</a>
-      <a href="#proceso">Proceso</a>
-      <a href="#preguntas">Preguntas</a>
-    </nav>
-    <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary b-demo">Agenda una demo</a>
-  </header>
+  <Nav links={links} />
 
-  <main id="contenido">
-    <HeroCine />
+  <div class="fina">
+    <main id="contenido">
+      <Hero />
+      <Caos />
+      <Servicios />
+      <Proceso />
+      <Comparador />
+      <Fredy />
+      <Preguntas />
+    </main>
 
-    <section id="servicios" class="wrap b-sec">
-      <h2 class="text-d2">Lo que construimos.</h2>
-      <ul class="b-bento mt-12">
-        {servicios.map((s) => (
-          <li class:list={['b-tile', `b-${s.tamano}`]} data-tile>
-            <Glifo id={s.g} class={s.tamano === 'grande' ? 'b-glifo-xl' : ''} />
-            <div class="b-tile-txt">
-              <h3 class="text-d3">{s.t}</h3>
-              <p class="mt-3 text-body text-ash">{s.d}</p>
-              {s.g === 'wa' && <a href="#rebelbot" class="b-more">Ver cómo funciona RebelBot</a>}
-            </div>
-          </li>
-        ))}
-        <li class="b-tile b-normal b-otro">
-          <h3 class="text-d3">¿Algo más?</h3>
-          <p class="mt-3 text-body text-ash">Si implica software, probablemente podemos construirlo. <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="b-more">Conversemos</a></p>
-        </li>
+    <Cierre />
+
+    <footer class="wrap fina-foot">
+      <span class="text-bone"><Logo /></span>
+      <ul class="text-note text-ash">
+        <li><a href={`mailto:${contacto.correo}`}>{contacto.correo}</a></li>
+        <li><a href={contacto.whatsappLink} target="_blank" rel="noopener">WhatsApp {contacto.whatsapp}</a></li>
       </ul>
-    </section>
+    </footer>
 
-    <section id="rebelbot" class="b-pin" data-pin>
-      <div class="b-pin-head wrap">
-        <h2 class="text-d2">RebelBot: tu WhatsApp responde, califica y agenda. Solo.</h2>
-        <p class="mt-3 max-w-[50ch] text-body text-ash">Nuestro asistente con IA, conectado a los datos de tu negocio. Estos son sus cuatro pasos.</p>
-        <div class="b-pin-bar" aria-hidden="true"><span data-pin-bar></span></div>
-      </div>
-      <div class="b-track" data-track>
-        {pasos.map((p, i) => (
-          <article class="b-tile b-panel" data-panel>
-            <div>
-              <p class="text-note text-ash">Paso {i + 1} de {pasos.length}</p>
-              <h3 class="mt-3 text-d3">{p.titulo}</h3>
-              <p class="mt-2 text-body text-ash">{p.texto}</p>
-            </div>
-            <div class="b-panel-chat"><Chat msgs={p.chat} estilo="burbujas" /></div>
-          </article>
-        ))}
-      </div>
-    </section>
-
-    <section id="proceso" class="wrap b-sec">
-      <h2 class="text-d2 max-w-[20ch]">Ocho pasos, con una semana a prueba antes de pagar.</h2>
-      <ol class="b-steps mt-12" data-steps>
-        {proceso.map((p, i) => (
-          <li class="b-step" data-step>
-            <span class="b-fill" aria-hidden="true"></span>
-            <span class="b-n text-note text-ash">{i + 1}</span>
-            <h3 class="mt-3 text-d3">{p.t}</h3>
-            <p class="mt-2 text-body text-ash">{p.d}</p>
-          </li>
-        ))}
-      </ol>
-    </section>
-
-    <section class="wrap b-sec">
-      <h2 class="text-d2">Pruébalo antes de pagar.</h2>
-      <div class="b-trio mt-12">
-        {garantias.map((g) => (
-          <div class="b-tile">
-            <h3 class="text-d3">{g.t}</h3>
-            <p class="mt-3 text-body text-ash">{g.d}</p>
-          </div>
-        ))}
-      </div>
-      <div class="b-cmp mt-12" data-cmp>
-        <table>
-          <caption class="sr-only">Comparación con una agencia tradicional y con un freelancer</caption>
-          <thead>
-            <tr>
-              <th scope="col"><span class="sr-only">Aspecto</span></th>
-              <th scope="col">Agencia tradicional</th>
-              <th scope="col">Freelancer</th>
-              <th scope="col" class="is-us">RebelDEV</th>
-            </tr>
-          </thead>
-          <tbody>
-            {comparacion.map((f) => (
-              <tr>
-                <th scope="row">{f.k}</th>
-                <td>{f.a}</td>
-                <td>{f.f}</td>
-                <td class="is-us">{f.r}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="wrap b-sec b-eng">
-      <h2 class="text-d1 max-w-[16ch]">La IA acelera, no decide.</h2>
-      <p class="mt-6 max-w-[40ch] text-d3 b-eng-lead" data-scrub-words>Un ingeniero senior define la arquitectura y aprueba cada cambio. Lo construimos rápido con IA y lo revisan ingenieros que han hecho sistemas para millones de personas.</p>
-      <div class="b-hechos mt-12">
-        {hechos.map((h) => (
-          <div class="b-tile">
-            <h3 class="text-d3">{h.t}</h3>
-            <p class="mt-2 text-body text-ash">{h.d}</p>
-          </div>
-        ))}
-      </div>
-      <p class="mt-10 text-note text-ash">
-        <span>Con qué está hecho RebelBot:</span>
-        {stack.map((s, i) => <>{i > 0 && <span class="slash" aria-hidden="true">/</span>}<span>{s}</span></>)}
-      </p>
-    </section>
-
-    <section id="nosotros" class="wrap b-sec b-fund">
-      <blockquote class="b-quote">
-        <p class="text-d2" data-scrub-words>{cita}</p>
-      </blockquote>
-      <div class="b-tile b-founder">
-        <h2 class="text-d3">Fredy Ramos</h2>
-        <p class="mt-1 text-body text-red-text">{fundador.cargo}</p>
-        <p class="mt-5 text-body text-ash">{fundador.formacion}</p>
-        <ul class="b-chips mt-6">
-          {fundador.trayectoria.map((t) => <li>{t}</li>)}
-        </ul>
-      </div>
-    </section>
-
-    <section id="preguntas" class="wrap b-sec">
-      <h2 class="text-d2">Preguntas frecuentes.</h2>
-      <div class="b-faq mt-12">
-        {preguntas.map((p) => (
-          <div class="b-tile">
-            <h3 class="text-d3">{p.q}</h3>
-            <p class="mt-3 text-body text-ash">{p.a}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-  </main>
-
-  <section id="contacto" class="wrap b-sec">
-    <div class="b-close" data-close>
-      <h2 class="text-d1">Cuéntanos qué necesita tu negocio.</h2>
-      <p class="mt-6 max-w-[40ch] text-lead">Ingeniería de sistemas usados por millones, entregada en semanas.</p>
-      <div class="mt-10 flex flex-wrap gap-3">
-        <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn b-btn-light">Agenda una demo por WhatsApp</a>
-        <a href={`mailto:${contacto.correo}`} class="btn b-btn-line">Escríbenos</a>
-      </div>
-    </div>
-  </section>
-
-  <footer class="wrap b-foot">
-    <span class="text-bone"><Logo /></span>
-    <ul class="text-note text-ash">
-      <li><a href={`mailto:${contacto.correo}`}>{contacto.correo}</a></li>
-      <li><a href={contacto.whatsappLink} target="_blank" rel="noopener">WhatsApp {contacto.whatsapp}</a></li>
-    </ul>
-  </footer>
-
-  <Versiones actual="v2" />
+    <div class="fina-cursor" data-fina-cursor aria-hidden="true"><span></span></div>
+  </div>
 </Base>
 
+<style is:global>
+  .fina-sec { padding-block: clamp(6rem, 12vw, 10rem); }
+  .fina section[id] { scroll-margin-top: 5rem; }
+  .fina { overflow-x: clip; }
+</style>
+
 <style>
-  /* Barra flotante centrada */
-  .b-nav {
-    position: fixed; z-index: 50; top: 1rem; left: 50%; transform: translateX(-50%);
-    width: min(calc(100% - 2rem), 60rem); display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-    padding: 0.5rem 0.5rem 0.5rem 1.2rem; border-radius: 999px;
-    background: color-mix(in srgb, var(--color-surface) 88%, transparent); border: 1px solid var(--color-line);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  .fina-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem; padding-block: 3rem; }
+  .fina-foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+  .fina-foot a:hover { color: var(--color-bone); }
+
+  .fina-cursor { display: none; }
+  :global(html.has-cursor) .fina-cursor { display: block; position: fixed; left: 0; top: 0; z-index: 70; pointer-events: none; width: 0; height: 0; }
+  .fina-cursor span {
+    position: absolute; left: 14px; top: 10px; width: 3px; height: 20px; border-radius: 3px; background: var(--color-red);
+    transform: rotate(18deg); transition: width 0.3s, height 0.3s, opacity 0.3s;
   }
-  .b-logo { font-size: 1.15rem; color: var(--color-bone); }
-  .b-links { display: none; gap: 1.6rem; }
-  .b-links a { color: var(--color-ash); font-size: 0.92rem; transition: color 0.3s; }
-  .b-links a:hover { color: var(--color-bone); }
-  .b-demo { padding: 0.7rem 1rem; font-size: 0.88rem; }
-  @media (min-width: 900px) { .b-links { display: flex; } }
-
-  /* Bloques (base de la versión) */
-  .b-tile { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 1.5rem; padding: 1.6rem; }
-  .b-sec { padding-block: 6rem; }
-  @media (min-width: 900px) { .b-sec { padding-block: 8rem; } }
-
-  /* Servicios: cuadrícula de tamaños distintos, cada bloque con su ícono animado */
-  .b-bento { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: 1fr; }
-  .b-bento > li { display: flex; flex-direction: column; gap: 2rem; }
-  .b-tile-txt { margin-top: auto; }
-  @media (min-width: 640px) { .b-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); } .b-ancho, .b-grande { grid-column: span 2; } }
-  @media (min-width: 1024px) {
-    .b-bento { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-flow: dense; }
-    .b-grande { grid-column: span 2; grid-row: span 2; background: color-mix(in srgb, var(--color-red) 12%, var(--color-surface)); border-color: color-mix(in srgb, var(--color-red) 40%, transparent); }
-    .b-ancho { grid-column: span 2; }
-  }
-  .b-normal { min-height: 13rem; }
-  .b-otro { justify-content: flex-end; }
-  .b-grande :global(.b-glifo-xl) { width: clamp(6rem, 14vw, 12rem); height: clamp(6rem, 14vw, 12rem); }
-  .b-more { display: inline-block; margin-top: 1rem; color: var(--color-red-text); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
-
-  /* RebelBot: franja horizontal. Sin JavaScript (o con «menos movimiento») son bloques apilados */
-  .b-pin { padding-block: 6rem; }
-  .b-pin-head { padding-bottom: 2.5rem; }
-  .b-pin-bar { display: none; }
-  .b-track { display: grid; gap: 1.25rem; padding-inline: clamp(1.25rem, 4vw, 3rem); }
-  .b-panel { width: 100%; }
-  /* Fija: el título queda bajo la barra flotante y todo cabe en una pantalla */
-  .b-panel-chat { margin-top: 1.25rem; }
-  .b-pin.pin-on { height: 100vh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding-block: 5rem 1.25rem; }
-  .b-pin.pin-on .b-pin-head { padding-bottom: 1.5rem; }
-  .b-pin.pin-on .b-pin-head h2 { font-size: clamp(1.6rem, 2.4vw, 2.4rem); }
-  @media (max-height: 760px) { .b-pin.pin-on .b-pin-head p { display: none; } }
-  .b-pin.pin-on .b-panel { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); column-gap: 1.75rem; align-items: start; padding: 1.4rem 1.5rem; }
-  .b-pin.pin-on .b-panel-chat { margin-top: 0; }
-  .b-pin.pin-on .b-panel :global(.chat) { gap: 0.4rem; }
-  .b-pin.pin-on .b-panel :global(.chat-map) { height: 3.6rem; }
-  .b-pin.pin-on .b-pin-bar { display: block; margin-top: 1.5rem; width: min(100%, 20rem); height: 2px; background: var(--color-line); }
-  .b-pin-bar span { display: block; height: 100%; background: var(--color-red); transform: scaleX(0); transform-origin: left; }
-  .b-pin.pin-on .b-track { display: flex; width: max-content; gap: 2rem; padding-block: 0; }
-  .b-pin.pin-on .b-panel { width: min(56rem, 66vw); flex: none; opacity: 0.38; transition: opacity 0.5s, border-color 0.5s; }
-  .b-pin.pin-on .b-panel.is-active { opacity: 1; border-color: color-mix(in srgb, var(--color-red) 45%, transparent); }
-
-  /* Mientras RebelBot «escribe»: el globo ya ocupa su lugar y muestra tres puntos */
-  .b-panel :global(.chat-msg) { position: relative; transition: color 0.25s; }
-  .b-panel :global(.chat-who) { transition: color 0.25s; }
-  .b-panel :global(.b-typing) { position: absolute; left: 0.9rem; top: 50%; display: flex; gap: 4px; translate: 0 -50%; opacity: 0; transition: opacity 0.2s; }
-  .b-panel :global(.b-typing i) { width: 6px; height: 6px; border-radius: 99px; background: var(--color-bone); animation: b-dot 1s ease-in-out infinite; }
-  .b-panel :global(.b-typing i:nth-child(2)) { animation-delay: 0.15s; }
-  .b-panel :global(.b-typing i:nth-child(3)) { animation-delay: 0.3s; }
-  .b-panel :global(.is-typing), .b-panel :global(.is-typing .chat-who) { color: transparent; }
-  .b-panel :global(.is-typing .b-typing) { opacity: 1; }
-  @keyframes b-dot { 0%, 100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
-
-  /* Proceso: cuatro columnas; al bajar, la línea roja de cada paso se llena en orden */
-  .b-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 2.5rem 2rem; grid-template-columns: 1fr; }
-  @media (min-width: 640px) { .b-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 1024px) { .b-steps { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-  .b-step { position: relative; padding-top: 1.2rem; border-top: 1px solid var(--color-line); }
-  .b-fill { position: absolute; left: 0; right: 0; top: -1px; height: 2px; background: var(--color-red); transform: scaleX(0); transform-origin: left; }
-  .b-n { font-variant-numeric: tabular-nums; transition: color 0.3s; }
-  .b-step.is-on .b-n { color: var(--color-red-text); }
-
-  /* Garantías y comparación */
-  .b-trio { display: grid; gap: 1rem; }
-  @media (min-width: 900px) { .b-trio { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  .b-cmp { overflow-x: auto; }
-  .b-cmp table { width: 100%; min-width: 40rem; border-collapse: collapse; }
-  .b-cmp th, .b-cmp td { padding: 1rem; text-align: left; vertical-align: top; border-top: 1px solid var(--color-line); font-size: 0.95rem; line-height: 1.5; }
-  .b-cmp thead th { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 400; color: var(--color-ash-dim); text-transform: uppercase; letter-spacing: 0.04em; }
-  .b-cmp tbody th { font-family: var(--font-display); font-weight: 600; color: var(--color-bone); width: 22%; }
-  .b-cmp td { color: var(--color-ash); }
-  .b-cmp .is-us { color: var(--color-bone); transition: background-color 0.6s; }
-  .b-cmp thead .is-us { color: var(--color-red-text); }
-  .b-cmp td.is-lit, :global(html:not(.has-motion)) .b-cmp td.is-us { background: color-mix(in srgb, var(--color-red) 12%, transparent); }
-
-  /* IA y estudio */
-  .b-eng-lead { color: var(--color-bone); font-family: var(--font-sans); font-weight: 400; letter-spacing: -0.01em; line-height: 1.4; }
-  .b-hechos { display: grid; gap: 1rem; }
-  @media (min-width: 768px) { .b-hechos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  .b-fund { display: grid; gap: 3rem; }
-  @media (min-width: 900px) { .b-fund { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); align-items: start; } }
-  .b-quote { margin: 0; }
-  .b-quote p { max-width: 22ch; }
-  .b-founder { padding: 2rem; }
-  .b-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .b-chips li { padding: 0.45rem 0.9rem; border-radius: 999px; border: 1px solid var(--color-line-strong); font-size: 0.875rem; color: var(--color-bone); }
-
-  /* Preguntas: todas abiertas, en dos columnas */
-  .b-faq { display: grid; gap: 1rem; }
-  @media (min-width: 900px) { .b-faq { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-
-  /* Cierre: el único bloque de color sólido; al llegar se abre hasta el ancho completo */
-  .b-close { background: var(--color-red); color: #fff; border-radius: 2rem; padding: clamp(2.2rem, 6vw, 5rem); }
-  .b-close h2 { color: #fff; max-width: 14ch; }
-  .b-close .text-lead { color: #fff; opacity: 0.92; }
-  .b-btn-light { background: #fff; color: #0B0A0E; }
-  .b-btn-light:hover { background: #F4F0E8; }
-  .b-btn-line { border: 1px solid rgb(255 255 255 / 0.7); color: #fff; }
-  .b-btn-line:hover { border-color: #fff; }
-
-  .b-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem; padding-block: 3rem; }
-  .b-foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
-  .b-foot a:hover { color: var(--color-bone); }
+  :global(html.has-cursor) .fina-cursor.is-link span { height: 30px; }
 </style>
 
 <script>
-  import { gsap, ScrollTrigger, SplitText, reduceMotion, coarsePointer } from '../scripts/motion';
-  import { glifoTl } from '../scripts/glifos';
+  import { gsap, initReveals, reduceMotion, coarsePointer } from '../scripts/motion';
 
-  // Palabras que se encienden al leer (como el texto del hero de Terminal Industries).
-  function scrubWords(el: HTMLElement) {
-    const words = SplitText.create(el, { type: 'words' }).words;
-    gsap.fromTo(words, { opacity: 0.16 }, { opacity: 1, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: el, start: 'top 82%', end: 'bottom 48%', scrub: true } });
-  }
+  initReveals();
 
-  // RebelBot escribe: los mensajes del cliente aparecen y los del asistente muestran tres puntos antes del texto.
-  function chatTl(panel: HTMLElement) {
-    const tl = gsap.timeline({ paused: true });
-    panel.querySelectorAll<HTMLElement>('.chat > *').forEach((m) => {
-      const bot = m.classList.contains('chat-out') || m.classList.contains('chat-agent');
-      if (!bot) { tl.fromTo(m, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.35 }, '+=0.3'); return; }
-      m.insertAdjacentHTML('beforeend', '<span class="b-typing" aria-hidden="true"><i></i><i></i><i></i></span>');
-      tl.call(() => m.classList.add('is-typing'), [], '+=0.3')
-        .fromTo(m, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.35 }, '<')
-        .call(() => m.classList.remove('is-typing'), [], '+=0.7');
-    });
-    return tl;
-  }
-
-  if (!reduceMotion) {
-    document.querySelectorAll<HTMLElement>('[data-tile]').forEach((tile) => {
-      const tl = glifoTl(tile.querySelector<SVGSVGElement>('[data-glifo]'));
-      if (!tl) return;
-      ScrollTrigger.create({ trigger: tile, start: 'top 82%', once: true, onEnter: () => tl.play() });
-      if (!coarsePointer) tile.addEventListener('pointerenter', () => { if (tl.progress() === 1) tl.restart(); });
+  if (!reduceMotion && !coarsePointer) {
+    document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((el) => {
+      const x = gsap.quickTo(el, 'x', { duration: 0.5, ease: 'power3.out' });
+      const y = gsap.quickTo(el, 'y', { duration: 0.5, ease: 'power3.out' });
+      el.addEventListener('pointermove', (e) => {
+        const r = el.getBoundingClientRect();
+        x((e.clientX - r.left - r.width / 2) * 0.25);
+        y((e.clientY - r.top - r.height / 2) * 0.35);
+      });
+      el.addEventListener('pointerleave', () => { x(0); y(0); });
     });
 
-    gsap.matchMedia().add({ desk: '(min-width: 1024px)', mob: '(max-width: 1023px)' }, (ctx) => {
-      const sec = document.querySelector<HTMLElement>('[data-pin]')!;
-      const panels = gsap.utils.toArray<HTMLElement>('[data-panel]', sec);
-      const chats = panels.map(chatTl);
-
-      if (ctx.conditions!.desk) {
-        // Recorrido horizontal fijo: el avance decide qué paso está activo (uno a la vez, en orden),
-        // ese paso se resalta y su chat escribe. La barra roja marca el avance.
-        const track = sec.querySelector<HTMLElement>('[data-track]')!;
-        const bar = sec.querySelector('[data-pin-bar]');
-        sec.classList.add('pin-on');
-        let played = -1;
-        const activate = (k: number) => {
-          panels.forEach((p, i) => p.classList.toggle('is-active', i === k));
-          for (; played < k; played++) chats[played + 1].play();
-        };
-        const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
-        gsap.to(track, {
-          x: () => -dist(),
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sec, start: 'top top', end: () => `+=${Math.max(dist() * 1.5, window.innerHeight * 2)}`, pin: true, scrub: 0.6, invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              gsap.set(bar, { scaleX: self.progress });
-              activate(Math.min(panels.length - 1, Math.floor(self.progress * (panels.length - 1) + 0.35)));
-            },
-          },
-        });
-        // El primer paso empieza a escribir un poco antes de que la sección se fije.
-        ScrollTrigger.create({ trigger: sec, start: 'top 55%', onEnter: () => { if (played < 0) activate(0); } });
-      } else {
-        panels.forEach((p, i) => ScrollTrigger.create({ trigger: p, start: 'top 72%', once: true, onEnter: () => chats[i].play() }));
-      }
-      return () => {
-        sec.classList.remove('pin-on');
-        sec.querySelectorAll('.b-typing').forEach((t) => t.remove());
-      };
+    // Cursor «/»: se inclina más cuanto más rápido se mueve.
+    const cur = document.querySelector<HTMLElement>('[data-fina-cursor]')!;
+    const bar = cur.querySelector('span')!;
+    document.documentElement.classList.add('has-cursor');
+    const cx = gsap.quickTo(cur, 'x', { duration: 0.35, ease: 'power3.out' });
+    const cy = gsap.quickTo(cur, 'y', { duration: 0.35, ease: 'power3.out' });
+    const tilt = gsap.quickTo(bar, 'rotation', { duration: 0.5, ease: 'power3.out' });
+    let lx = 0, rest = 0;
+    gsap.set(bar, { autoAlpha: 0 });
+    window.addEventListener('pointermove', (e) => {
+      if (!lx) { gsap.set(cur, { x: e.clientX, y: e.clientY }); gsap.to(bar, { autoAlpha: 1, duration: 0.2 }); }
+      cx(e.clientX); cy(e.clientY);
+      tilt(18 + gsap.utils.clamp(-30, 30, (e.clientX - lx) * 1.2));
+      lx = e.clientX;
+      clearTimeout(rest);
+      rest = window.setTimeout(() => tilt(18), 120);
+      cur.classList.toggle('is-link', !!(e.target as Element).closest?.('a, button, summary, [role="slider"]'));
     });
-
-    // Proceso: cada paso se llena cuando le toca y su número se enciende.
-    const steps = gsap.utils.toArray<HTMLElement>('[data-step]');
-    const fills = steps.map((s) => s.querySelector<HTMLElement>('.b-fill')!);
-    ScrollTrigger.create({
-      trigger: '[data-steps]', start: 'top 72%', end: 'bottom 62%',
-      onUpdate: (self) => {
-        const p = self.progress * steps.length;
-        steps.forEach((s, i) => {
-          const f = gsap.utils.clamp(0, 1, p - i);
-          fills[i].style.transform = `scaleX(${f})`;
-          s.classList.toggle('is-on', f > 0.98);
-        });
-      },
-    });
-
-    // Comparación: la columna de RebelDEV se enciende fila por fila.
-    const lit = gsap.utils.toArray<HTMLElement>('[data-cmp] tbody td.is-us');
-    ScrollTrigger.create({ trigger: '[data-cmp]', start: 'top 72%', once: true, onEnter: () => lit.forEach((c, i) => gsap.delayedCall(i * 0.18, () => c.classList.add('is-lit'))) });
-
-    document.fonts.ready.then(() => document.querySelectorAll<HTMLElement>('[data-scrub-words]').forEach(scrubWords));
-
-    // Cierre: el bloque rojo se abre hasta el ancho completo al llegar.
-    gsap.fromTo('[data-close]', { clipPath: 'inset(0% 7% 0% 7% round 2rem)' }, {
-      clipPath: 'inset(0% 0% 0% 0% round 2rem)', ease: 'none',
-      scrollTrigger: { trigger: '#contacto', start: 'top 92%', end: 'top 40%', scrub: true },
-    });
+    document.addEventListener('pointerleave', () => gsap.to(bar, { autoAlpha: 0, duration: 0.2 }));
+    document.addEventListener('pointerenter', () => gsap.to(bar, { autoAlpha: 1, duration: 0.2 }));
   }
 </script>

@@ -1,5 +1,5 @@
 ---
-// Servicios (Versión Fina): el índice de la v3; un clic abre debajo una demo de 4 pasos. El panel queda fijo y, al bajar,
+// Servicios en índice: un clic abre debajo una demo de 4 pasos. El panel queda fijo y, al bajar,
 // cada paso reemplaza al anterior en el mismo lugar mientras la escena avanza.
 import Glifo from '../Glifo.astro';
 import Medida from './demos/Medida.astro';
@@ -325,7 +325,7 @@ const filas = servicios.map((s) => ({
     f.btn.addEventListener('click', () => alternar(f));
   });
 
-  // Con ratón: el glifo del servicio sigue al cursor sobre la cabecera (de la v3).
+  // Con ratón: el glifo del servicio sigue al cursor sobre la cabecera.
   gsap.matchMedia().add({
     desk: '(min-width: 900px) and (hover: hover) and (pointer: fine)',
     tactil: '(max-width: 899px), (hover: none), (pointer: coarse)',

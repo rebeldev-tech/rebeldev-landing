@@ -2,16 +2,9 @@
 import Logo from './Logo.astro';
 import { contacto } from '../data/contacto';
 
-// menu: bajo 900 px los enlaces pasan a un panel desplegable (lo usa la Versión Fina); sin él, bajo 900 px no hay enlaces.
-interface Props { conRebelBot?: boolean; links?: { href: string; label: string }[]; menu?: boolean }
-const { conRebelBot = true, menu = false } = Astro.props;
-
-const links = Astro.props.links ?? [
-  ...(conRebelBot ? [{ href: '#rebelbot', label: 'RebelBot' }] : []),
-  { href: '#servicios', label: 'Servicios' },
-  { href: '#como-trabajamos', label: 'Cómo trabajamos' },
-  { href: '#preguntas', label: 'Preguntas' },
-];
+// Bajo 900 px los enlaces pasan a un panel desplegable (con el botón de tema adentro).
+interface Props { links: { href: string; label: string }[] }
+const { links } = Astro.props;
 ---
 <header class="nav fixed inset-x-0 top-0 z-50" data-nav>
   <div class="wrap flex h-[4.5rem] items-center justify-between gap-2 min-[375px]:gap-4 sm:gap-6">
@@ -20,40 +13,36 @@ const links = Astro.props.links ?? [
       {links.map((l) => <a href={l.href} class="nav-link whitespace-nowrap text-[0.95rem] text-ash transition-colors hover:text-bone">{l.label}</a>)}
     </nav>
     <div class="flex items-center gap-2 sm:gap-3">
-      <button type="button" class:list={['theme-btn', menu ? 'max-[899px]:!hidden' : 'max-[359px]:!hidden']} data-theme-toggle aria-label="Cambiar a modo claro">
+      <button type="button" class="theme-btn max-[899px]:!hidden" data-theme-toggle aria-label="Cambiar a modo claro">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <g class="sun"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" /></g>
           <path class="moon" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
         </svg>
       </button>
-      <a href={contacto.whatsappLink} target="_blank" rel="noopener" class:list={['btn btn-primary whitespace-nowrap !px-4 !py-2.5 text-[0.95rem] max-[420px]:!px-3.5 max-[420px]:text-[0.875rem]', { 'max-[359px]:!hidden': menu }]}>Agenda<span class="max-[420px]:hidden"> una</span> demo</a>
-      {menu && (
-        <button type="button" class="menu-btn min-[900px]:!hidden" aria-expanded="false" aria-controls="nav-menu" aria-label="Abrir menú" data-menu-btn>
-          <span></span><span></span>
-        </button>
-      )}
+      <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary whitespace-nowrap !px-4 !py-2.5 text-[0.95rem] max-[420px]:!px-3.5 max-[420px]:text-[0.875rem] max-[359px]:!hidden">Agenda<span class="max-[420px]:hidden"> una</span> demo</a>
+      <button type="button" class="menu-btn min-[900px]:!hidden" aria-expanded="false" aria-controls="nav-menu" aria-label="Abrir menú" data-menu-btn>
+        <span></span><span></span>
+      </button>
     </div>
   </div>
 
-  {menu && (
-    <div id="nav-menu" class="nav-menu min-[900px]:!hidden" hidden data-menu data-lenis-prevent>
-      <nav aria-label="Secciones" class="wrap">
-        <ul class="menu-list">
-          {links.map((l) => <li><a href={l.href} class="menu-link" data-menu-link><span class="menu-sl" aria-hidden="true">/</span>{l.label}</a></li>)}
-        </ul>
-        <div class="menu-foot">
-          <span class="text-note text-ash">Tema</span>
-          <button type="button" class="theme-btn" data-theme-toggle aria-label="Cambiar a modo claro">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <g class="sun"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" /></g>
-              <path class="moon" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
-            </svg>
-          </button>
-        </div>
-        <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary menu-cta min-[360px]:!hidden" data-menu-link>Agenda una demo</a>
-      </nav>
-    </div>
-  )}
+  <div id="nav-menu" class="nav-menu min-[900px]:!hidden" hidden data-menu data-lenis-prevent>
+    <nav aria-label="Secciones" class="wrap">
+      <ul class="menu-list">
+        {links.map((l) => <li><a href={l.href} class="menu-link" data-menu-link><span class="menu-sl" aria-hidden="true">/</span>{l.label}</a></li>)}
+      </ul>
+      <div class="menu-foot">
+        <span class="text-note text-ash">Tema</span>
+        <button type="button" class="theme-btn" data-theme-toggle aria-label="Cambiar a modo claro">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <g class="sun"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" /></g>
+            <path class="moon" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
+          </svg>
+        </button>
+      </div>
+      <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary menu-cta min-[360px]:!hidden" data-menu-link>Agenda una demo</a>
+    </nav>
+  </div>
 </header>
 
 <style>
@@ -121,7 +110,7 @@ const links = Astro.props.links ?? [
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // Menú (solo si la página lo pide): se cierra con un enlace, con Escape, tocando fuera o al pasar a pantalla ancha.
+  // Menú: se cierra con un enlace, con Escape, tocando fuera o al pasar a pantalla ancha.
   if (menuBtn && menu) {
     const setMenu = (v: boolean, volverAlBoton = false) => {
       open = v;

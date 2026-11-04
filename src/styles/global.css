@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Paleta y tipografía de la marca (base: el mock; contrastes revisados en referencias/mapeo-mejoras-marca.md).
+/* Paleta y tipografía de la marca (base: el mock del Brand Hub, con contrastes revisados).
    Los nombres son de la marca: «ink» es el FONDO y «bone» el TEXTO en cualquier tema.
    El modo claro (más abajo, :root.light) solo cambia los valores. */
 @theme {
@@ -15,7 +15,7 @@
   --color-ash-dim: #8E8791;    /* notas: 5,7:1 (el del mock no pasaba) */
   --color-red: #E4121F;        /* rojo de marca: barra, botones, rellenos */
   --color-red-text: #FF2D3F;   /* rojo para texto e íconos sobre oscuro: 5,4:1 */
-  --color-amber: #FF6A2C;      /* ámbar: «a prueba» (v4). Solo relleno con texto oscuro encima: 6,9:1 */
+  --color-amber: #FF6A2C;      /* ámbar: acento puntual («a prueba»). Solo relleno con texto oscuro encima: 6,9:1 */
   --color-wa: #0B141A;         /* fondo del chat (el teléfono es oscuro en los dos temas) */
   --color-wa-in: #1F2C34;
   --color-wa-out: #144D37;
@@ -85,13 +85,6 @@ html.theme-anim::view-transition-new(root) {
 @utility text-note   { font-size: 0.875rem; line-height: 1.5; }
 
 @utility wrap { width: 100%; max-width: 84rem; margin-inline: auto; padding-inline: clamp(1.25rem, 4vw, 3rem); }
-
-/* Grano suave, como el banner de LinkedIn */
-:root.light .grain { opacity: 0.05; }
-.grain {
-  position: fixed; inset: 0; pointer-events: none; z-index: 60; opacity: 0.07; mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
 
 /* Botones */
 .btn {

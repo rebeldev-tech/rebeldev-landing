@@ -1,4 +1,4 @@
-// Geometría del isotipo </> provisional (propuesta I-A de referencias/propuestas-logo.html).
+// Geometría del isotipo </> provisional (propuesta I-A).
 // Alto T = 30 unidades; trazo = 0,22 del alto; los tres signos separados por medio trazo.
 // Se usa en el logo (SVG), en la pantalla de carga y para muestrear las partículas.
 

@@ -262,7 +262,7 @@ export class ParticleMark {
   private running = false; private visible = true;
   private clock = 0; private last = 0; private formT0 = -1;
 
-  // formado: empieza armado, sin la entrada de build(). polvo: escala de la nube (1 = la de la v1).
+  // formado: empieza armado, sin la entrada de build(). polvo: escala de la nube (1 = la normal).
   constructor(private canvas: HTMLCanvasElement, private slot: HTMLElement, private opts: { interactive: boolean; still: boolean; formado?: boolean; polvo?: number }) {
     this.renderer = new WebGLRenderer({ canvas, alpha: true, antialias: false, premultipliedAlpha: true, powerPreference: 'high-performance' });
     this.renderer.setClearColor(0x000000, 0);

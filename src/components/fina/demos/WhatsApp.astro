@@ -21,7 +21,7 @@ const ficha = [
       <span class="wa-tag">Ejemplo</span>
     </div>
     <div class="wa-cuerpo">
-      {pasos.map((p) => <div class="wa-paso" data-e="paso"><Chat msgs={p.chat} estilo="burbujas" /></div>)}
+      {pasos.map((p) => <div class="wa-paso" data-e="paso"><Chat msgs={p.chat} /></div>)}
       <div class="wa-typing" data-e="typing"><i></i><i></i><i></i></div>
     </div>
     <div class="wa-pie"><span>Escribe un mensaje</span></div>
@@ -58,7 +58,7 @@ const ficha = [
   .wa-cuerpo { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 0.4em 0.55em; font-size: 0.78em; }
   .wa-cuerpo :global(.chat) { gap: 0.4em; }
   .wa-cuerpo :global(.chat > *) { overflow: hidden; }
-  /* Chat.astro mide en rem (lo usan otras versiones): aquí pasa a em para escalar con la escena.
+  /* Chat.astro mide en rem: aquí pasa a em para escalar con la escena.
      Equivalencias con la escena a 15 px (chat a 11,7 px), así en escritorio se ve igual que antes; dentro de la tarjeta, la letra es 1.2em. */
   .wa-cuerpo :global(.chat-who) { font-size: 0.985em; }
   .wa-cuerpo :global(.chat-burbujas .chat-msg) { padding: 0.82em 1.23em; border-radius: 1.5em; }

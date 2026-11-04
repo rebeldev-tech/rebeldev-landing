@@ -1,37 +1,29 @@
 ---
-// Conversación de ejemplo de RebelBot. Cada versión la muestra a su manera:
-// «texto» (líneas con quien habla) o «burbujas» (estilo de mensajería, con botones, formulario y ubicación).
+// Conversación de ejemplo de RebelBot en burbujas de mensajería, con botones, formulario y ubicación.
 import type { Msg } from '../data/rebelbot';
 
-interface Props { msgs: Msg[]; estilo?: 'texto' | 'burbujas' }
-const { msgs, estilo = 'texto' } = Astro.props;
+interface Props { msgs: Msg[] }
+const { msgs } = Astro.props;
 const quien: Record<string, string> = { in: 'Cliente', out: 'RebelBot', agent: 'Asesor' };
-const burbujas = estilo === 'burbujas';
 ---
-<div class:list={['chat', `chat-${estilo}`]}>
+<div class="chat chat-burbujas">
   {msgs.map((m) => {
-    if (m.kind === 'system') return <p class="chat-sys">{burbujas && <span class="chat-dot" aria-hidden="true"></span>}{m.text}</p>;
-    if (m.kind === 'buttons') return burbujas
-      ? <p class="chat-chips">{m.options.map((o, i) => <span class:list={['chat-chip', { 'is-on': i === m.selected }]}>{o}</span>)}</p>
-      : <p class="chat-opts">Opciones: {m.options.join(', ')}</p>;
-    if (m.kind === 'form') return burbujas
-      ? (
-        <div class="chat-card">
-          <p class="chat-card-title">{m.title}</p>
-          <ul class="chat-slots">{m.options.map((o, i) => <li class:list={['chat-slot', { 'is-on': i === m.selected }]}><span class="chat-radio" aria-hidden="true"></span>{o}</li>)}</ul>
-          <p class="chat-cta">{m.cta}</p>
-        </div>
-      )
-      : <p class="chat-opts">{m.title}: {m.options.join(', ')}</p>;
-    if (m.kind === 'location') return burbujas
-      ? (
-        <div class="chat-card chat-loc">
-          <div class="chat-map" aria-hidden="true"><span class="chat-pin"></span></div>
-          <p class="chat-card-title">{m.title}</p>
-          <p class="chat-loc-sub">{m.text}</p>
-        </div>
-      )
-      : <p class="chat-opts">{m.title}</p>;
+    if (m.kind === 'system') return <p class="chat-sys"><span class="chat-dot" aria-hidden="true"></span>{m.text}</p>;
+    if (m.kind === 'buttons') return <p class="chat-chips">{m.options.map((o, i) => <span class:list={['chat-chip', { 'is-on': i === m.selected }]}>{o}</span>)}</p>;
+    if (m.kind === 'form') return (
+      <div class="chat-card">
+        <p class="chat-card-title">{m.title}</p>
+        <ul class="chat-slots">{m.options.map((o, i) => <li class:list={['chat-slot', { 'is-on': i === m.selected }]}><span class="chat-radio" aria-hidden="true"></span>{o}</li>)}</ul>
+        <p class="chat-cta">{m.cta}</p>
+      </div>
+    );
+    if (m.kind === 'location') return (
+      <div class="chat-card chat-loc">
+        <div class="chat-map" aria-hidden="true"><span class="chat-pin"></span></div>
+        <p class="chat-card-title">{m.title}</p>
+        <p class="chat-loc-sub">{m.text}</p>
+      </div>
+    );
     return (
       <p class:list={['chat-msg', `chat-${m.kind}`]}>
         <span class="chat-who">{quien[m.kind]}</span>
@@ -45,10 +37,7 @@ const burbujas = estilo === 'burbujas';
   .chat { display: grid; gap: 0.5rem; }
   .chat-msg { margin: 0; color: var(--color-bone); }
   .chat-who { display: block; font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-ash-dim); }
-  .chat-sys, .chat-opts { margin: 0; font-size: 0.875rem; color: var(--color-ash); }
-
-  /* Texto: una línea por mensaje, separada por filetes */
-  .chat-texto .chat-msg, .chat-texto .chat-sys, .chat-texto .chat-opts { padding: 0.6rem 0; border-top: 1px solid var(--color-line); }
+  .chat-sys { margin: 0; font-size: 0.875rem; color: var(--color-ash); }
 
   /* Burbujas: el cliente a la izquierda, RebelBot y el asesor a la derecha */
   .chat-burbujas .chat-msg { max-width: 84%; padding: 0.6rem 0.9rem; border-radius: 1.1rem; background: var(--color-surface-2); }

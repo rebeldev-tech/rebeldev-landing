@@ -1,4 +1,4 @@
-// Animaciones de los íconos de servicios (Glifo.astro). Las usan la versión 2 y la 3.
+// Animaciones de los íconos de servicios (Glifo.astro).
 // Cada una arma el ícono en pequeño: la pieza roja es la que «hace el trabajo».
 import { gsap } from './motion';
 
