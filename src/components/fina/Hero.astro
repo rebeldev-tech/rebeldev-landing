@@ -4,7 +4,20 @@ import { contacto } from '../../data/contacto';
 import { hero, piezasHero } from '../../data/fina';
 import Mini from './Mini.astro';
 
-const especialidades = ['Software a medida', 'Automatización de procesos', 'Asistentes de WhatsApp', 'Plataformas web', 'Backend y APIs', 'Integraciones', 'Diseño UX/UI'];
+// La v1 cambia la bajada, los botones y la cinta; sin props queda la Fina.
+interface Props {
+  bajada?: string;
+  primario?: string;
+  secundario?: { texto: string; href: string };
+  cinta?: string[];
+}
+const {
+  bajada = hero.bajada,
+  primario = 'Agenda una demo',
+  secundario = { texto: 'Mira cómo trabajamos', href: '#como' },
+  cinta = ['Software a medida', 'Automatización de procesos', 'Asistentes de WhatsApp', 'Plataformas web', 'Backend y APIs', 'Integraciones', 'Diseño UX/UI'],
+} = Astro.props;
+const especialidades = cinta;
 ---
 <section id="inicio" class="hc" data-hc aria-labelledby="hc-title">
   <div class="hc-line" data-hc-line aria-hidden="true"><span data-hc-draw></span></div>
@@ -30,10 +43,10 @@ const especialidades = ['Software a medida', 'Automatización de procesos', 'Asi
     </div>
 
     <div class="hc-foot">
-      <p class="text-lead hc-bajada" data-hc-in>{hero.bajada}</p>
+      <p class="text-lead hc-bajada" data-hc-in>{bajada}</p>
       <div class="hc-ctas" data-hc-in>
-        <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary" data-magnetic>Agenda una demo</a>
-        <a href="#como" class="btn btn-ghost">Mira cómo trabajamos</a>
+        <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary" data-magnetic>{primario}</a>
+        <a href={secundario.href} class="btn btn-ghost">{secundario.texto}</a>
       </div>
     </div>
   </div>

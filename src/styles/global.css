@@ -61,6 +61,22 @@
   --color-red-text: #C40F1B;
 }
 
+/* Barra de desplazamiento: fina, sin flechas y sobre el mismo fondo, para que no corte la página. El tirador es gris
+   y se pone rojo al pasar el ratón o al arrastrarlo (la barra roja de la marca). Sigue al tema claro por las variables.
+   Chrome, Edge y Safari usan ::-webkit-scrollbar (permite el rojo al pasar); Firefox, las propiedades estándar. */
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: var(--color-ink); }
+::-webkit-scrollbar-thumb {
+  min-height: 3rem; border: 3px solid var(--color-ink); border-radius: 99px;
+  background-color: var(--color-line-strong); background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background-color: var(--color-red); }
+::-webkit-scrollbar-thumb:active { background-color: var(--color-red-text); }
+::-webkit-scrollbar-button { display: none; }
+@supports not selector(::-webkit-scrollbar) {
+  html { scrollbar-width: thin; scrollbar-color: var(--color-line-strong) var(--color-ink); }
+}
+
 /* Cambio de tema: transición diagonal propia (idea de «polygon-gradient», código nuestro).
    La foto nueva de la página entra con una máscara en degradado que crece desde arriba a la izquierda.
    Solo se aplica mientras dura el cambio de tema (clase theme-anim). */

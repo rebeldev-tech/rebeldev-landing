@@ -1,0 +1,518 @@
+---
+// Panel de RebelBot recreado y simplificado (v1, sección Producto, «Así lo manejas tú»). Datos de ejemplo: src/data/panel.ts.
+// Se dibuja en em y escala con el ancho de su contenedor (container-type: inline-size en Producto).
+// El CSS es el estado final (pantalla Consumo); la línea de tiempo vive en el script de Producto.astro.
+// .is-antes: lo que solo se ve antes de su paso (el script lo muestra al empezar y lo apaga a su tiempo).
+import { negocio, menu, kpis, bandeja, citas, leads, conocimiento, aprendizaje, tablero, consumo, miles } from '../../data/panel';
+import type { Temperatura } from '../../data/panel';
+
+const temp: Record<Temperatura, string> = { Caliente: 'is-caliente', Tibio: 'is-tibio', Frío: 'is-frio' };
+
+const tope = Math.max(...tablero.serie);
+const cursor = '<svg class="pn-cursor-svg" viewBox="0 0 16 20"><path d="M1.5 1.5v14.6l3.7-3.5 2.6 6 2.6-1.1-2.6-5.9h5.3z"/></svg>';
+---
+<div class="pn" data-panel aria-hidden="true">
+  <div class="pn-bar">
+    <span class="pn-dots"><i></i><i></i><i></i></span>
+    <span class="pn-negocio">{negocio}</span>
+    <span class="pn-por">Panel por <span class="pn-rd">Rebel<b>&lt;/</b>DEV<b>&gt;</b></span></span>
+    <span class="pn-tag">Ejemplo</span>
+  </div>
+
+  <div class="pn-body">
+    <div class="pn-menu">
+      {menu.map((g) => (
+        <div class="pn-grupo">
+          <p class="pn-grupo-t">{g.grupo}</p>
+          <ul>
+            {g.items.map((it) => (
+              <li class="pn-item" data-pn={it.k ? 'item' : undefined} data-k={it.k} style={it.k === 'consumo' ? '--on: 1' : undefined}><span>{it.t}</span></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <div class="pn-main">
+      <dl class="pn-kpis">
+        {kpis.map((k) => (
+          <div class="pn-kpi"><dt>{k.t}</dt><dd data-pn={k.k ? `kpi-${k.k}` : undefined} data-antes={k.antes}>{k.v}</dd></div>
+        ))}
+      </dl>
+
+      <div class="pn-scrs">
+        <!-- Bandeja -->
+        <div class="pn-scr pn-ban" data-pn="scr">
+          <ul class="pn-convs">
+            {bandeja.conversaciones.map((c, i) => (
+              <li class:list={['pn-conv', { 'is-sel': i === 0 }]}>
+                <span class="pn-conv-n">{c.n}</span>
+                <span class="pn-conv-h">{c.hace}</span>
+                <span class="pn-conv-m">{c.m}</span>
+                {i === 0 ? (
+                  <span class="pn-swap"><span class="pn-chip is-antes" data-pn="b-bot">Bot</span><span class="pn-chip is-asesor" data-pn="b-asesor">Asesor</span></span>
+                ) : (
+                  <span class:list={['pn-chip', { 'is-asesor': c.quien === 'Asesor' }]}>{c.quien}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+
+          <div class="pn-hilo">
+            <div class="pn-hilo-cab">
+              <span class="pn-quien"><b>{bandeja.cliente.n}</b><span>{bandeja.cliente.tel}</span></span>
+              <span class="pn-swap"><span class="pn-chip is-antes" data-pn="b-bot">Bot</span><span class="pn-chip is-asesor" data-pn="b-asesor">Asesor</span></span>
+            </div>
+            <div class="pn-msgs">
+              {bandeja.hilo.map((m) => (
+                <p class:list={['pn-msg', m.de === 'in' ? 'is-in' : 'is-out']}>{m.de !== 'in' && <span class="pn-msg-q">RebelBot</span>}{m.t}</p>
+              ))}
+              <p class="pn-msg is-in" data-pn="b-nuevo">{bandeja.nuevo}</p>
+              <p class="pn-sys" data-pn="b-sys">{bandeja.aviso}</p>
+            </div>
+            <div class="pn-hilo-acc">
+              <span class="pn-input">Escribe como asesor…</span>
+              <span class="pn-btn-wrap">
+                <span class="pn-swap">
+                  <span class="pn-btn is-rojo is-antes" data-pn="b-tomar">Tomar control</span>
+                  <span class="pn-btn" data-pn="b-devolver">Devolver al asistente</span>
+                </span>
+                <span class="pn-cursor" data-pn="b-cursor" set:html={cursor} />
+              </span>
+            </div>
+          </div>
+
+          <div class="pn-card pn-lead">
+            <p class="pn-h">Lead</p>
+            <dl>
+              {bandeja.lead.map((d) => <div><dt>{d.k}</dt><dd>{d.v}</dd></div>)}
+            </dl>
+            <p class="pn-h">Resumen para el asesor</p>
+            <p class="pn-resumen">{bandeja.resumen}</p>
+          </div>
+        </div>
+
+        <!-- Citas: el horario de las 11:30 pasa de libre a la visita que agendó el asistente -->
+        <div class="pn-scr pn-cit" data-pn="scr">
+          <div class="pn-cab">
+            <p class="pn-cab-t">Citas</p>
+            <p class="pn-cab-s">El asistente solo ofrece tus horarios libres, evita las dobles reservas y le envía la ubicación al cliente.</p>
+          </div>
+          <div class="pn-cit-grid">
+            <div class="pn-card pn-dia">
+              <p class="pn-h">{citas.dia}</p>
+              <ul class="pn-slots">
+                {citas.horarios.map((s) => (
+                  <li class="pn-slot">
+                    <span class="pn-slot-h">{s.h}</span>
+                    {s.nueva ? (
+                      <span class="pn-swap">
+                        <span class="pn-slot-libre is-antes" data-pn="ci-libre">Libre</span>
+                        <span class="pn-slot-cita is-nueva" data-pn="ci-slot"><b>{s.quien}</b>{s.tipo}</span>
+                      </span>
+                    ) : s.quien ? (
+                      <span class="pn-slot-cita"><b>{s.quien}</b>{s.tipo}</span>
+                    ) : (
+                      <span class="pn-slot-libre">Libre</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div class="pn-card pn-prox">
+              <p class="pn-h">Próximas citas</p>
+              <table class="pn-tabla">
+                <tbody>
+                  {citas.proximas.map((c) => (
+                    <tr class:list={{ 'is-nueva': c.nueva }} data-pn={c.nueva ? 'ci-fila' : undefined}>
+                      <td>{c.cuando}</td><td><b>{c.n}</b></td><td>{c.tipo}</td><td class="pn-ancho">{c.p}</td>
+                      <td><span class:list={['pn-chip', { 'is-asesor': c.por === 'Asesor' }]}>{c.por}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p class="pn-sys pn-ubic" data-pn="ci-ubic">{citas.ubicacion}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leads: Lucía M. queda registrada y pasa de nueva a caliente -->
+        <div class="pn-scr pn-lds" data-pn="scr">
+          <div class="pn-cab pn-cab-fila">
+            <p class="pn-cab-t">Leads</p>
+            <span class="pn-filtros">{leads.filtros.map((f, i) => <span class:list={['pn-campo', { 'is-on': i === 0 }]}>{f}</span>)}</span>
+          </div>
+          <table class="pn-tabla pn-lds-t">
+            <thead>
+              <tr><th>Cliente</th><th class="pn-ancho">Busca</th><th>Plazo</th><th class="pn-ancho">Pago</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+              {leads.filas.map((l) => (
+                <tr class:list={{ 'is-nueva': l.nueva }} data-pn={l.nueva ? 'l-fila' : undefined}>
+                  <td><b>{l.n}</b></td><td class="pn-ancho">{l.busca}</td><td>{l.plazo}</td><td class="pn-ancho">{l.pago}</td>
+                  <td>
+                    {l.nueva ? (
+                      <span class="pn-swap">
+                        <span class="pn-chip is-antes" data-pn="l-antes">{leads.antes}</span>
+                        <span class:list={['pn-temp', temp[l.estado]]} data-pn="l-estado">{l.estado}</span>
+                      </span>
+                    ) : (
+                      <span class:list={['pn-temp', temp[l.estado]]}>{l.estado}</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div class="pn-card pn-lds-res" data-pn="l-res">
+            <p class="pn-h">Resumen para el asesor</p>
+            <p class="pn-resumen">{leads.resumen}</p>
+          </div>
+        </div>
+
+        <!-- Conocimiento -->
+        <div class="pn-scr pn-con" data-pn="scr">
+          <div class="pn-cab">
+            <p class="pn-cab-t">Base de conocimiento</p>
+            <p class="pn-cab-s">Todo lo que el asistente puede decir sale de aquí. Si un dato está vacío, no lo inventa: ofrece que un asesor lo confirme.</p>
+          </div>
+          <ul class="pn-proys">
+            {conocimiento.proyectos.map((p) => (
+              <li class="pn-card pn-proy">
+                <b>{p.n}</b>
+                <span class="pn-chip">{p.etapa}</span>
+                <span class="pn-proy-d">Desde {p.m2}&nbsp;m²<br />Desde S/&nbsp;{p.precio}</span>
+                <span class="pn-proy-t">{p.d}</span>
+              </li>
+            ))}
+          </ul>
+          <table class="pn-tabla">
+            <thead>
+              <tr><th>Código</th><th class="pn-ancho">Proyecto</th><th class="pn-n">m²</th><th class="pn-n">Dorm.</th><th>Estado</th><th class="pn-n">Precio S/</th></tr>
+            </thead>
+            <tbody>
+              {conocimiento.unidades.map((u) => (
+                <tr>
+                  <td>{u.c}</td><td class="pn-ancho">{u.p}</td><td class="pn-n">{u.m2}</td><td class="pn-n">{u.dorm}</td><td>{u.estado}</td>
+                  <td class="pn-n">
+                    {u.precio || (
+                      <span class="pn-vacio">—<span class="pn-ring" data-pn="c-ring"></span><span class="pn-falta" data-pn="c-chip">Lo confirma un asesor</span></span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Aprendizaje -->
+        <div class="pn-scr pn-apr" data-pn="scr">
+          <div class="pn-cab">
+            <p class="pn-cab-t">Aprendizaje supervisado</p>
+            <p class="pn-cab-s">La IA propone preguntas frecuentes a partir de lo que respondieron tus asesores. Nada entra a la base de conocimiento sin tu aprobación.</p>
+          </div>
+          <ul class="pn-sugs">
+            {aprendizaje.map((s, i) => (
+              <li class="pn-card pn-sug">
+                <span class="pn-sug-k">Pregunta</span>
+                <span class="pn-sug-p">{s.p}</span>
+                <span class="pn-sug-k">Respuesta propuesta</span>
+                <span class="pn-sug-r">{s.r}</span>
+                <span class="pn-sug-base">{s.base}</span>
+                {i === 0 ? (
+                  <span class="pn-sug-acc">
+                    <span class="pn-swap">
+                      <span class="pn-acc is-antes" data-pn="a-acc">
+                        <span class="pn-btn-wrap"><span class="pn-btn is-rojo" data-pn="a-btn">Aprobar</span><span class="pn-cursor" data-pn="a-cursor" set:html={cursor} /></span>
+                        <span class="pn-btn">Descartar</span>
+                      </span>
+                      <span class="pn-ok" data-pn="a-ok"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" /><path d="M4.8 8.3l2.2 2.2 4.2-4.6" /></svg>Aprobada: ya está en la base de conocimiento</span>
+                    </span>
+                  </span>
+                ) : (
+                  <span class="pn-sug-acc"><span class="pn-acc"><span class="pn-btn is-rojo">Aprobar</span><span class="pn-btn">Descartar</span></span></span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Tablero -->
+        <div class="pn-scr pn-tab" data-pn="scr">
+          <div class="pn-cab pn-cab-fila">
+            <p class="pn-cab-t">Tablero</p>
+            <span class="pn-filtros">
+              <span class="pn-campo"><small>Desde</small>{tablero.desde}</span>
+              <span class="pn-campo"><small>Hasta</small>{tablero.hasta}</span>
+              <span class="pn-btn">Exportar CSV</span>
+            </span>
+          </div>
+          <ul class="pn-mets">
+            {tablero.metricas.map((m) => (
+              <li class="pn-card pn-met">
+                <span class="pn-met-t">{m.t}</span>
+                <b class="pn-met-v" data-pn="t-num" data-v={m.v} data-suf={m.suf}>{m.v}{m.suf}</b>
+                <span class="pn-met-n">{m.nota}</span>
+              </li>
+            ))}
+          </ul>
+          <div class="pn-card pn-graf">
+            <p class="pn-h">Conversaciones por día</p>
+            <div class="pn-barras">{tablero.serie.map((v) => <i data-pn="t-bar" style={`--h: ${(v / tope).toFixed(3)}`}></i>)}</div>
+          </div>
+        </div>
+
+        <!-- Consumo (estado final sin JS) -->
+        <div class="pn-scr pn-cons" data-pn="scr">
+          <div class="pn-cab">
+            <p class="pn-cab-t">Consumo</p>
+            <p class="pn-cab-s">Todo lo que hace la IA se mide en créditos: 1 crédito son 100,000 tokens procesados.</p>
+          </div>
+          <div class="pn-cons-grid">
+            <div class="pn-card pn-cred">
+              <p class="pn-h">Créditos usados en el mes</p>
+              <p class="pn-cred-v"><b data-pn="k-num" data-v={consumo.usados}>{miles(consumo.usados)}</b> de {miles(consumo.total)}</p>
+              <p class="pn-cred-tk"><span data-pn="k-tokens" data-v={consumo.tokens}>{miles(consumo.tokens)}</span> tokens procesados</p>
+              <div class="pn-medidor">
+                <span class="pn-fill" data-pn="k-fill" style={`--p: ${consumo.usados / consumo.total}`}></span>
+                <span class="pn-marca"><small>Te avisamos al 80 %</small></span>
+              </div>
+              <p class="pn-aviso" data-pn="k-aviso"><i></i>Llegaste al 80&nbsp;% de tus créditos del mes.</p>
+            </div>
+            <div class="pn-lado">
+              <div class="pn-card pn-usos">
+                <p class="pn-h">En qué se usaron</p>
+                <ul>
+                  {consumo.usos.map((u) => <li><span>{u.t}</span><b>{u.v}</b><i data-pn="k-uso" style={`--w: ${(u.v / consumo.usados).toFixed(3)}`}></i></li>)}
+                </ul>
+              </div>
+              <div class="pn-card pn-reg">
+                <p class="pn-h">Registro de cada uso</p>
+                <table class="pn-tabla">
+                  <tbody>
+                    {consumo.registro.map((r) => <tr><td>{r.h}</td><td>{r.t}</td><td class="pn-n">{r.tk} tokens</td></tr>)}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Ventana de app que sigue el tema: solo variables de la marca. Medidas en em (la letra sale del ancho del contenedor). */
+  .pn {
+    --r: 0.7em;
+    position: relative; width: 100%; aspect-ratio: 16 / 10; min-height: 0; overflow: hidden;
+    display: grid; grid-template-rows: auto minmax(0, 1fr);
+    font-size: clamp(7px, 1.75cqw, 18px); line-height: 1.3; color: var(--color-bone); text-align: left;
+    background: var(--color-ink); border: 1px solid var(--color-line-strong); border-radius: 1em;
+    box-shadow: 0 2.5em 5em -2.5em rgb(0 0 0 / 0.55);
+    user-select: none;
+  }
+  .pn * { box-sizing: border-box; }
+  /* Solo márgenes: un padding aquí pisaría el de las burbujas y avisos (este selector pesa más) */
+  .pn p, .pn dd { margin: 0; }
+  .pn ul, .pn dl { margin: 0; padding: 0; list-style: none; }
+  .is-antes { visibility: hidden; opacity: 0; }
+
+  /* Barra de la ventana */
+  .pn-bar { display: flex; align-items: center; gap: 0.9em; padding: 0.7em 1em; white-space: nowrap; background: var(--color-surface); border-bottom: 1px solid var(--color-line); }
+  .pn-dots { display: flex; gap: 0.35em; }
+  .pn-dots i { width: 0.6em; height: 0.6em; border-radius: 99px; background: var(--color-line-strong); }
+  .pn-negocio { font-size: 0.9em; font-weight: 600; }
+  .pn-por { font-size: 0.72em; color: var(--color-ash); }
+  .pn-rd { font-family: var(--font-display); font-weight: 800; color: var(--color-bone); letter-spacing: -0.01em; }
+  .pn-rd b { color: var(--color-red-text); font-weight: 800; }
+  .pn-tag { margin-left: auto; padding: 0.2em 0.65em; border-radius: 99px; border: 1px solid var(--color-line-strong); font-size: 0.68em; color: var(--color-ash); }
+
+  .pn-body { display: grid; grid-template-columns: 11.5em minmax(0, 1fr); min-height: 0; }
+
+  /* Menú: --on (0–1) marca el ítem activo; la línea de tiempo lo pasa de uno a otro */
+  .pn-menu { padding: 0.9em 0.6em; overflow: hidden; background: var(--color-surface); border-right: 1px solid var(--color-line); }
+  .pn-grupo + .pn-grupo { margin-top: 0.7em; }
+  .pn-grupo-t { padding: 0 0.75em 0.3em; font-size: 0.62em; font-weight: 600; color: var(--color-ash-dim); }
+  .pn-item { --on: 0; position: relative; isolation: isolate; padding: 0.24em 0.75em; border-radius: 0.45em; font-size: 0.74em; white-space: nowrap; }
+  .pn-item span { opacity: calc(0.6 + var(--on) * 0.4); }
+  .pn-item::after { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--color-surface-2); opacity: var(--on); }
+  .pn-item::before {
+    content: ''; position: absolute; left: 0; top: 22%; bottom: 22%; width: 0.22em; border-radius: 99px;
+    background: var(--color-red); opacity: var(--on); transform: scaleY(var(--on));
+  }
+
+  .pn-main { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 0.9em; min-width: 0; min-height: 0; padding: 1em 1.1em; }
+
+  /* Cifras de arriba */
+  .pn-kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.6em; }
+  .pn-kpi { display: grid; align-content: start; gap: 0.15em; padding: 0.55em 0.7em; border-radius: var(--r); background: var(--color-surface); border: 1px solid var(--color-line); }
+  .pn-kpi dt { font-size: 0.64em; line-height: 1.25; color: var(--color-ash); }
+  .pn-kpi dd { order: -1; justify-self: start; transform-origin: 0 80%; font-family: var(--font-display); font-weight: 800; font-size: 1.3em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+
+  /* Pantallas apiladas: sin JS se ve la última */
+  .pn-scrs { display: grid; grid-template-areas: 'scr'; min-height: 0; }
+  .pn-scr { grid-area: scr; min-width: 0; min-height: 0; overflow: hidden; visibility: hidden; opacity: 0; }
+  .pn-scr.pn-cons { visibility: visible; opacity: 1; }
+
+  .pn-cab { display: grid; gap: 0.2em; margin-bottom: 0.8em; }
+  .pn-cab-t { font-family: var(--font-display); font-weight: 800; font-size: 1.15em; letter-spacing: -0.02em; }
+  .pn-cab-s { max-width: 70em; font-size: 0.74em; color: var(--color-ash); }
+  .pn-cab-fila { display: flex; align-items: center; justify-content: space-between; gap: 1em; }
+  .pn-card { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--r); }
+  .pn-h { font-size: 0.68em; font-weight: 600; color: var(--color-ash); }
+  .pn-chip { display: inline-block; justify-self: start; padding: 0.15em 0.55em; border-radius: 99px; border: 1px solid var(--color-line-strong); font-size: 0.62em; line-height: 1.3; color: var(--color-ash); white-space: nowrap; }
+  .pn-chip.is-asesor { color: var(--color-red-text); border-color: currentColor; }
+  .pn-btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.42em 0.8em; border-radius: 0.5em; border: 1px solid var(--color-line-strong); font-size: 0.7em; font-weight: 600; white-space: nowrap; }
+  .pn-btn.is-rojo { background: var(--color-red); border-color: var(--color-red); color: #fff; }
+  .pn-swap { display: inline-grid; justify-items: start; }
+  .pn-swap > * { grid-area: 1 / 1; }
+  .pn-cursor { position: absolute; left: 55%; top: 45%; z-index: 2; width: 1.25em; visibility: hidden; opacity: 0; pointer-events: none; }
+  .pn-cursor :global(svg) { display: block; width: 100%; height: auto; overflow: visible; }
+  .pn-cursor :global(path) { fill: var(--color-bone); stroke: var(--color-ink); stroke-width: 1.2; stroke-linejoin: round; }
+
+  /* Bandeja */
+  .pn-ban { display: grid; grid-template-columns: 12.5em minmax(0, 1fr) 11.5em; gap: 0.7em; }
+  .pn-convs { display: grid; align-content: start; gap: 0.35em; }
+  .pn-conv { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.25em 0.5em; padding: 0.55em 0.65em; border-radius: var(--r); border: 1px solid transparent; }
+  .pn-conv.is-sel { background: var(--color-surface); border-color: var(--color-line-strong); }
+  .pn-conv-n { font-size: 0.74em; font-weight: 600; }
+  .pn-conv-h { align-self: center; font-size: 0.6em; color: var(--color-ash-dim); }
+  .pn-conv-m { grid-column: 1 / -1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 0.66em; color: var(--color-ash); }
+  .pn-hilo { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; overflow: hidden; background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--r); }
+  .pn-hilo-cab { display: flex; align-items: center; justify-content: space-between; gap: 0.5em; padding: 0.6em 0.75em; border-bottom: 1px solid var(--color-line); }
+  .pn-quien { display: grid; font-size: 0.74em; }
+  .pn-quien span { font-size: 0.85em; color: var(--color-ash-dim); }
+  .pn-msgs { display: flex; flex-direction: column; justify-content: flex-end; gap: 0.45em; min-height: 0; padding: 0.7em; overflow: hidden; }
+  .pn-msg { max-width: 85%; padding: 0.5em 0.7em; border-radius: 0.8em; font-size: 0.7em; line-height: 1.35; }
+  .pn-msg.is-in { align-self: flex-start; background: var(--color-surface-2); border-bottom-left-radius: 0.25em; }
+  .pn-msg.is-out { align-self: flex-end; background: var(--color-ink); border: 1px solid var(--color-line-strong); border-bottom-right-radius: 0.25em; }
+  .pn-msg-q { display: block; margin-bottom: 0.15em; font-size: 0.85em; font-weight: 600; color: var(--color-ash-dim); }
+  .pn-sys { align-self: center; display: inline-flex; align-items: center; gap: 0.45em; padding: 0.3em 0.75em; border-radius: 99px; border: 1px dashed var(--color-line-strong); font-size: 0.62em; color: var(--color-ash); }
+  .pn-sys::before { content: ''; flex: none; width: 0.55em; height: 0.55em; border-radius: 99px; background: var(--color-red); }
+  .pn-hilo-acc { display: flex; align-items: center; gap: 0.5em; padding: 0.55em 0.75em; border-top: 1px solid var(--color-line); }
+  .pn-input { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0.42em 0.8em; border-radius: 99px; background: var(--color-ink); font-size: 0.66em; color: var(--color-ash-dim); }
+  .pn-btn-wrap { position: relative; }
+  .pn-lead { display: grid; align-content: start; gap: 0.6em; padding: 0.75em; }
+  .pn-lead dl { display: grid; gap: 0.5em; }
+  .pn-lead dt { font-size: 0.6em; color: var(--color-ash-dim); }
+  .pn-lead dd { font-size: 0.7em; }
+  .pn-resumen { padding: 0.6em 0.7em; border-radius: 0.6em; background: var(--color-surface-2); font-size: 0.68em; line-height: 1.4; }
+
+  /* Citas */
+  .pn-cit-grid { display: grid; grid-template-columns: 13em minmax(0, 1fr); gap: 0.7em; align-items: start; }
+  .pn-dia { padding: 0.75em 0.8em; }
+  .pn-slots { display: grid; gap: 0.4em; margin-top: 0.55em; }
+  .pn-slot { display: grid; grid-template-columns: 2.9em minmax(0, 1fr); align-items: center; gap: 0.5em; font-size: 0.7em; }
+  .pn-slot-h { color: var(--color-ash); font-variant-numeric: tabular-nums; }
+  .pn-slot-libre, .pn-slot-cita { display: block; padding: 0.5em 0.7em; border-radius: 0.5em; line-height: 1.25; }
+  .pn-slot-libre { border: 1px dashed var(--color-line-strong); color: var(--color-ash-dim); }
+  .pn-slot-cita { background: var(--color-surface-2); color: var(--color-ash); }
+  .pn-slot-cita b { display: block; color: var(--color-bone); font-weight: 600; }
+  .pn-slot-cita.is-nueva { box-shadow: inset 0.22em 0 0 var(--color-red); }
+  .pn-prox { padding: 0.75em 0.9em; }
+  .pn-prox .pn-tabla { margin-top: 0.4em; }
+  .pn-prox .pn-tabla tr:last-child td { border-bottom: 0; }
+  .pn-tabla tr.is-nueva td { background: var(--color-surface-2); }
+  .pn-ubic { display: inline-flex; margin-top: 0.8em; }
+
+  /* Leads */
+  .pn-campo.is-on { border-color: var(--color-bone); }
+  .pn-lds-t { margin-top: 0; }
+  .pn-temp { display: inline-flex; align-items: center; gap: 0.4em; white-space: nowrap; }
+  .pn-temp::before { content: ''; flex: none; width: 0.55em; height: 0.55em; border-radius: 99px; background: var(--color-ash-dim); }
+  .pn-temp.is-caliente::before { background: var(--color-red); }
+  .pn-temp.is-tibio::before { background: var(--color-amber); }
+  .pn-lds-res { margin-top: 0.8em; padding: 0.7em 0.8em; display: grid; gap: 0.45em; }
+
+  /* Conocimiento */
+  .pn-proys { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6em; }
+  .pn-proy { display: grid; align-content: start; gap: 0.3em; padding: 0.7em 0.8em; }
+  .pn-proy b { font-size: 0.78em; }
+  .pn-proy-d { font-size: 0.66em; }
+  .pn-proy-t { font-size: 0.64em; color: var(--color-ash); }
+  .pn-tabla { width: 100%; margin-top: 0.8em; border-collapse: collapse; font-size: 0.68em; font-variant-numeric: tabular-nums; }
+  .pn-tabla th { padding: 0.45em 0.6em; text-align: left; font-weight: 600; color: var(--color-ash-dim); border-bottom: 1px solid var(--color-line-strong); }
+  .pn-tabla td { padding: 0.5em 0.6em; border-bottom: 1px solid var(--color-line); white-space: nowrap; }
+  .pn-tabla .pn-n { text-align: right; }
+  .pn-vacio { position: relative; display: inline-block; min-width: 4.5em; text-align: center; color: var(--color-ash-dim); }
+  .pn-ring { position: absolute; inset: -0.35em -0.4em; border: 1.5px dashed var(--color-red-text); border-radius: 0.4em; }
+  .pn-falta { position: absolute; right: -0.4em; bottom: calc(100% + 0.6em); padding: 0.3em 0.65em; border-radius: 0.4em; background: var(--color-red); color: #fff; font-weight: 600; white-space: nowrap; }
+
+  /* Aprendizaje */
+  .pn-sugs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7em; align-items: start; }
+  .pn-sug { display: grid; gap: 0.2em; padding: 0.85em 0.95em; }
+  .pn-sug-k { font-size: 0.6em; color: var(--color-ash-dim); }
+  .pn-sug-p { margin-bottom: 0.45em; font-size: 0.84em; font-weight: 600; }
+  .pn-sug-r { font-size: 0.72em; color: var(--color-ash); }
+  .pn-sug-base { margin-top: 0.5em; font-size: 0.62em; color: var(--color-ash-dim); }
+  .pn-sug-acc { position: relative; justify-self: start; margin-top: 0.7em; }
+  .pn-acc { display: flex; gap: 0.4em; }
+  .pn-ok { display: inline-flex; align-items: center; gap: 0.45em; font-size: 0.7em; font-weight: 600; }
+  .pn-ok svg { flex: none; width: 1.3em; height: 1.3em; fill: none; stroke: var(--color-red-text); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Tablero */
+  .pn-tab { display: grid; grid-template-rows: auto auto minmax(0, 1fr); }
+  .pn-filtros { display: flex; align-items: center; gap: 0.4em; }
+  .pn-campo { display: inline-flex; gap: 0.45em; padding: 0.35em 0.65em; border-radius: 0.5em; border: 1px solid var(--color-line-strong); font-size: 0.66em; white-space: nowrap; }
+  .pn-campo small { font-size: 1em; color: var(--color-ash-dim); }
+  .pn-mets { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.6em; }
+  .pn-met { display: grid; align-content: start; gap: 0.25em; padding: 0.7em 0.75em; }
+  .pn-met-t { min-height: 2.5em; font-size: 0.64em; color: var(--color-ash); }
+  .pn-met-v { font-family: var(--font-display); font-weight: 800; font-size: 1.7em; line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .pn-met-n { font-size: 0.58em; color: var(--color-ash-dim); }
+  .pn-graf { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 0.6em; min-height: 0; margin-top: 0.7em; padding: 0.7em 0.8em; }
+  .pn-barras { display: flex; align-items: flex-end; gap: 0.3em; min-height: 3em; }
+  .pn-barras i { flex: 1; height: calc(var(--h) * 100%); border-radius: 0.2em 0.2em 0 0; background: var(--color-line-strong); transform-origin: 50% 100%; }
+  .pn-barras i:last-child { background: var(--color-red); }
+
+  /* Consumo */
+  .pn-cons-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 0.7em; align-items: start; }
+  .pn-cred { display: grid; gap: 0.35em; padding: 0.85em 0.95em; }
+  .pn-cred-v { font-size: 0.8em; color: var(--color-ash); }
+  .pn-cred-v b { margin-right: 0.12em; font-family: var(--font-display); font-weight: 800; font-size: 2.6em; line-height: 1; color: var(--color-bone); font-variant-numeric: tabular-nums; }
+  .pn-cred-tk { font-size: 0.66em; color: var(--color-ash); font-variant-numeric: tabular-nums; }
+  .pn-medidor { position: relative; height: 0.7em; margin: 0.6em 0 1.7em; border-radius: 99px; background: var(--color-surface-2); }
+  .pn-fill { position: absolute; inset: 0; border-radius: inherit; background: var(--color-red); transform-origin: 0 50%; transform: scaleX(var(--p, 0.8)); }
+  .pn-marca { position: absolute; left: 80%; top: -0.35em; bottom: -0.35em; width: 2px; margin-left: -1px; background: var(--color-bone); }
+  .pn-marca small { position: absolute; top: calc(100% + 0.35em); left: 50%; transform: translateX(-50%); font-size: 0.62em; color: var(--color-ash); white-space: nowrap; }
+  .pn-aviso { display: flex; align-items: center; gap: 0.55em; padding: 0.5em 0.75em; border-radius: 0.5em; background: var(--color-surface-2); font-size: 0.68em; }
+  .pn-aviso i { flex: none; width: 0.65em; height: 0.65em; border-radius: 99px; background: var(--color-amber); }
+  .pn-lado { display: grid; gap: 0.7em; }
+  .pn-usos, .pn-reg { padding: 0.75em 0.9em; }
+  .pn-usos ul { display: grid; gap: 0.5em; margin-top: 0.55em; }
+  .pn-usos li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.25em 0.5em; font-size: 0.7em; }
+  .pn-usos li b { font-variant-numeric: tabular-nums; }
+  .pn-usos li i { grid-column: 1 / -1; width: calc(var(--w) * 100%); height: 0.35em; border-radius: 99px; background: var(--color-ash-dim); transform-origin: 0 50%; }
+  .pn-reg .pn-tabla { margin-top: 0.3em; font-size: 0.64em; }
+  .pn-reg .pn-tabla tr:last-child td { border-bottom: 0; }
+
+  /* Contenedor angosto (celular y tablet): ventana cuadrada, menú en puntos y cada pantalla con lo esencial */
+  @container (max-width: 560px) {
+    .pn { aspect-ratio: 1 / 1; font-size: clamp(8px, 3.3cqw, 13px); }
+    .pn-bar { gap: 0.7em; padding: 0.65em 0.8em; }
+    .pn-body { grid-template-columns: 2em minmax(0, 1fr); }
+    .pn-menu { display: grid; align-content: start; justify-items: center; padding: 1.1em 0; }
+    .pn-grupo-t, .pn-item span { display: none; }
+    .pn-grupo ul { display: grid; justify-items: center; gap: 0.55em; }
+    .pn-grupo + .pn-grupo { margin-top: 0.95em; }
+    .pn-item { width: 0.45em; height: 0.45em; padding: 0; font-size: 1em; border-radius: 99px; background: var(--color-line-strong); }
+    .pn-item::after { display: none; }
+    .pn-item::before { top: 0; bottom: 0; width: auto; right: 0; border-radius: inherit; transform: scaleY(calc(1 + var(--on) * 1.4)); }
+    .pn-main { gap: 0.7em; padding: 0.8em; }
+    .pn-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.45em; }
+    .pn-kpi:nth-child(3), .pn-kpi:nth-child(4) { display: none; }
+    .pn-ban { grid-template-columns: minmax(0, 1fr); }
+    .pn-convs, .pn-lead { display: none; }
+    .pn-cit-grid { grid-template-columns: minmax(0, 1fr); }
+    .pn-prox, .pn-lds .pn-filtros, .pn-lds-res { display: none; }
+    .pn-proys { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pn-proy:nth-child(3), .pn-proy-t, .pn-tabla .pn-ancho { display: none; }
+    .pn-sugs { grid-template-columns: minmax(0, 1fr); }
+    .pn-sug:nth-child(2) { display: none; }
+    .pn-mets { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.45em; }
+    .pn-cons-grid { grid-template-columns: minmax(0, 1fr); }
+    .pn-lado { display: none; }
+  }
+</style>

@@ -1,0 +1,99 @@
+---
+// Pie de la v1: el eslogan y la promesa (textos oficiales), los enlaces de la página, los servicios y el contacto.
+// Abajo, el logotipo enorme y cortado por el borde: letras casi del color del fondo y los signos en rojo
+// (la firma de la marca). Al llegar al final de la página, sube a su lugar. Con «menos movimiento», queda quieto.
+import { contacto } from '../../data/contacto';
+import { linksV1, serviciosV1 } from '../../data/v1';
+
+const anio = new Date().getFullYear();
+---
+<footer class="pie" data-pie>
+  <div class="wrap pie-grid">
+    <div class="pie-marca-txt">
+      <p class="pie-lema">Ingeniería para empresas rebeldes.</p>
+      <p class="pie-promesa">Primero entendemos tu negocio; después construimos la solución que realmente necesitas.</p>
+    </div>
+
+    <nav class="pie-col" aria-label="Secciones">
+      <p class="pie-h">Secciones</p>
+      <ul>{linksV1.map((l) => <li><a href={l.href} class="pie-l">{l.label}</a></li>)}</ul>
+    </nav>
+
+    <div class="pie-col">
+      <p class="pie-h">Servicios</p>
+      <ul>
+        <li><a href="#producto" class="pie-l">RebelBot</a></li>
+        {serviciosV1.map((s) => <li><a href="#servicios" class="pie-l">{s.t}</a></li>)}
+      </ul>
+    </div>
+
+    <div class="pie-col">
+      <p class="pie-h">Contacto</p>
+      <ul>
+        <li><a href={contacto.whatsappLink} target="_blank" rel="noopener" class="pie-l">WhatsApp {contacto.whatsapp}</a></li>
+        <li><a href={`mailto:${contacto.correo}`} class="pie-l">{contacto.correo}</a></li>
+        <li><a href={contacto.acceso} class="pie-l">Iniciar sesión</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap pie-base">
+    <p>© {anio} RebelDEV</p>
+    <a href="#inicio" class="pie-l pie-arriba">Volver arriba</a>
+  </div>
+
+  <div class="wrap pie-gigante" aria-hidden="true">
+    <span class="pie-gigante-t" data-pie-gigante translate="no">Rebel<i>&lt;</i><i>/</i>DEV<i>&gt;</i></span>
+  </div>
+</footer>
+
+<style>
+  .pie { position: relative; margin-top: clamp(2rem, 5vw, 4rem); padding-top: clamp(4rem, 8vw, 6.5rem); border-top: 1px solid var(--color-line); overflow: clip; }
+
+  .pie-grid { display: grid; gap: 2.75rem 2rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pie-marca-txt { grid-column: 1 / -1; }
+  @media (min-width: 1024px) {
+    .pie-grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.7fr) minmax(0, 1fr) minmax(0, 1fr); column-gap: clamp(2rem, 4vw, 4rem); }
+    .pie-marca-txt { grid-column: auto; }
+  }
+  .pie-lema { margin: 0; max-width: 11ch; font-family: var(--font-display); font-weight: 800; font-size: clamp(2rem, 3.6vw, 3.1rem); line-height: 1; letter-spacing: -0.04em; text-wrap: balance; }
+  .pie-promesa { margin: 1.25rem 0 0; max-width: 34ch; font-size: 1.0625rem; line-height: 1.6; color: var(--color-ash); }
+
+  .pie-h { margin: 0 0 1rem; font-size: 0.875rem; color: var(--color-ash-dim); }
+  .pie-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
+  /* Enlaces: al pasar el ratón se aclaran y les entra la barra roja de la marca, como en el menú y los servicios */
+  .pie-l { display: inline-flex; align-items: baseline; color: var(--color-ash); font-size: 0.975rem; line-height: 1.35; transition: color 0.3s; }
+  .pie-l::before { content: '/'; display: inline-block; width: 0; overflow: hidden; color: var(--color-red-text); font-weight: 600; transition: width 0.45s var(--ease-out-expo); }
+  .pie-l:hover, .pie-l:focus-visible { color: var(--color-bone); }
+  .pie-l:hover::before, .pie-l:focus-visible::before { width: 0.7em; }
+
+  .pie-base {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;
+    margin-top: clamp(3.5rem, 7vw, 5.5rem); padding-block: 1.5rem; border-top: 1px solid var(--color-line);
+    font-size: 0.875rem; color: var(--color-ash-dim);
+  }
+  .pie-base p { margin: 0; }
+  .pie-arriba { font-size: 0.875rem; }
+
+  /* El logotipo enorme: ocupa el ancho de la columna (cqi) y el borde de abajo lo corta. --sube lo mueve el script. */
+  .pie-gigante { container-type: inline-size; height: 13.5cqi; overflow: clip; }
+  .pie-gigante-t {
+    display: block; width: max-content; margin-inline: auto; white-space: nowrap;
+    font-family: var(--font-display); font-weight: 800; font-size: 17.6cqi; line-height: 1; letter-spacing: -0.05em;
+    color: var(--color-surface-2); transform: translateY(var(--sube, 8%)); user-select: none;
+  }
+  .pie-gigante-t i { font-style: normal; color: var(--color-red); }
+</style>
+
+<script>
+  import { gsap, reduceMotion } from '../../scripts/motion';
+
+  // El logotipo sube desde abajo mientras se llega al final de la página (atado al scroll).
+  const t = document.querySelector<HTMLElement>('[data-pie-gigante]');
+  if (t && !reduceMotion) {
+    gsap.fromTo(t, { '--sube': '75%' }, {
+      '--sube': '8%', ease: 'none',
+      scrollTrigger: { trigger: t.parentElement, start: 'top bottom', end: 'bottom bottom', scrub: 0.5 },
+    });
+  }
+</script>

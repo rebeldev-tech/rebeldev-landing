@@ -1,0 +1,292 @@
+---
+// v1, sección «Producto»: RebelBot visto desde los dos lados. A: lo que vive el cliente en WhatsApp (escena wa de la Fina).
+// B: el panel desde el que el negocio lo maneja (Panel.astro). Cada parte es un panel fijo con pasos (scripts/fina/pasos.ts):
+// al bajar, cada paso reemplaza al anterior y la escena avanza hasta su etiqueta p1, p2…
+import WhatsApp from '../fina/demos/WhatsApp.astro';
+import Panel from './Panel.astro';
+import { pasos as pasosWa } from '../../data/rebelbot';
+import { pasosPanel } from '../../data/panel';
+
+type PasoV = { t: string; d: string; enlace?: { t: string; href: string } };
+const partes: { id: string; titulo: string; panel: boolean; pasos: PasoV[] }[] = [
+  { id: 'cliente', titulo: 'Así lo vive tu cliente', panel: false, pasos: pasosWa.map((p) => ({ t: p.titulo, d: p.texto })) },
+  { id: 'negocio', titulo: 'Así lo manejas tú', panel: true, pasos: pasosPanel.map((p) => ({ t: p.titulo, d: p.texto, enlace: p.enlace })) },
+];
+---
+<section id="producto" class="wrap fina-sec pd" aria-labelledby="pd-title" data-pd>
+  <div class="pd-cab">
+    <h2 id="pd-title" class="text-d2" data-reveal>RebelBot: tu asistente de ventas en WhatsApp.</h2>
+    <p class="text-lead text-ash" data-reveal>Ya está funcionando. Atiende a tus clientes por WhatsApp las 24 horas y tu equipo lo maneja desde su propio panel.</p>
+  </div>
+
+  {partes.map((p) => (
+    <div class:list={['pd-parte', { 'is-panel': p.panel }]} data-pd-parte>
+      <div class="pd-track" data-pd-track style={`--n: ${p.pasos.length}`}>
+        <div class="pd-in">
+          <div class="pd-copy" data-pd-copia>
+            <h3 id={`pd-${p.id}`} class="pd-h3">{p.titulo}</h3>
+            <ol class="pd-pasos" aria-labelledby={`pd-${p.id}`}>
+              {p.pasos.map((s, k) => (
+                <li class="pd-paso" data-pd-paso>
+                  <p class="pd-paso-t"><span class="pd-paso-n" aria-hidden="true">{k + 1}</span>{s.t}</p>
+                  <p class="pd-paso-d">{s.d}{s.enlace && <>{' '}<a href={s.enlace.href} class="pd-link">{s.enlace.t}</a></>}</p>
+                </li>
+              ))}
+            </ol>
+            <div class="pd-prog" aria-hidden="true">{p.pasos.map(() => <i data-pd-barra></i>)}</div>
+          </div>
+          <div class="pd-escena">{p.panel ? <Panel /> : <WhatsApp />}</div>
+        </div>
+      </div>
+    </div>
+  ))}
+</section>
+
+<style>
+  .pd-cab { max-width: 48rem; }
+  .pd-cab p { margin: 1.25rem 0 0; max-width: 52ch; }
+  .pd-parte { margin-top: clamp(2.5rem, 5vw, 4rem); }
+
+  .pd-in { display: grid; gap: 2rem; padding: 0.5rem 0 clamp(2.5rem, 5vw, 4rem); }
+  .pd-escena { container-type: inline-size; width: 100%; max-width: 36rem; justify-self: center; }
+  .pd-parte.is-panel .pd-escena { max-width: 60rem; }
+
+  .pd-h3 { margin: 0; max-width: 22ch; font-size: clamp(1.4rem, 2.2vw, 1.9rem); line-height: 1.1; letter-spacing: -0.03em; }
+  .pd-pasos { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; }
+  .pd-paso { padding-block: 1rem; }
+  .pd-paso-t {
+    display: flex; gap: 0.75rem; align-items: baseline; margin: 0; color: var(--color-bone);
+    font-family: var(--font-display); font-weight: 700; font-size: clamp(1.15rem, 1.6vw, 1.45rem); line-height: 1.25; letter-spacing: -0.02em;
+  }
+  .pd-paso-n { min-width: 1ch; font-variant-numeric: tabular-nums; color: var(--color-red-text); }
+  .pd-paso-d { margin: 0.45rem 0 0 calc(1ch + 0.75rem); max-width: 42ch; font-size: 1.0625rem; line-height: 1.6; color: var(--color-ash); }
+  .pd-link { color: var(--color-red-text); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+  .pd-link:hover { text-decoration-thickness: 2px; }
+
+  /* Con JS: cada parte es un tramo alto y lo de adentro queda fijo; cada paso aparece en el lugar del anterior */
+  .pd.is-live .pd-track { height: calc(100svh + var(--n) * 55svh); }
+  .pd.is-live .pd-in { position: sticky; top: 0; height: 100svh; padding-block: 5rem 2rem; align-content: center; }
+  .pd.is-live .pd-pasos { grid-template-areas: "paso"; }
+  .pd.is-live .pd-paso {
+    grid-area: paso; visibility: hidden; opacity: 0; transform: translateY(1.25rem);
+    transition: opacity 0.35s, transform 0.5s var(--ease-out-expo), visibility 0s 0.35s;
+  }
+  .pd.is-live .pd-paso.is-pasado { transform: translateY(-1.25rem); }
+  .pd.is-live .pd-paso.is-on {
+    visibility: visible; opacity: 1; transform: none;
+    transition: opacity 0.5s 0.15s, transform 0.7s 0.15s var(--ease-out-expo), visibility 0s;
+  }
+  .pd-prog { display: none; }
+  .pd.is-live .pd-prog { display: flex; gap: 0.4rem; max-width: 12rem; margin: 0.5rem 0 0 calc(1ch + 0.75rem); }
+  .pd-prog i { flex: 1; height: 3px; border-radius: 3px; background: var(--color-line-strong); transition: background-color 0.4s; }
+  .pd-prog i.is-hecho { background: var(--color-ash-dim); }
+  .pd-prog i.is-on { background: var(--color-red); }
+
+  @media (min-width: 1024px) {
+    .pd-in { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); column-gap: clamp(2.5rem, 5vw, 5rem); align-items: center; }
+    .pd-escena { justify-self: end; }
+    /* El panel va a todo el ancho: el título y el avance arriba, y el paso abajo, como un subtítulo.
+       .pd-copy se disuelve (display: contents) para que sus piezas se acomoden alrededor del panel. */
+    .pd-parte.is-panel .pd-in {
+      grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'h prog' 'esc esc' 'pasos pasos';
+      row-gap: 1.1rem; align-items: end;
+    }
+    .pd-parte.is-panel .pd-copy { display: contents; }
+    .pd-parte.is-panel .pd-h3 { grid-area: h; max-width: none; }
+    .pd-parte.is-panel .pd-prog { grid-area: prog; width: 12rem; margin: 0 0 0.45rem; }
+    .pd-parte.is-panel .pd-escena { grid-area: esc; justify-self: center; max-width: none; }
+    .pd-parte.is-panel .pd-pasos { grid-area: pasos; margin: 0; }
+    .pd-parte.is-panel .pd-paso { display: grid; grid-template-columns: minmax(13rem, max-content) minmax(0, 1fr); column-gap: 2.5rem; align-items: baseline; padding-block: 0; }
+    .pd-parte.is-panel .pd-paso-d { margin: 0; max-width: 64ch; }
+    /* Arriba y no al centro: así el primer tramo queda pegado al título de la sección, sin un hueco de media pantalla */
+    .pd.is-live .pd-cab + .pd-parte .pd-in { align-content: start; padding-top: clamp(5.5rem, 12svh, 7.5rem); }
+    .pd.is-live .pd-cab + .pd-parte { margin-top: 0; }
+    /* Que la escena entre a lo alto en pantallas bajas */
+    .pd.is-live .pd-escena { max-width: min(36rem, calc((100svh - 10rem) * 4 / 3)); }
+    /* El panel: todo el ancho que permita el alto (quedan unos 15rem para el título, el paso y los márgenes) */
+    /* El bloque toma el ancho del panel, para que el título y el paso queden alineados con sus bordes */
+    .pd.is-live .pd-parte.is-panel .pd-in { width: min(100%, calc((100svh - 15rem) * 1.6)); margin-inline: auto; }
+    .pd.is-live .pd-parte.is-panel .pd-escena { width: 100%; max-width: none; }
+  }
+  @media (max-width: 1023px) {
+    .pd-escena { order: -1; }
+    .pd.is-live .pd-in { align-content: start; gap: 1.25rem; padding-top: 4.75rem; }
+    /* --copia: alto del texto de la parte (lo mide el script). La escena se achica lo justo para que el texto entre en la pantalla. */
+    .pd.is-live .pd-escena { max-width: min(26rem, max(12rem, calc(100svh - var(--copia, 20rem) - 7.5rem))); }
+  }
+  /* En pantallas bajas el subtítulo se oculta a la vista, pero el lector de pantalla lo sigue leyendo */
+  @media (max-width: 1023px) and (max-height: 640px) {
+    .pd.is-live .pd-h3 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  }
+  @media (max-width: 1023px) and (max-height: 600px) {
+    .pd.is-live .pd-paso-d { font-size: 0.95rem; line-height: 1.5; }
+  }
+  /* Celular en horizontal: texto a la izquierda y la escena (cuadrada) del alto de la pantalla a la derecha */
+  @media (max-width: 1023px) and (max-height: 520px) and (orientation: landscape) {
+    .pd.is-live .pd-in { grid-template-columns: minmax(0, 1fr) auto; column-gap: 2rem; align-content: center; align-items: center; padding-block: 4.75rem 1rem; }
+    .pd.is-live .pd-escena { order: 0; width: calc(100svh - 6rem); max-width: 26rem; }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion } from '../../scripts/motion';
+  import { escenas } from '../../scripts/fina/escenas';
+  import { montarPasos } from '../../scripts/fina/pasos';
+  import { miles } from '../../data/panel';
+
+  type TL = gsap.core.Timeline;
+
+  // Panel del negocio: una pantalla por paso, con etiquetas p1–p7. El CSS es el estado final (Consumo);
+  // lo que cambia se pinta en su inicio con fromTo al crear la línea de tiempo.
+  function panelTl(root: HTMLElement): TL {
+    const q = (k: string) => Array.from(root.querySelectorAll<HTMLElement>(`[data-pn="${k}"]`));
+    const tl = gsap.timeline({ paused: true, defaults: { duration: 0.5, ease: 'power3.out' } });
+    const pausa = (etiqueta: string, d = 0.4) => tl.to({}, { duration: d }).addLabel(etiqueta);
+    const scr = q('scr');
+    const items = ['bandeja', 'citas', 'leads', 'conocimiento', 'aprendizaje', 'tablero', 'consumo']
+      .map((k) => root.querySelector<HTMLElement>(`[data-pn="item"][data-k="${k}"]`)!);
+
+    // Una cifra que va de un valor a otro: el objeto se anima y escribe el texto (también al volver atrás).
+    const contar = (el: HTMLElement, desde: number, hasta: number, fmt: (n: number) => string, pos: gsap.Position, duration = 1, ease = 'power2.out') => {
+      const o = { v: desde };
+      el.textContent = fmt(desde);
+      tl.to(o, { v: hasta, duration, ease, onUpdate: () => { el.textContent = fmt(Math.round(o.v)); } }, pos);
+    };
+    const pulso = (el: HTMLElement) => tl.to(el, { scale: 1.2, duration: 0.18, yoyo: true, repeat: 1, ease: 'power1.inOut' }, '<');
+    // El cursor llega desde (x, y) en % de su tamaño y pulsa el botón.
+    const clic = (cursor: HTMLElement, boton: HTMLElement, x: number, y: number) => tl
+      .fromTo(cursor, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 })
+      .fromTo(cursor, { xPercent: x, yPercent: y }, { xPercent: 0, yPercent: 0, duration: 0.75, ease: 'power2.inOut' }, '<')
+      .to(boton, { scale: 0.92, duration: 0.1, yoyo: true, repeat: 1, ease: 'power1.inOut' });
+    // Cambio de pantalla: sale la anterior, entra la nueva y la marca roja del menú pasa a su ítem.
+    const cambiar = (i: number) => {
+      const at = tl.duration();
+      const sale = { autoAlpha: 0, y: -6, duration: 0.3 };
+      if (i === 1) tl.fromTo(scr[0], { autoAlpha: 1, y: 0 }, sale, at).fromTo(items[0], { '--on': 1 }, { '--on': 0, duration: 0.4 }, at);
+      else tl.to(scr[i - 1], sale, at).to(items[i - 1], { '--on': 0, duration: 0.4 }, at);
+      tl.fromTo(scr[i], { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.45 }, at + 0.2)
+        .fromTo(items[i], { '--on': 0 }, { '--on': 1, duration: 0.5 }, at + 0.1);
+      return at + 0.6;
+    };
+
+    // 1. Bandeja: llega un mensaje y se toma el control.
+    const [kAsesor] = q('kpi-asesor'), [kSug] = q('kpi-sug');
+    const [curB] = q('b-cursor'), [tomar] = q('b-tomar');
+    tl.fromTo(q('b-nuevo'), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.45 }, 0.25);
+    clic(curB, tomar, -300, -220);
+    tl.fromTo(tomar, { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.2 })
+      .fromTo(q('b-devolver'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, '<')
+      .fromTo(q('b-bot'), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.2 }, '<')
+      .fromTo(q('b-asesor'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, '<')
+      .fromTo(q('b-sys'), { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.4 }, '<0.1')
+      .to(curB, { autoAlpha: 0, duration: 0.3 }, '<0.15');
+    contar(kAsesor, Number(kAsesor.dataset.antes), Number(kAsesor.textContent), String, '<', 0.2);
+    pulso(kAsesor);
+    pausa('p1');
+
+    // 2. Citas: el horario de las 11:30 deja de estar libre, la cita entra a la lista y sale la ubicación.
+    let at = cambiar(1);
+    const [kCitas] = q('kpi-citas');
+    tl.fromTo(q('ci-libre'), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.25 }, at + 0.35)
+      .fromTo(q('ci-slot'), { autoAlpha: 0, scale: 0.94 }, { autoAlpha: 1, scale: 1, duration: 0.45 }, '<0.1')
+      .fromTo(q('ci-fila'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.45 }, '<0.15')
+      .fromTo(q('ci-ubic'), { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.4 }, '<0.3');
+    contar(kCitas, Number(kCitas.dataset.antes), Number(kCitas.textContent), String, '<', 0.2);
+    pulso(kCitas);
+    pausa('p2');
+
+    // 3. Leads: la clienta que agendó entra como nueva y pasa a caliente, con su resumen para el asesor.
+    at = cambiar(2);
+    const [kLeads] = q('kpi-leads');
+    tl.fromTo(q('l-fila'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.45 }, at + 0.3)
+      .fromTo(q('l-antes'), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.2 }, '+=0.35')
+      .fromTo(q('l-estado'), { autoAlpha: 0, scale: 0.9 }, { autoAlpha: 1, scale: 1, duration: 0.4 }, '<')
+      .fromTo(q('l-res'), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.45 }, '<0.15');
+    contar(kLeads, Number(kLeads.dataset.antes), Number(kLeads.textContent), String, '<', 0.2);
+    pulso(kLeads);
+    pausa('p3');
+
+    // 4. Conocimiento: el dato vacío se marca y queda para un asesor.
+    at = cambiar(3);
+    tl.fromTo(q('c-ring'), { autoAlpha: 0, scale: 1.3 }, { autoAlpha: 1, scale: 1, duration: 0.6, ease: 'expo.out' }, at + 0.35)
+      .fromTo(q('c-chip'), { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.45 }, '<0.2');
+    pausa('p4', 0.5);
+
+    // 5. Aprendizaje: se aprueba una sugerencia.
+    cambiar(4);
+    const [curA] = q('a-cursor'), [aprobar] = q('a-btn');
+    clic(curA, aprobar, 320, -200);
+    tl.fromTo(q('a-acc'), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.2 })
+      .fromTo(q('a-ok'), { autoAlpha: 0, x: -6 }, { autoAlpha: 1, x: 0, duration: 0.4 }, '<0.1')
+      .to(curA, { autoAlpha: 0, duration: 0.3 }, '<');
+    contar(kSug, Number(kSug.dataset.antes), Number(kSug.textContent), String, '<', 0.2);
+    pulso(kSug);
+    pausa('p5');
+
+    // 6. Tablero: las cifras suben.
+    at = cambiar(5);
+    q('t-num').forEach((el) => {
+      const suf = el.dataset.suf ?? '';
+      contar(el, 0, Number(el.dataset.v), (n) => `${n}${suf}`, at + 0.25, 1.2);
+    });
+    tl.fromTo(q('t-bar'), { scaleY: 0 }, { scaleY: 1, duration: 0.7, stagger: 0.035, ease: 'power2.out' }, at + 0.25);
+    pausa('p6');
+
+    // 7. Consumo: la barra llega al 80 % y aparece el aviso.
+    at = cambiar(6);
+    const [fill] = q('k-fill'), [kNum] = q('k-num'), [kTok] = q('k-tokens');
+    const lleno = Number(fill.style.getPropertyValue('--p')) || 0.8;
+    const ease = 'power2.inOut';
+    tl.fromTo(fill, { scaleX: 0 }, { scaleX: lleno, duration: 1.3, ease }, at + 0.3);
+    contar(kNum, 0, Number(kNum.dataset.v), miles, at + 0.3, 1.3, ease);
+    contar(kTok, 0, Number(kTok.dataset.v), miles, at + 0.3, 1.3, ease);
+    tl.fromTo(q('k-uso'), { scaleX: 0 }, { scaleX: 1, duration: 0.6, stagger: 0.1 }, at + 0.5)
+      .fromTo(q('k-aviso'), { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.45 }, at + 1.5);
+    pausa('p7', 0.3);
+    return tl;
+  }
+
+  const sec = document.querySelector<HTMLElement>('[data-pd]');
+  if (sec) {
+    sec.classList.add('is-live');
+    const partes = Array.from(sec.querySelectorAll<HTMLElement>('[data-pd-parte]'));
+
+    // En celular la escena se achica según lo que mide el texto de su parte (ver --copia en el CSS).
+    const medir = () => partes.forEach((p) => {
+      const copia = p.querySelector<HTMLElement>('[data-pd-copia]');
+      if (copia) p.style.setProperty('--copia', `${copia.offsetHeight}px`);
+    });
+    medir();
+    let ancho = window.innerWidth;
+    window.addEventListener('resize', () => {
+      if (window.innerWidth === ancho) return;
+      ancho = window.innerWidth;
+      medir();
+    });
+
+    partes.forEach((p) => {
+      const wa = p.querySelector<HTMLElement>('[data-escena="wa"]');
+      const panel = p.querySelector<HTMLElement>('[data-panel]');
+      const pasos = Array.from(p.querySelectorAll<HTMLElement>('[data-pd-paso]'));
+      const barras = Array.from(p.querySelectorAll<HTMLElement>('[data-pd-barra]'));
+      const demo = montarPasos({
+        track: p.querySelector<HTMLElement>('[data-pd-track]')!,
+        pasos,
+        barras,
+        tl: wa ? escenas.wa(wa) : panel ? panelTl(panel) : null,
+      });
+
+      // Hasta que la parte se acerca se ve el primer paso con la escena en su inicio; al llegar, arranca
+      // (así la animación del primer paso no corre fuera de la vista).
+      pasos[0]?.classList.add('is-on');
+      barras[0]?.classList.add('is-on');
+      let listo = false;
+      const arrancar = () => { if (!listo) { listo = true; demo.iniciar(); } };
+      if (reduceMotion) { arrancar(); return; }
+      const st = ScrollTrigger.create({ trigger: p, start: 'top 65%', onEnter: (self) => { arrancar(); self.kill(); } });
+      if (st.scroll() > st.start) { arrancar(); st.kill(); }
+    });
+
+    ScrollTrigger.refresh();
+  }
+</script>

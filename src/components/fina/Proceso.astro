@@ -1,14 +1,32 @@
 ---
 // Proceso en ruta horizontal fija con riel y medidor de pago; sin JS, angosto o con «menos movimiento», estaciones apiladas.
-import { proceso } from '../../data/estudio';
-import { estaciones, medidor } from '../../data/fina';
+import { proceso as procesoFina } from '../../data/estudio';
+import { estaciones as estacionesFina, medidor as medidorFina } from '../../data/fina';
+
+// La v1 cambia los textos de pago; sin props queda la Fina.
+interface Props {
+  titulo?: string;
+  pasos?: typeof procesoFina;
+  estaciones?: typeof estacionesFina;
+  medidor?: typeof medidorFina;
+  /** v1: al pasar el ratón por una estación cuya animación ya terminó, se vuelve a reproducir. */
+  repetir?: boolean;
+}
+const {
+  titulo = 'Ocho pasos, con una semana a prueba antes de pagar.',
+  pasos: proceso = procesoFina,
+  estaciones = estacionesFina,
+  medidor = medidorFina,
+  repetir = false,
+} = Astro.props;
 
 const CLAVE = 5;
 const LV = ['L', 'M', 'M', 'J', 'V'];
+const LD = [...LV, 'S', 'D'];
 ---
-<section id="proceso" class="pr" aria-labelledby="pr-title" data-pr>
+<section id="proceso" class:list={['pr', { 'pr-repite': repetir }]} aria-labelledby="pr-title" data-pr data-repetir={repetir ? '' : undefined}>
   <div class="wrap pr-head">
-    <h2 id="pr-title" class="text-d2 max-w-[22ch]">Ocho pasos, con una semana a prueba antes de pagar.</h2>
+    <h2 id="pr-title" class="text-d2 max-w-[22ch]">{titulo}</h2>
   </div>
 
   <div class="pr-view">
@@ -76,6 +94,17 @@ const LV = ['L', 'M', 'M', 'J', 'V'];
                 <span class="es-cap">{m[0]}</span>
                 <span class="es-grid">{Array.from({ length: 14 }, () => <i data-a="sq"></i>)}</span>
                 <span class="es-cap">{m[1]}</span>
+              </>}
+              {e.escena === 'chequeo' && <>
+                <div class="es-cal">
+                  <span></span>
+                  {LD.map((d) => <span class="es-cal-d">{d}</span>)}
+                  {m.slice(0, 2).map((sem) => <>
+                    <span class="es-cal-s">{sem}</span>
+                    {LD.map(() => <span class="es-cal-c"><svg viewBox="0 0 16 16"><path data-a="check" d="M4 8.6l2.8 2.8L12.2 5.4" /></svg></span>)}
+                  </>)}
+                </div>
+                <span class="es-legend es-legend-ok" data-a="cap"><svg viewBox="0 0 16 16"><path d="M4 8.6l2.8 2.8L12.2 5.4" /></svg>{m[2]}</span>
               </>}
               {e.escena === 'revisiones' && (
                 <div class="es-rev">
@@ -160,11 +189,13 @@ const LV = ['L', 'M', 'M', 'J', 'V'];
 
   .es-pair { display: flex; justify-content: space-between; width: 100%; gap: 1rem; }
 
-  .es-weeks { display: grid; grid-template-columns: repeat(3, auto); gap: clamp(0.4rem, 2vw, 0.8rem); }
+  /* Los 15 días se miden contra el ancho del dibujo (cqi), no de la ventana: así las 3 semanas caben en cualquier tarjeta */
+  .es-sprints { container-type: inline-size; }
+  .es-weeks { display: grid; grid-template-columns: repeat(3, auto); gap: clamp(0.35rem, 3cqi, 0.8rem); }
   .es-week { display: grid; gap: 0.35rem; justify-items: center; }
   .es-days { display: flex; gap: 0.2rem; }
   .es-days i {
-    display: grid; place-items: center; width: clamp(0.95rem, 4.2vw, 1.25rem); height: 1.6rem; border-radius: 0.3rem; font-style: normal; font-size: 0.65rem;
+    display: grid; place-items: center; width: clamp(0.6rem, 4.6cqi, 1.25rem); height: 1.6rem; border-radius: 0.3rem; font-style: normal; font-size: 0.65rem;
     background: var(--color-surface-2); color: var(--color-ash);
   }
   .es-days i[data-a="vie"] { background: var(--color-red); color: #fff; }
@@ -179,6 +210,15 @@ const LV = ['L', 'M', 'M', 'J', 'V'];
   .es-grid { display: grid; grid-template-columns: repeat(7, 1.3rem); gap: 0.3rem; }
   .es-grid i { height: 1.3rem; border-radius: 0.3rem; background: var(--color-bone); }
 
+  /* Chequeo (07 de la v1): dos semanas, de lunes a domingo, con un visto por día. Medido contra el dibujo (cqi). */
+  .es-chequeo { container-type: inline-size; }
+  .es-cal { display: grid; grid-template-columns: auto repeat(7, clamp(1rem, 8.5cqi, 1.6rem)); gap: clamp(0.2rem, 1.4cqi, 0.3rem); align-items: center; }
+  .es-cal-d { font-size: 0.7rem; color: var(--color-ash); text-align: center; }
+  .es-cal-s { padding-right: 0.35rem; font-size: 0.75rem; color: var(--color-ash); white-space: nowrap; }
+  .es-cal-c { display: grid; place-items: center; aspect-ratio: 1; border-radius: 0.3rem; background: var(--color-surface-2); }
+  .es-cal-c svg, .es-legend-ok svg { width: 78%; fill: none; stroke: var(--color-bone); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+  .es-legend-ok svg { width: 0.85rem; stroke: var(--color-red-text); }
+
   .es-rev { position: relative; width: 100%; height: 6rem; }
   .es-track { position: absolute; left: 0; right: 0; top: 2.2rem; height: 3px; border-radius: 3px; background: var(--color-line-strong); }
   .es-trackfill { position: absolute; inset: 0; border-radius: inherit; background: var(--color-red); transform-origin: 0 50%; }
@@ -192,6 +232,13 @@ const LV = ['L', 'M', 'M', 'J', 'V'];
   .es-month i { display: none; }
 
   .pr-hud { display: none; }
+
+  /* Con «repetir»: el dibujo se aclara un poco al pasar el ratón, para que se note que reacciona */
+  .pr-repite .pr-pic { transition: background-color 0.3s; }
+  @media (hover: hover) {
+    .pr-repite .pr-st:hover .pr-pic { background: var(--color-surface-2); }
+    .pr-repite .pr-key:hover .pr-pic { background: rgb(11 10 14 / 0.14); }
+  }
 
   .pr.is-h { height: 100vh; height: 100svh; padding: 0; overflow: hidden; display: flex; flex-direction: column; }
   .pr.is-h .pr-head { flex: none; padding-top: clamp(5.5rem, 12vh, 7.5rem); }
@@ -264,12 +311,51 @@ const LV = ['L', 'M', 'M', 'J', 'V'];
       .fromTo(q('big'), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out' }, '-=0.1'),
     monitoreo: (q) => gsap.timeline({ paused: true })
       .fromTo(q('sq'), { scale: 0.3, autoAlpha: 0.15 }, { scale: 1, autoAlpha: 1, duration: 0.3, stagger: 0.06, ease: 'power2.out' }),
+    chequeo: (q) => gsap.timeline({ paused: true })
+      .fromTo(q('check'), { drawSVG: '0% 0%' }, { drawSVG: '0% 100%', duration: 0.3, stagger: 0.07, ease: 'power2.out' })
+      .fromTo(q('cap'), { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power3.out' }, '-=0.2'),
     revisiones: (q) => gsap.timeline({ paused: true })
       .fromTo(q('fill'), { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: 'power1.inOut' })
       .fromTo(q('mark'), { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35, stagger: 0.28 }, 0.15)
       .fromTo(q('month'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, '-=0.1'),
   };
-  const sceneTl = (st: HTMLElement) => escenas[st.dataset.escena!]?.((a) => Array.from(st.querySelectorAll(`[data-a="${a}"]`))) ?? null;
+  // Cada estación guarda su animación para poder repetirla (ver «repetir» más abajo).
+  const animaciones = new Map<HTMLElement, gsap.core.Timeline>();
+  const sceneTl = (st: HTMLElement) => {
+    const tl = escenas[st.dataset.escena!]?.((a) => Array.from(st.querySelectorAll(`[data-a="${a}"]`))) ?? null;
+    if (tl) animaciones.set(st, tl);
+    return tl;
+  };
+
+  // Repetir (v1): mientras el ratón está encima de una estación, su animación se repite en bucle, con una pausa
+  // corta entre vuelta y vuelta; al salir, termina la vuelta en curso y se queda quieta. Si la estación todavía
+  // no llegó (o se está desarmando al volver), no hace nada. En pantallas táctiles, tocar el dibujo la repite una vez.
+  if (sec.hasAttribute('data-repetir') && !reduceMotion) {
+    const PAUSA = 0.6;
+    const terminada = (tl: gsap.core.Timeline) => tl.progress() === 1 && !tl.reversed() && !tl.isActive();
+    stations.forEach((st) => {
+      let encima = false;
+      let espera: gsap.core.Tween | undefined;
+      const otraVez = () => {
+        const tl = animaciones.get(st);
+        if (tl && encima && terminada(tl)) tl.restart();
+      };
+      st.addEventListener('pointerenter', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        encima = true;
+        const tl = animaciones.get(st);
+        if (!tl) return;
+        // Al terminar cada vuelta, si el ratón sigue encima, espera un momento y empieza otra.
+        tl.eventCallback('onComplete', () => { espera?.kill(); espera = gsap.delayedCall(PAUSA, otraVez); });
+        if (terminada(tl)) tl.restart();
+      });
+      st.addEventListener('pointerleave', () => { encima = false; espera?.kill(); });
+      st.querySelector('.pr-pic')?.addEventListener('click', () => {
+        const tl = animaciones.get(st);
+        if (tl && terminada(tl)) tl.restart();
+      });
+    });
+  }
 
   if (!reduceMotion) {
     document.fonts.ready.then(() => {
@@ -284,21 +370,46 @@ const LV = ['L', 'M', 'M', 'J', 'V'];
 
         sec.classList.add('is-h');
         const dist = () => Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
+        // tarde: estaciones cuya marca queda más allá del final del recorrido (las últimas, en pantallas anchas).
+        // Nunca cruzan su marca, así que se arman al llegar al final y se desarman al volver.
+        let tls: (gsap.core.Timeline | null)[] = [];
+        const early: boolean[] = [];
+        const tarde: boolean[] = [];
+        const alFinal: boolean[] = [];
+        // Cada marca del riel va en el progreso en que su estación cruza el 62 % de la pantalla (su «start»).
+        // Se calcula con la posición real de la estación: leer el start de su ScrollTrigger daba 0 en todas,
+        // porque a veces se refrescaba antes que el recorrido.
+        const ubicarMarcas = () => {
+          const d = dist() || 1;
+          const vw = document.documentElement.clientWidth;
+          stations.forEach((st, i) => {
+            const bruto = (st.offsetLeft - 0.62 * vw) / d;
+            ticks[i].style.left = `${gsap.utils.clamp(0, 1, bruto) * 100}%`;
+            early[i] = bruto <= 0;
+            tarde[i] = bruto > 1;
+          });
+        };
         const run = gsap.to(track, {
           x: () => -dist(), ease: 'none', // lineal: el scroll y la posición deben coincidir
           scrollTrigger: {
             trigger: sec, start: 'top top', end: () => `+=${dist() * 1.15}`, pin: true, scrub: 0.6, invalidateOnRefresh: true,
+            onRefresh: ubicarMarcas,
             onUpdate: (self) => {
               gsap.set(fill, { scaleX: self.progress });
               gsap.set(mark, { left: `${self.progress * 100}%` });
+              const fin = self.progress > 0.985;
+              tarde.forEach((t, i) => {
+                if (!t || !!alFinal[i] === fin) return;
+                alFinal[i] = fin;
+                if (fin) tls[i]?.play(); else tls[i]?.reverse();
+                ticks[i].classList.toggle('is-on', fin);
+              });
             },
           },
         });
 
-        // Cada marca del riel se ubica en el progreso exacto en que llega su estación.
         // Las que ya se ven al fijarse (early) arman su dibujo mientras la sección sube.
-        const tls = stations.map(sceneTl);
-        const early: boolean[] = [];
+        tls = stations.map(sceneTl);
         ScrollTrigger.create({
           trigger: sec, start: 'top 60%',
           onEnter: () => tls.forEach((tl, i) => { if (early[i]) tl?.play(); }),
@@ -314,13 +425,7 @@ const LV = ['L', 'M', 'M', 'J', 'V'];
             },
             onEnter: () => { if (i === PAGA) pay.classList.add('is-paid'); },
             onLeaveBack: () => { if (!early[i]) tl?.reverse(); ticks[i].classList.remove('is-on'); if (i === PAGA) pay.classList.remove('is-paid'); },
-            onRefresh: (self) => {
-              const main = run.scrollTrigger!;
-              const p = gsap.utils.clamp(0, 1, (self.start - main.start) / (main.end - main.start || 1));
-              ticks[i].style.left = `${p * 100}%`;
-              early[i] = p === 0;
-              if (self.progress > 0) ticks[i].classList.add('is-on');
-            },
+            onRefresh: (self) => { if (self.progress > 0) ticks[i].classList.add('is-on'); },
           });
         });
 

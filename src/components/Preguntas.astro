@@ -1,6 +1,8 @@
 ---
 // Preguntas frecuentes. Las respuestas salen de lo que el producto hace hoy (CLAUDE.md, secciones 1 y 2).
-const preguntas = [
+// La v1 pasa su propia lista; sin props quedan las de la Fina.
+interface Props { items?: { q: string; a: string }[] }
+const fina = [
   { q: '¿Solo hacen asistentes de WhatsApp?', a: 'No. RebelBot es nuestro producto, pero somos un estudio de software: creamos soluciones a medida, desde automatización de procesos hasta plataformas web, backend, APIs e integraciones.' },
   { q: '¿RebelBot puede inventar precios o datos?', a: 'No. Responde solo con los datos de tu negocio. Si falta algo, ofrece que un asesor lo confirme.' },
   { q: '¿Qué pasa si el asistente no puede resolver algo?', a: 'Pasa la conversación a una persona de tu equipo. Si el asesor no responde a tiempo, la retoma con todo el contexto para que el cliente no se quede esperando.' },
@@ -12,6 +14,7 @@ const preguntas = [
   { q: '¿Qué pasa después de entregar?', a: 'Revisamos tus métricas a los 30, 60 y 90 días, y después tienes una revisión mensual con mejoras incluidas.' },
   { q: '¿Cómo empezamos?', a: 'Agenda una demo por WhatsApp. Primero entendemos tu negocio; después te proponemos la solución que realmente necesitas.' },
 ];
+const { items: preguntas = fina } = Astro.props;
 ---
 <section id="preguntas" class="relative border-t border-line py-24 lg:py-36" aria-labelledby="faq-title">
   <div class="wrap grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-24">

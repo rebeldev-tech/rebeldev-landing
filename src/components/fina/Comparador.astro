@@ -1,7 +1,15 @@
 ---
 // Comparador con la «/» arrastrable y un dibujo en la mitad vacía de cada capa, que avanza según cuánto la descubre la manija.
-import { comparacion, garantias } from '../../data/estudio';
-import { lineas } from '../../data/fina';
+import { comparacion as comparacionFina, garantias as garantiasFina } from '../../data/estudio';
+import { lineas as lineasFina } from '../../data/fina';
+
+// La v1 cambia las filas, el dibujo y las garantías; sin props queda la Fina.
+interface Props {
+  filas?: { k: string; a: string; r: string }[];
+  lineas?: typeof lineasFina;
+  garantias?: { t: string }[];
+}
+const { filas: comparacion = comparacionFina, lineas = lineasFina, garantias = garantiasFina } = Astro.props;
 
 const us = lineas.nosotros.marcas;
 const them = lineas.agencia.marcas;
@@ -56,9 +64,11 @@ const them = lineas.agencia.marcas;
     </div>
   </div>
 
-  <p class="cmp-garantias mt-14 text-d3">
-    {garantias.map((g, i) => <>{i > 0 && <span class="slash" aria-hidden="true">/</span>}<span>{g.t}</span></>)}
-  </p>
+  {garantias.length > 0 && (
+    <p class="cmp-garantias mt-14 text-d3">
+      {garantias.map((g, i) => <>{i > 0 && <span class="slash" aria-hidden="true">/</span>}<span>{g.t}</span></>)}
+    </p>
+  )}
 </section>
 
 <style>

@@ -3,8 +3,10 @@ import Logo from './Logo.astro';
 import { contacto } from '../data/contacto';
 
 // Bajo 900 px los enlaces pasan a un panel desplegable (con el botón de tema adentro).
-interface Props { links: { href: string; label: string }[] }
-const { links } = Astro.props;
+// boton: «demo» (la Fina) lleva a WhatsApp; «acceso» (la v1) es «Iniciar sesión», y la demo va en un botón flotante.
+interface Props { links: { href: string; label: string }[]; boton?: 'demo' | 'acceso' }
+const { links, boton = 'demo' } = Astro.props;
+const acceso = boton === 'acceso';
 ---
 <header class="nav fixed inset-x-0 top-0 z-50" data-nav>
   <div class="wrap flex h-[4.5rem] items-center justify-between gap-2 min-[375px]:gap-4 sm:gap-6">
@@ -19,7 +21,11 @@ const { links } = Astro.props;
           <path class="moon" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
         </svg>
       </button>
-      <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary whitespace-nowrap !px-4 !py-2.5 text-[0.95rem] max-[420px]:!px-3.5 max-[420px]:text-[0.875rem] max-[359px]:!hidden">Agenda<span class="max-[420px]:hidden"> una</span> demo</a>
+      {acceso ? (
+        <a href={contacto.acceso} class="btn btn-ghost whitespace-nowrap !px-4 !py-2.5 text-[0.95rem] max-[420px]:!px-3.5 max-[420px]:text-[0.875rem] max-[359px]:!hidden">Iniciar sesión</a>
+      ) : (
+        <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary whitespace-nowrap !px-4 !py-2.5 text-[0.95rem] max-[420px]:!px-3.5 max-[420px]:text-[0.875rem] max-[359px]:!hidden">Agenda<span class="max-[420px]:hidden"> una</span> demo</a>
+      )}
       <button type="button" class="menu-btn min-[900px]:!hidden" aria-expanded="false" aria-controls="nav-menu" aria-label="Abrir menú" data-menu-btn>
         <span></span><span></span>
       </button>
@@ -40,7 +46,11 @@ const { links } = Astro.props;
           </svg>
         </button>
       </div>
-      <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary menu-cta min-[360px]:!hidden" data-menu-link>Agenda una demo</a>
+      {acceso ? (
+        <a href={contacto.acceso} class="btn btn-ghost menu-cta min-[360px]:!hidden" data-menu-link>Iniciar sesión</a>
+      ) : (
+        <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary menu-cta min-[360px]:!hidden" data-menu-link>Agenda una demo</a>
+      )}
     </nav>
   </div>
 </header>

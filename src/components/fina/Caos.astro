@@ -2,9 +2,16 @@
 // «Del caos al sistema»: caos, diagnóstico con escáner, encaje por capas y una pieza nueva por capa. Piezas ilustrativas.
 import { pasosCaos, capas, piezas, caos } from '../../data/fina';
 
+// prioridad: refreshPriority del anclaje. En la Fina va 1 (la sección está arriba de Proceso); en la v1, debajo de
+// Proceso, va 0 y ScrollTrigger ordena los recálculos por el lugar en la página.
+// arriba (solo la v1): el contenido fijo va arriba y no centrado, para que el primer paso quede pegado al título
+// de «A medida» que va justo antes. Sin esta prop, la Fina no cambia.
+interface Props { prioridad?: number; arriba?: boolean }
+const { prioridad = 1, arriba = false } = Astro.props;
+
 const nuevaDe = (capa: string) => caos.nuevas.find((n) => n.capa === capa);
 ---
-<section id="como" class="cs" data-cs data-pulso={JSON.stringify(caos.pulso)} aria-labelledby="cs-title">
+<section id="como" class:list={['cs', { 'cs-arriba': arriba }]} data-cs data-pulso={JSON.stringify(caos.pulso)} data-prioridad={prioridad} aria-labelledby="cs-title">
   <h2 id="cs-title" class="sr-only">Cómo trabajamos</h2>
   <div class="wrap cs-grid">
     <ol class="cs-steps" data-cs-steps>
@@ -183,7 +190,10 @@ const nuevaDe = (capa: string) => caos.nuevas.find((n) => n.capa === capa);
     :global(html.has-motion) .cs.is-pinned .cs-stage { height: min(74vh, 42rem); }
     :global(html.has-motion) .cs.is-pinned .cs-zoom { height: 100%; }
     :global(html.has-motion) .cs.is-pinned .cs-order { position: absolute; inset: 0; display: grid; align-content: center; }
+    :global(html.has-motion) .cs.cs-arriba.is-pinned { align-items: flex-start; padding-top: clamp(5.5rem, 13vh, 8rem); }
+    :global(html.has-motion) .cs.cs-arriba.is-pinned .cs-grid { align-items: start; }
   }
+  .cs.cs-arriba:not(.is-pinned) { padding-top: clamp(2rem, 4vw, 3rem); }
   /* La sombra sin desenfoque tapa la franja de arriba cuando la barra se esconde al bajar */
   .cs.is-mobile .cs-stage { order: -1; position: sticky; top: 4.25rem; z-index: 1; min-height: 0; padding-block: 0.75rem; background: var(--color-ink); box-shadow: 0 -4.25rem 0 var(--color-ink); }
   .cs.is-mobile .cs-rows { gap: 0.9rem; }
@@ -351,7 +361,7 @@ const nuevaDe = (capa: string) => caos.nuevas.find((n) => n.capa === capa);
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: pinned
-        ? { trigger: sec, start: 'top top', end: '+=480%', pin: true, scrub: 0.7, refreshPriority: 1, onUpdate: sync }
+        ? { trigger: sec, start: 'top top', end: '+=480%', pin: true, scrub: 0.7, refreshPriority: Number(sec.dataset.prioridad ?? 1), onUpdate: sync }
         : { trigger: sec.querySelector('[data-cs-steps]'), start: 'top 70%', end: 'bottom 75%', scrub: 0.7, onUpdate: sync },
     });
 
