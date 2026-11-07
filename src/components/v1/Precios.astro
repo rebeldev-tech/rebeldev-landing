@@ -1,5 +1,6 @@
 ---
-// Precios: «Solo pagas lo que consumes.» Todas las cifras y textos salen de src/data/precios.ts.
+// Precios: «Solo pagas lo que consumes.» Las cifras y las tablas salen de src/data/precios.ts.
+// Dos formas de pagar, y se elige una: por uso (opción 1) o un plan mensual (opción 2).
 // El momento llamativo es el precio por crédito; el resto se lee como tablas limpias.
 import Cotizador from './Cotizador.astro';
 import {
@@ -19,7 +20,7 @@ const marcas = Array.from({ length: topeAcciones + 1 }, (_, i) => i);
   <header class="pc-head" data-reveal>
     <h2 id="pc-title" class="text-d2">Solo pagas lo que consumes.</h2>
     <p class="text-lead text-ash pc-sub">
-      Sin cargo fijo ni licencias. Pagas los créditos que usa tu asistente; la implementación, el soporte y las mejoras van por nuestra cuenta.
+      Dos formas de pagar, y eliges una: por uso, pagas solo los créditos que consume tu asistente, sin cargo fijo; o un plan mensual, con un monto fijo y más servicio. En las dos, nosotros configuramos tu asistente y cargamos tu información.
     </p>
   </header>
 
@@ -35,9 +36,9 @@ const marcas = Array.from({ length: topeAcciones + 1 }, (_, i) => i);
         <span class="pc-cur">S/</span><span class="pc-num">{precioCredito}</span><span class="pc-per">por crédito</span>
       </p>
       <p class="pc-mono">{soles(credito.precio)} + IGV</p>
-      <p class="pc-eq">1 crédito = {num(credito.tokens)} tokens procesados ≈ 1 conversación típica</p>
+      <p class="pc-eq">Una conversación promedio usa un poco más de 1 crédito: las cortas, menos; las largas, más.</p>
 
-      <ul class="pc-list">{porUso.incluye.map((t) => <li>{t}</li>)}</ul>
+      <ul class="pc-list">{porUso.incluye.map((x) => <li>{x}</li>)}</ul>
 
       <table class="pc-tbl pc-ej">
         <thead><tr><th scope="col">Si atiendes al mes</th><th scope="col" class="r">Pagas con IGV</th></tr></thead>
@@ -54,7 +55,8 @@ const marcas = Array.from({ length: topeAcciones + 1 }, (_, i) => i);
 
   <!-- Planes mensuales -->
   <div class="pc-block" data-reveal>
-    <h3 class="text-d3">Planes mensuales</h3>
+    <h3 class="text-d3">Opción 2: planes mensuales</h3>
+    <p class="text-body text-ash pc-lead">En lugar de pagar por uso, pagas un monto fijo al mes con tus créditos incluidos y más servicio. Contrato de 12 meses, sin pago inicial.</p>
     <div class="pc-plans">
       {planes.map((p) => (
         <article class="pc-plan" aria-labelledby={`pc-p-${p.id}`} data-plan-col={p.id}>
@@ -63,7 +65,7 @@ const marcas = Array.from({ length: topeAcciones + 1 }, (_, i) => i);
           <p class="pc-plan-price"><span>{soles(conIgv(p.base))}</span> al mes</p>
           <p class="pc-mono">{solesEnteros(p.base)} + IGV</p>
           <p class="pc-plan-cred"><span class="pc-red">{num(p.creditos)} créditos</span> ≈ {num(p.conversaciones)} conversaciones al mes</p>
-          <ul class="pc-list">{p.incluye.map((t) => <li>{t}</li>)}</ul>
+          <ul class="pc-list">{p.incluye.map((x) => <li>{x}</li>)}</ul>
         </article>
       ))}
     </div>
@@ -106,7 +108,7 @@ const marcas = Array.from({ length: topeAcciones + 1 }, (_, i) => i);
   <!-- Lo que consume cada acción: barras sobre una regla de créditos y soles. La típica (≈ 1 crédito) es la medida. -->
   <div class="pc-block" data-reveal>
     <h3 class="text-d3">Lo que consume cada acción</h3>
-    <p class="text-body text-ash pc-lead">Una conversación típica usa cerca de un crédito. Con esa medida, esto es lo que consume cada cosa que hace tu asistente.</p>
+    <p class="text-body text-ash pc-lead">Una conversación típica, de 6 a 12 mensajes de tu cliente, usa 1.1 créditos. Con esa medida, esto es lo que consume cada cosa que hace tu asistente.</p>
 
     <div class="pc-cons" data-pc-cons style={`--tope: ${topeAcciones}`}>
       <div class="pc-regla" aria-hidden="true">
@@ -160,7 +162,7 @@ const marcas = Array.from({ length: topeAcciones + 1 }, (_, i) => i);
           <h4 class="pc-h4">Qué paga cada sol</h4>
           <table class="pc-tbl">
             <thead><tr><th scope="col">En qué se usa</th><th scope="col" class="r">De cada {soles(credito.precio)}</th></tr></thead>
-            <tbody>{cadaSol.map(([t, v]) => <tr><td>{t}</td><td class="r pc-fig">{soles(v)}</td></tr>)}</tbody>
+            <tbody>{cadaSol.map(([en, v]) => <tr><td>{en}</td><td class="r pc-fig">{soles(v)}</td></tr>)}</tbody>
             <tfoot><tr><th scope="row">Total, sin IGV</th><td class="r pc-fig">{soles(totalSol)}</td></tr></tfoot>
           </table>
           <p class="text-note text-ash pc-after">{notaCadaSol}</p>

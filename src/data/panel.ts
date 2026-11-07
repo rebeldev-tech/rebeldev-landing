@@ -1,4 +1,4 @@
-// Panel de RebelBot recreado para la v1 (sección Producto, parte «Así lo manejas tú»).
+// Panel de RebelBot recreado para la sección Producto (parte «Así lo manejas tú»).
 // TODO ES DE EJEMPLO: negocio, proyectos, personas, teléfonos y cifras son inventados y genéricos.
 // Nada sale del panel real ni de un cliente; en pantalla va con la pastilla «Ejemplo».
 
@@ -6,12 +6,11 @@ export type Pantalla = 'bandeja' | 'citas' | 'leads' | 'conocimiento' | 'aprendi
 
 export const negocio = 'Inmobiliaria Demo';
 
-// Menú del panel, agrupado como el real. k: las pantallas que se recorren en la demo.
-export const menu: { grupo: string; items: { t: string; k?: Pantalla }[] }[] = [
-  { grupo: 'Atender', items: [{ t: 'Bandeja', k: 'bandeja' }, { t: 'Simulador' }, { t: 'Citas', k: 'citas' }, { t: 'Leads', k: 'leads' }, { t: 'Casos y encuesta' }] },
-  { grupo: 'Enseñar al asistente', items: [{ t: 'Conocimiento', k: 'conocimiento' }, { t: 'Comportamiento' }, { t: 'Aprendizaje', k: 'aprendizaje' }, { t: 'Revisión' }] },
-  { grupo: 'Medir y crecer', items: [{ t: 'Tablero', k: 'tablero' }, { t: 'Supervisión' }, { t: 'Marketing' }, { t: 'WhatsApp' }, { t: 'Consumo', k: 'consumo' }] },
-  { grupo: 'Tu equipo', items: [{ t: 'Usuarios y auditoría' }, { t: 'Ayuda y mejoras' }] },
+// Menú del panel, agrupado como el real, con solo las 7 pantallas que recorre la demo. k: la pantalla de cada opción.
+export const menu: { grupo: string; items: { t: string; k: Pantalla }[] }[] = [
+  { grupo: 'Atender', items: [{ t: 'Bandeja', k: 'bandeja' }, { t: 'Citas', k: 'citas' }, { t: 'Leads', k: 'leads' }] },
+  { grupo: 'Enseñar al asistente', items: [{ t: 'Conocimiento', k: 'conocimiento' }, { t: 'Aprendizaje', k: 'aprendizaje' }] },
+  { grupo: 'Medir y crecer', items: [{ t: 'Tablero', k: 'tablero' }, { t: 'Consumo', k: 'consumo' }] },
 ];
 
 // Cifras de arriba de cada pantalla. v es el valor final (el que muestra el CSS);

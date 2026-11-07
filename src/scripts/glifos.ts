@@ -12,11 +12,6 @@ const glifos: Record<string, (q: Q) => gsap.core.Timeline> = {
   auto: (q) => gsap.timeline({ paused: true })
     .from(q('ring'), { rotation: -300, svgOrigin: '32 32', autoAlpha: 0, duration: 1.2, ease: 'power3.inOut' })
     .from(q('dot'), { scale: 0, transformOrigin: '50% 50%', duration: 0.4, stagger: 0.12, ease: 'back.out(2)' }, '-=0.5'),
-  wa: (q) => {
-    const tl = gsap.timeline({ paused: true });
-    q('b').forEach((b, i) => tl.from(b, { scale: 0.5, autoAlpha: 0, transformOrigin: (b as HTMLElement).dataset.o === 'right' ? '100% 100%' : '0% 100%', duration: 0.45, ease: 'back.out(1.6)' }, i * 0.35));
-    return tl;
-  },
   web: (q) => gsap.timeline({ paused: true })
     .fromTo(q('frame'), { drawSVG: '0% 0%' }, { drawSVG: '0% 100%', duration: 0.8, ease: 'power2.inOut', stagger: 0.15 })
     .from(q('blk'), { scaleX: 0, transformOrigin: '0% 50%', duration: 0.5, stagger: 0.1 }, '-=0.3'),

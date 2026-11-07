@@ -1,5 +1,5 @@
 // Panel fijo con pasos: el avance dentro de un tramo alto elige el paso visible (cada uno reemplaza al anterior
-// en el mismo lugar) y lleva la línea de tiempo de la escena hasta su etiqueta p1, p2… Lo usan Servicios y la v1.
+// en el mismo lugar) y lleva la línea de tiempo de la escena hasta su etiqueta p1, p2… Lo usan Servicios y Producto.
 import { ScrollTrigger, reduceMotion } from '../motion';
 
 export type Pasos = { iniciar(): void; parar(): void };

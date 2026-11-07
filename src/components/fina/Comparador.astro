@@ -1,15 +1,13 @@
 ---
 // Comparador con la «/» arrastrable y un dibujo en la mitad vacía de cada capa, que avanza según cuánto la descubre la manija.
-import { comparacion as comparacionFina, garantias as garantiasFina } from '../../data/estudio';
-import { lineas as lineasFina } from '../../data/fina';
 
-// La v1 cambia las filas, el dibujo y las garantías; sin props queda la Fina.
+// filas: cada punto, con la agencia (a) y RebelDEV (r). lineas: los textos de los dos dibujos.
+type Linea = { titulo: string; marcas: string[] };
 interface Props {
-  filas?: { k: string; a: string; r: string }[];
-  lineas?: typeof lineasFina;
-  garantias?: { t: string }[];
+  filas: { k: string; a: string; r: string }[];
+  lineas: { nosotros: Linea; agencia: Linea };
 }
-const { filas: comparacion = comparacionFina, lineas = lineasFina, garantias = garantiasFina } = Astro.props;
+const { filas: comparacion, lineas } = Astro.props;
 
 const us = lineas.nosotros.marcas;
 const them = lineas.agencia.marcas;
@@ -63,12 +61,6 @@ const them = lineas.agencia.marcas;
       </span>
     </div>
   </div>
-
-  {garantias.length > 0 && (
-    <p class="cmp-garantias mt-14 text-d3">
-      {garantias.map((g, i) => <>{i > 0 && <span class="slash" aria-hidden="true">/</span>}<span>{g.t}</span></>)}
-    </p>
-  )}
 </section>
 
 <style>
@@ -116,9 +108,6 @@ const them = lineas.agencia.marcas;
   .cmp-handle:hover .cmp-knob, .cmp-knob:focus-visible { transform: translate(-50%, -50%) scale(1.08); }
   .cmp-knob:focus-visible { outline: 2px solid var(--color-bone); outline-offset: 4px; border-radius: 999px; }
   .cmp-knob svg { width: 1.3rem; height: 1.3rem; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-
-  .cmp-garantias { margin-bottom: 0; max-width: 60ch; color: var(--color-bone); font-family: var(--font-display); font-weight: 800; }
-  .cmp-garantias .slash { padding-inline: 0.35em; }
 
   /* Dibujos: cada fila se descubre según --k (0 a 1), que el script toma de la manija; sin manija, completos */
   .cmp-vis { --k: 1; display: grid; gap: 0.9rem; margin-top: 1.75rem; }

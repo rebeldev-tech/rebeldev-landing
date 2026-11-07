@@ -1,6 +1,7 @@
 ---
-// v1 (3 nov 2026): producto primero (RebelBot y su panel), «Solo pagas lo que consumes» y la consultoría como opción.
-// Ruta aparte para que el equipo la vea; la Fina sigue en «/» hasta que la v1 se apruebe.
+// Portada y única página: producto primero (RebelBot y su panel), «Solo pagas lo que consumes» y la consultoría como opción.
+// Los textos están en src/data/v1.ts y las cifras de precios en src/data/precios.ts.
+// Las versiones anteriores (la Versión Fina y la primera v1) se recuperan del historial de git (355392a).
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Preguntas from '../components/Preguntas.astro';
@@ -17,27 +18,27 @@ import Pie from '../components/v1/Pie.astro';
 import { contacto } from '../data/contacto';
 import {
   metaV1, linksV1, heroV1, serviciosV1, aMedida, procesoV1, procesoV1Titulo, estacionesV1, medidorV1,
-  comparacionV1, lineasV1, garantiasV1, preguntasV1, cierreV1,
+  comparacionV1, lineasV1, preguntasV1, cierreV1,
 } from '../data/v1';
 ---
 <Base title={metaV1.title} description={metaV1.description}>
-  <Nav links={linksV1} boton="acceso" />
+  <Nav links={linksV1} />
 
   <div class="fina">
     <main id="contenido">
       <Hero {...heroV1} />
       <Producto />
       <Precios />
-      <Comparador filas={comparacionV1} lineas={lineasV1} garantias={garantiasV1} />
-      <Proceso titulo={procesoV1Titulo} pasos={procesoV1} estaciones={estacionesV1} medidor={medidorV1} repetir />
+      <Comparador filas={comparacionV1} lineas={lineasV1} />
+      <Proceso titulo={procesoV1Titulo} pasos={procesoV1} estaciones={estacionesV1} medidor={medidorV1} />
 
       <!-- «A medida» y «Del caos al sistema» se leen como un solo comienzo: el primer paso queda pegado a este título -->
       <section id="a-medida" class="wrap v1-medida" aria-labelledby="am-title">
         <h2 id="am-title" class="text-d1 max-w-[18ch]" data-reveal>{aMedida.titulo}</h2>
         <p class="mt-6 max-w-[52ch] text-lead text-ash" data-reveal>{aMedida.texto}</p>
       </section>
-      <Caos prioridad={0} arriba />
-      <Servicios items={serviciosV1} centrar />
+      <Caos />
+      <Servicios items={serviciosV1} />
 
       <Fredy />
       <Preguntas items={preguntasV1} />
@@ -51,7 +52,7 @@ import {
   </div>
 
   <!-- La demo, siempre a mano: abajo a la derecha, lleva al WhatsApp de RebelBot -->
-  <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary demo-flot" aria-label="Agenda una demo por WhatsApp (se abre en otra pestaña)">
+  <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary demo-flot" data-demo-flot="cz" aria-label="Agenda una demo por WhatsApp (se abre en otra pestaña)">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5l1.2-3.6A7.8 7.8 0 1 1 8.4 18.6z" /><path d="M9 10.5h6M9 13.5h4" /></svg>
     Agenda una demo
   </a>
@@ -66,14 +67,21 @@ import {
 <style>
   .v1-medida { padding-block: clamp(6rem, 12vw, 10rem) clamp(2rem, 4vw, 3rem); border-top: 1px solid var(--color-line); }
 
-  /* Botón flotante de la demo: por debajo de la barra (z-50), así el menú del móvil lo tapa al abrirse */
+  /* Botón flotante de la demo: por debajo de la barra (z-50), así el menú del móvil lo tapa al abrirse.
+     En pantallas angostas baja y se esconde mientras el cotizador está a la vista, para no taparlo. */
   .demo-flot {
     position: fixed; z-index: 40; gap: 0.55rem; white-space: nowrap;
     right: max(1rem, env(safe-area-inset-right)); bottom: max(1rem, env(safe-area-inset-bottom));
     padding: 0.85rem 1.25rem; font-size: 0.95rem;
     box-shadow: 0 0.5rem 1.75rem rgb(0 0 0 / 0.45), 0 0 0 1px rgb(255 255 255 / 0.06) inset;
+    transition: background-color .3s, color .3s, border-color .3s, translate 0.35s var(--ease-out-expo), visibility 0s;
   }
   .demo-flot svg { width: 1.2rem; height: 1.2rem; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .demo-flot.is-oculto {
+    translate: 0 calc(100% + 2rem); visibility: hidden;
+    transition: background-color .3s, color .3s, border-color .3s, translate 0.35s var(--ease-out-expo), visibility 0s 0.35s;
+  }
+  @media (prefers-reduced-motion: reduce) { .demo-flot, .demo-flot.is-oculto { transition: none; } }
   @media (min-width: 1024px) { .demo-flot { right: 1.75rem; bottom: 1.75rem; padding: 0.95rem 1.4rem; font-size: 1rem; } }
   @media (prefers-reduced-motion: no-preference) {
     .demo-flot { animation: demo-in 0.6s var(--ease-out-expo) 0.8s both; }
@@ -93,6 +101,21 @@ import {
   import { gsap, initReveals, reduceMotion, coarsePointer } from '../scripts/motion';
 
   initReveals();
+
+  // Bajo 1024 px, el botón flotante se esconde mientras el cotizador está a la vista (en el celular lo tapaba).
+  const flot = document.querySelector<HTMLAnchorElement>('[data-demo-flot]');
+  const cz = document.querySelector('[data-cz]');
+  if (flot && cz) {
+    const angosta = window.matchMedia('(max-width: 1023px)');
+    let aLaVista = false;
+    const aplicar = () => {
+      const oculto = aLaVista && angosta.matches;
+      flot.classList.toggle('is-oculto', oculto);
+      flot.inert = oculto;
+    };
+    new IntersectionObserver(([e]) => { aLaVista = e.isIntersecting; aplicar(); }).observe(cz);
+    angosta.addEventListener('change', aplicar);
+  }
 
   if (!reduceMotion && !coarsePointer) {
     document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((el) => {

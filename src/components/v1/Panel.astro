@@ -1,5 +1,5 @@
 ---
-// Panel de RebelBot recreado y simplificado (v1, sección Producto, «Así lo manejas tú»). Datos de ejemplo: src/data/panel.ts.
+// Panel de RebelBot recreado y simplificado (sección Producto, «Así lo manejas tú»). Datos de ejemplo: src/data/panel.ts.
 // Se dibuja en em y escala con el ancho de su contenedor (container-type: inline-size en Producto).
 // El CSS es el estado final (pantalla Consumo); la línea de tiempo vive en el script de Producto.astro.
 // .is-antes: lo que solo se ve antes de su paso (el script lo muestra al empezar y lo apaga a su tiempo).
@@ -26,7 +26,7 @@ const cursor = '<svg class="pn-cursor-svg" viewBox="0 0 16 20"><path d="M1.5 1.5
           <p class="pn-grupo-t">{g.grupo}</p>
           <ul>
             {g.items.map((it) => (
-              <li class="pn-item" data-pn={it.k ? 'item' : undefined} data-k={it.k} style={it.k === 'consumo' ? '--on: 1' : undefined}><span>{it.t}</span></li>
+              <li class="pn-item" data-pn="item" data-k={it.k} style={it.k === 'consumo' ? '--on: 1' : undefined}><span>{it.t}</span></li>
             ))}
           </ul>
         </div>

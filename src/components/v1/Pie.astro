@@ -1,5 +1,5 @@
 ---
-// Pie de la v1: el eslogan y la promesa (textos oficiales), los enlaces de la página, los servicios y el contacto.
+// Pie: el eslogan y la promesa (textos oficiales), los enlaces de la página, los servicios y el contacto.
 // Abajo, el logotipo enorme y cortado por el borde: letras casi del color del fondo y los signos en rojo
 // (la firma de la marca). Al llegar al final de la página, sube a su lugar. Con «menos movimiento», queda quieto.
 import { contacto } from '../../data/contacto';
@@ -32,7 +32,7 @@ const anio = new Date().getFullYear();
       <ul>
         <li><a href={contacto.whatsappLink} target="_blank" rel="noopener" class="pie-l">WhatsApp {contacto.whatsapp}</a></li>
         <li><a href={`mailto:${contacto.correo}`} class="pie-l">{contacto.correo}</a></li>
-        <li><a href={contacto.acceso} class="pie-l">Iniciar sesión</a></li>
+        <li><a href={contacto.acceso} class="pie-l">Acceso clientes</a></li>
       </ul>
     </div>
   </div>

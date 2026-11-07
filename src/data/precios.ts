@@ -16,12 +16,13 @@ export const credito = {
 
 export const porUso = {
   nombre: 'Por uso',
-  etiqueta: 'Para empezar',
-  ejemplos: [150, 300, 600], // conversaciones al mes
+  etiqueta: 'Opción 1: sin cargo fijo',
+  ejemplos: [50, 150, 300, 600, 1000], // conversaciones al mes
   incluye: [
     'Sin contrato: cancelas cuando quieras',
     'Asistente 24/7 con plantilla estándar para inmobiliarias',
-    'Hasta 1,500 créditos al mes; arriba de eso te conviene un plan',
+    // 1,400: las conversaciones que caben en el tope, redondeadas hacia abajo a la centena.
+    'Hasta 1,500 créditos al mes, unas 1,400 conversaciones. Si necesitas más, pasas a un plan',
   ],
 };
 
@@ -34,7 +35,7 @@ export const planes: Plan[] = [
   },
   {
     id: 'crecimiento', nombre: 'Crecimiento', base: 3630, creditos: 2000, conversaciones: 1794, crm: true,
-    incluye: ['Todo lo de Arranque', 'Conexión con tu sistema de ventas (CRM)', 'Seguimientos automáticos a leads', 'Revisión mensual con el equipo'],
+    incluye: ['Todo lo de Arranque', 'Conexión con tu sistema de ventas (CRM)', 'Seguimientos automáticos a tus interesados', 'Revisión mensual con el equipo'],
   },
   {
     id: 'pro', nombre: 'Pro', base: 5630, creditos: 5000, conversaciones: 4484, crm: true,
@@ -42,13 +43,14 @@ export const planes: Plan[] = [
   },
 ];
 
-export const notaPlanes = 'Implementación incluida, sin pago inicial. Contrato mínimo de 12 meses. La conexión con tu sistema de ventas (CRM) está incluida en Crecimiento y Pro.';
+// No se dice qué pasa con los créditos que sobran en un plan: falta ese dato del equipo.
+export const notaPlanes = 'En los planes, el crédito sale más caro que por uso porque incluye más: tu asistente a la medida de tu negocio, ayuda en menos de 1 hora si algo falla, volumen sin tope y, en Crecimiento y Pro, la conexión con tu sistema de ventas (CRM). Implementación incluida, sin pago inicial. Contrato mínimo de 12 meses.';
 
 // Por uso o plan mensual: lo que cambia entre las dos formas de pagar (la primera semana gratis es igual y ya se dice
 // en la portada, en Proceso y en el cierre). v: lo que se lee primero; d: el detalle. cifra: la fila va grande.
 export const ladosModo = {
   uso: { nombre: 'Por uso', para: 'Para empezar.' },
-  plan: { nombre: 'Planes mensuales', para: 'Cuando ya atiendes mucho.' },
+  plan: { nombre: 'Planes mensuales', para: 'Si atiendes mucho o lo quieres a tu medida.' },
 };
 
 export type Lado = { v: string; d?: string };
@@ -99,7 +101,7 @@ export const queEs = {
 };
 
 export const cadaSol: [string, number][] = [
-  ['Inteligencia artificial (Claude)', 0.25],
+  ['Inteligencia artificial (Claude, la IA de Anthropic)', 0.25],
   ['Servidores y conexión con WhatsApp', 0.05],
   ['Soporte, monitoreo y mejoras', 0.4],
   ['Margen de RebelDEV', 0.3],
@@ -117,7 +119,7 @@ export const notaNiveles = 'Por defecto tu asistente elige el nivel según la pr
 
 export const notaPie = 'Precios en soles. «Con IGV» incluye el 18 % de IGV. Las plantillas de WhatsApp (recordatorios y campañas fuera de la ventana de 24 horas) las cobra Meta directamente a tu negocio y no consumen créditos.';
 
-// Ayudas de cálculo (las usa el cotizador y la tarjeta de «por uso»).
+// Ayudas de cálculo (las usan el cotizador, la tarjeta de «por uso» y las preguntas frecuentes).
 export const conIgv = (s: number) => Math.round(s * (1 + IGV) * 100) / 100;
 export const creditosMes = (conversaciones: number, seguimientos: number) =>
   conversaciones * credito.porConversacion + seguimientos * credito.porSeguimiento;

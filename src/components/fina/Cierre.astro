@@ -1,13 +1,10 @@
 ---
 // Cierre con partículas: el polvo se junta en el </> al bajar. Sin WebGL, el SVG.
 import { MARK } from '../../lib/mark';
-import { cierre as cierreFina } from '../../data/fina';
 import { contacto } from '../../data/contacto';
 
-// La v1 cambia título y bajada; sin props queda la Fina.
-interface Props { titulo?: string; bajada?: string }
-const { titulo = cierreFina.titulo, bajada = cierreFina.bajada } = Astro.props;
-const cierre = { titulo, bajada };
+interface Props { titulo: string; bajada: string }
+const { titulo, bajada } = Astro.props;
 ---
 <section id="contacto" class="wrap fina-sec ci" aria-labelledby="ci-title" data-ci>
   <canvas class="ci-canvas" data-ci-canvas aria-hidden="true"></canvas>
@@ -21,8 +18,8 @@ const cierre = { titulo, bajada };
   </div>
 
   <div class="ci-text" data-ci-text>
-    <h2 id="ci-title" class="text-d1">{cierre.titulo}</h2>
-    <p class="mt-6 max-w-[40ch] text-lead text-ash">{cierre.bajada}</p>
+    <h2 id="ci-title" class="text-d1">{titulo}</h2>
+    <p class="mt-6 max-w-[40ch] text-lead text-ash">{bajada}</p>
     <div class="mt-10 flex flex-wrap gap-3">
       <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary" data-magnetic>Agenda una demo por WhatsApp</a>
       <a href={`mailto:${contacto.correo}`} class="btn btn-ghost">Escríbenos</a>

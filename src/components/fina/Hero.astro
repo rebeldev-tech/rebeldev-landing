@@ -4,20 +4,14 @@ import { contacto } from '../../data/contacto';
 import { hero, piezasHero } from '../../data/fina';
 import Mini from './Mini.astro';
 
-// La v1 cambia la bajada, los botones y la cinta; sin props queda la Fina.
+// El titular sale de data/fina.ts; la bajada, los botones y la cinta los pasa la página.
 interface Props {
-  bajada?: string;
-  primario?: string;
-  secundario?: { texto: string; href: string };
-  cinta?: string[];
+  bajada: string;
+  primario: string;
+  secundario: { texto: string; href: string };
+  cinta: string[];
 }
-const {
-  bajada = hero.bajada,
-  primario = 'Agenda una demo',
-  secundario = { texto: 'Mira cómo trabajamos', href: '#como' },
-  cinta = ['Software a medida', 'Automatización de procesos', 'Asistentes de WhatsApp', 'Plataformas web', 'Backend y APIs', 'Integraciones', 'Diseño UX/UI'],
-} = Astro.props;
-const especialidades = cinta;
+const { bajada, primario, secundario, cinta: especialidades } = Astro.props;
 ---
 <section id="inicio" class="hc" data-hc aria-labelledby="hc-title">
   <div class="hc-line" data-hc-line aria-hidden="true"><span data-hc-draw></span></div>

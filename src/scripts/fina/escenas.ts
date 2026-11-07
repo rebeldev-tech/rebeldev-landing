@@ -1,4 +1,5 @@
-// Demos de servicios (Versión Fina): líneas de tiempo en pausa con las etiquetas p1–p4, el final de cada paso.
+// Demos de Servicios y escena de WhatsApp de Producto (wa): líneas de tiempo en pausa con las etiquetas p1, p2…,
+// el final de cada paso.
 // El CSS de cada escena es su estado final (sin JS); por eso lo que aparece usa fromTo, que pinta el inicio al crearse.
 import { gsap } from '../motion';
 import { pasos as pasosWa } from '../../data/rebelbot';

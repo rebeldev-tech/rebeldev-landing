@@ -1,12 +1,13 @@
 ---
 // Cotizador «¿Cuántos créditos necesitas?»: dos deslizadores y una casilla; calcula créditos, modalidad y total con IGV.
-// Sin JS: los controles quedan desactivados y se ve el ejemplo (800 + 300 → 854 créditos → S/ 1,007.80).
+// Sin JS: los controles quedan desactivados y se ve el ejemplo (150 + 0 → 157 créditos → S/ 185.64).
 // La regla está dos veces (aquí para el HTML y en el <script>): si cambia, cambiar las dos.
 import { credito, creditosMes, conIgv, soles, planes } from '../../data/precios';
 import { contacto } from '../../data/contacto';
 
-const C = { min: 0, max: 6000, step: 50, valor: 800 };
-const S = { min: 0, max: 4000, step: 50, valor: 300 };
+// Los deslizadores arrancan en un negocio chico: 150 conversaciones y ningún seguimiento.
+const C = { min: 0, max: 6000, step: 50, valor: 150 };
+const S = { min: 0, max: 4000, step: 50, valor: 0 };
 const fmt = (n: number) => n.toLocaleString('en-US');
 const pct = (v: number, max: number) => `${(v / max) * 100}%`;
 

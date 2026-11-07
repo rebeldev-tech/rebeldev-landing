@@ -4,31 +4,27 @@
 import Glifo from '../Glifo.astro';
 import Medida from './demos/Medida.astro';
 import Auto from './demos/Auto.astro';
-import WhatsApp from './demos/WhatsApp.astro';
 import Web from './demos/Web.astro';
 import Api from './demos/Api.astro';
 import Integraciones from './demos/Integraciones.astro';
 import Ux from './demos/Ux.astro';
-import { servicios } from '../../data/estudio';
 import { demos } from '../../data/fina';
-import { pasos as pasosWa } from '../../data/rebelbot';
 import { contacto } from '../../data/contacto';
 
-// items: la v1 quita la fila de WhatsApp, que allí tiene su propia sección (Producto).
-// centrar (v1): al abrir un servicio, la página baja hasta que su demo ocupa la pantalla, con el contenido centrado;
-// sin centrar (la Fina), sube la fila hasta arriba y la demo empieza debajo.
-interface Props { items?: typeof servicios; centrar?: boolean }
-const { items = servicios, centrar = false } = Astro.props;
+// items: los servicios a medida (los asistentes de WhatsApp tienen su propia sección, Producto). g elige el glifo y la demo.
+// Al abrir un servicio, la página baja hasta que su demo ocupa la pantalla, con el contenido centrado.
+interface Props { items: { g: string; t: string; d: string }[] }
+const { items } = Astro.props;
 
-const componentes: Record<string, any> = { medida: Medida, auto: Auto, wa: WhatsApp, web: Web, api: Api, int: Integraciones, ux: Ux };
+const componentes: Record<string, any> = { medida: Medida, auto: Auto, web: Web, api: Api, int: Integraciones, ux: Ux };
 const filas = items.map((s) => ({
   ...s,
   demo: demos[s.g],
-  pasos: s.g === 'wa' ? pasosWa.map((p) => ({ t: p.titulo, d: p.texto })) : demos[s.g].pasos,
+  pasos: demos[s.g].pasos,
   Escena: componentes[s.g],
 }));
 ---
-<section id="servicios" class="wrap fina-sec sv" aria-labelledby="sv-title" data-sv data-centrar={centrar ? '' : undefined}>
+<section id="servicios" class="wrap fina-sec sv" aria-labelledby="sv-title" data-sv>
   <h2 id="sv-title" class="text-d2 max-w-[18ch]">Lo que construimos, pieza por pieza.</h2>
   <p class="sv-hint text-note text-ash" data-sv-hint></p>
 
@@ -48,7 +44,6 @@ const filas = items.map((s) => ({
             <div class="sv-panel-in">
               <div class="sv-copy">
                 <p class="sv-tit">{f.demo.titulo}</p>
-                {f.demo.bajada && <p class="sv-bajada text-body text-ash">{f.demo.bajada}</p>}
                 <ol class="sv-pasos">
                   {f.pasos.map((p, k) => (
                     <li class="sv-paso" data-sv-paso>
@@ -68,7 +63,7 @@ const filas = items.map((s) => ({
     <li class="sv-row sv-otro">
       <div class="sv-head">
         <h3 class="sv-h"><span class="sv-name">¿Algo más?</span></h3>
-        <p class="sv-desc text-body text-ash">Si implica software, probablemente podemos construirlo. <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="sv-link">Conversemos</a></p>
+        <p class="sv-desc text-body text-ash">Si implica software, lo construimos. <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="sv-link">Conversemos</a></p>
       </div>
     </li>
   </ul>
@@ -121,7 +116,6 @@ const filas = items.map((s) => ({
   .sv-escena { container-type: inline-size; width: 100%; max-width: 36rem; justify-self: center; }
 
   .sv-tit { margin: 0; max-width: 22ch; font-family: var(--font-display); font-weight: 800; font-size: clamp(1.4rem, 2.2vw, 1.9rem); line-height: 1.1; letter-spacing: -0.03em; }
-  .sv-bajada { margin: 0.75rem 0 0; max-width: 44ch; }
   .sv-pasos { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; }
   .sv-paso { padding-block: 1rem; }
   .sv-paso-t {
@@ -161,9 +155,6 @@ const filas = items.map((s) => ({
     .sv.is-live .sv-escena { max-width: min(26rem, max(12rem, calc(100svh - var(--copia, 20rem) - 7.5rem))); }
   }
   /* En pantallas bajas no entran: se ocultan a la vista, pero el lector de pantalla los sigue leyendo */
-  @media (max-width: 1023px) and (max-height: 760px) {
-    .sv.is-live .sv-bajada { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  }
   @media (max-width: 1023px) and (max-height: 640px) {
     .sv.is-live .sv-tit { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   }
@@ -211,7 +202,6 @@ const filas = items.map((s) => ({
   const sec = document.querySelector<HTMLElement>('[data-sv]')!;
   const float = sec.querySelector<HTMLElement>('[data-sv-float]')!;
   const hint = sec.querySelector<HTMLElement>('[data-sv-hint]')!;
-  const centrar = sec.hasAttribute('data-centrar');
 
   const filas: Fila[] = Array.from(sec.querySelectorAll<HTMLElement>('[data-sv-row][data-g]'), (el) => ({
     el,
@@ -252,21 +242,13 @@ const filas = items.map((s) => ({
     f.btn.setAttribute('aria-expanded', 'true');
     f.el.classList.add('is-open');
     (f.demo ??= crearDemo(f)).iniciar();
-    const listo = () => {
-      ScrollTrigger.refresh();
-      // Con centrar, baja al inicio del tramo: ahí el panel queda fijo y ocupa la pantalla, con la demo centrada
-      // y en su primer paso. Sin centrar, la fila sube hasta arriba para que la demo empiece a la vista.
-      const destino = centrar ? f.el.querySelector<HTMLElement>('[data-sv-track]')! : f.head;
-      if (lenis) lenis.scrollTo(destino, { offset: centrar ? 0 : -72, duration: reduceMotion ? 0 : centrar ? 0.6 : 1.1 });
-      else destino.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
-    };
-    if (reduceMotion) listo();
-    else if (centrar) {
-      // Sin esperas: el panel aparece ya abierto y el desplazamiento arranca en el mismo clic; la demo entra con un fundido.
-      listo();
-      gsap.fromTo(f.el.querySelector('.sv-panel-in'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, ease: 'power2.out', clearProps: 'opacity,visibility' });
-    }
-    else gsap.fromTo(f.panel, { height: 0 }, { height: 'auto', duration: 0.7, ease: 'expo.out', overwrite: true, onComplete: () => { gsap.set(f.panel, { clearProps: 'height' }); listo(); } });
+    ScrollTrigger.refresh();
+    // Baja al inicio del tramo: ahí el panel queda fijo y ocupa la pantalla, con la demo centrada y en su primer paso.
+    const destino = f.el.querySelector<HTMLElement>('[data-sv-track]')!;
+    if (lenis) lenis.scrollTo(destino, { offset: 0, duration: reduceMotion ? 0 : 0.6 });
+    else destino.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+    // Sin esperas: el panel aparece ya abierto y el desplazamiento arranca en el mismo clic; la demo entra con un fundido.
+    if (!reduceMotion) gsap.fromTo(f.el.querySelector('.sv-panel-in'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, ease: 'power2.out', clearProps: 'opacity,visibility' });
   }
 
   function cerrar(f: Fila, ya = false) {

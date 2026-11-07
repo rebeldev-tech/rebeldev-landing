@@ -1,10 +1,9 @@
-// Textos propios del landing. Lo compartido (servicios, proceso, garantías, Fredy) sigue en estudio.ts.
+// Textos propios del landing: portada, del caos al sistema, demos de servicios y Fredy (su ficha está en estudio.ts).
 // Las frases largas salen del resumen oficial (CLAUDE.md, sección 1) y del cuestionario de marca.
-// Piezas, escenas y estaciones son ejemplos ilustrativos de un negocio cualquiera, no clientes ni cifras.
+// Piezas y escenas son ejemplos ilustrativos de un negocio cualquiera, no clientes ni cifras.
 
 export const hero = {
   titulo: ['Ingeniería para', 'empresas rebeldes.'],
-  bajada: 'RebelDEV es un estudio de desarrollo de software. Creamos soluciones a medida según lo que necesita cada empresa.',
 };
 
 // Mini pantallas del hero (sin texto): las mismas herramientas sueltas que se nombran en la sección siguiente.
@@ -69,7 +68,7 @@ export const caos = {
 };
 
 export type Paso = { t: string; d: string };
-export type Demo = { titulo: string; bajada?: string; pasos: Paso[] };
+export type Demo = { titulo: string; pasos: Paso[] };
 
 export const demos: Record<string, Demo> = {
   medida: {
@@ -89,11 +88,6 @@ export const demos: Record<string, Demo> = {
       { t: 'Avisa a quien corresponde.', d: 'Tu cliente recibe la confirmación por WhatsApp y tu equipo, el aviso para despachar.' },
       { t: 'Deja todo registrado.', d: 'Cada paso queda anotado con su hora, para revisar qué pasó cuando lo necesites.' },
     ],
-  },
-  wa: {
-    titulo: 'Tu WhatsApp responde, califica y agenda. Solo.',
-    bajada: 'Un asistente con IA que atiende a tus clientes como lo haría tu equipo, conectado a los datos de tu negocio.',
-    pasos: [], // salen de rebelbot.ts
   },
   web: {
     titulo: 'Tus clientes reservan, compran y te escriben desde tu web.',
@@ -133,25 +127,6 @@ export const demos: Record<string, Demo> = {
   },
 };
 
-// Mismo orden que `proceso` de estudio.ts. Solo duraciones del cuestionario de marca.
-export const estaciones = [
-  { escena: 'reloj', marcas: ['30 min'] },
-  { escena: 'vivo', marcas: ['En vivo', 'Con tus datos'] },
-  { escena: 'balanza', marcas: ['Una venta extra', 'Lo que cuesta'] },
-  { escena: 'base', marcas: ['Tus números de hoy'] },
-  { escena: 'sprints', marcas: ['Semana 1', 'Semana 2', 'Semana 3', 'Demo'] },
-  { escena: 'prueba', marcas: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom', 'En producción', 'Todavía no pagas'] },
-  { escena: 'monitoreo', marcas: ['Monitoreo diario', 'Primeras 2 semanas'] },
-  { escena: 'revisiones', marcas: ['30 días', '60 días', '90 días', 'Cada mes'] },
-];
-
-export const medidor = { antes: 'Has pagado: nada todavía', despues: 'Desde aquí pagas, en cuotas' };
-
-export const lineas = {
-  nosotros: { titulo: 'En semanas', marcas: ['Demo cada viernes', 'Semana a prueba', 'Pagas en cuotas', 'Revisión mensual'] },
-  agencia: { titulo: 'En meses', marcas: ['Contrato largo', 'Pago adelantado', 'Desarrollo', 'Entrega', 'Cada cambio se cobra'] },
-};
-
 // Lo que aporta cada etapa de fundador.trayectoria (texto nuestro, no un dato de Fredy).
 export const aportes = [
   'Sabe cómo se construye cada pieza.',
@@ -169,9 +144,4 @@ export const fredy = {
   // TEMPORAL: foto de referencia que pasó el usuario (no es Fredy). Cambiar antes de publicar.
   foto: '/fina/fredy-referencia.webp',
   fotoNota: 'Foto de referencia',
-};
-
-export const cierre = {
-  titulo: 'Cuéntanos qué necesita tu negocio.',
-  bajada: 'Ingeniería de sistemas usados por millones, entregada en semanas.',
 };

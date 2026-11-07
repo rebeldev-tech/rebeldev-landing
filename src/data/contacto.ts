@@ -5,5 +5,5 @@ export const contacto = {
   whatsapp: '+51 900 000 000',
   whatsappLink: 'https://wa.me/51900000000?text=Hola%20RebelDEV%2C%20quiero%20agendar%20una%20demo',
   linkedin: '#', // pendiente: URL de la página de LinkedIn
-  acceso: 'https://www.google.com', // «Iniciar sesión» (v1): provisional, hasta tener la dirección del panel
+  acceso: 'https://www.google.com', // «Acceso clientes»: provisional, hasta tener la dirección del panel
 };
