@@ -11,9 +11,9 @@ Guía para Claude Code al construir el landing de RebelDEV. Las pautas generales
 |---|---|
 | Página de LinkedIn de RebelDEV (texto que pegó el usuario el 23 oct 2026) | Resumen oficial, ficha y especialidades. |
 | Material de marca e inspiración (antigua carpeta `referencias/`) | Captura de LinkedIn, «Brand Hub» (mock), mapeo de mejoras de marca, cuestionario de Fredy (**privado**), propuestas y animaciones del logo, webs de inspiración y benchmarking. **Se borró el 3 nov 2026** a pedido del usuario; lo que importa está resumido en las secciones 3 a 5. Si hace falta algo, se recupera del historial de git: `git show 119a08f:referencias/<archivo>`. |
-| `C:\Users\USUARIO\Desktop\rebeca-agent` | El software que RebelDEV está construyendo: Rebeca. Leer `README.md`, `CLAUDE.md` y `docs/v0.1-requerimientos.md`. |
+| `../rebeldev` (repositorio `rebeldev-tech/rebeldev`) | El software que RebelDEV está construyendo: Rebeca. Leer `README.md`, `CLAUDE.md` y `docs/v0.1-requerimientos.md`. |
 
-**Del repositorio `rebeca-agent` solo se usa lo público:** `README.md`, `CLAUDE.md`, `docs/`, el código. Nunca usar ni mencionar `.env`, `CLAUDE.local.md`, `acuache.md`, `ROADMAP.md` ni `curso/`, que son privados.
+**Del repositorio `rebeldev` solo se usa lo público:** `README.md`, `CLAUDE.md`, `docs/`, el código. Nunca usar ni mencionar `.env`, `CLAUDE.local.md`, `acuache.md`, `ROADMAP.md` ni `curso/`, que son privados.
 
 ---
 
@@ -49,9 +49,28 @@ Es la prueba concreta de la especialidad «Asistentes de WhatsApp» y de la prom
 - **Qué es:** una plataforma para que varios negocios tengan su propio agente de ventas y atención en WhatsApp con IA generativa. Cada negocio tiene su propia base de datos, su configuración, sus usuarios y su número de WhatsApp.
 - **Nombres:** en el landing el producto se llama **RebelBot** (nombre provisional, decidido el 23 oct 2026). «Rebeca» es el nombre del bot del primer cliente y no se usa.
 - **Primer cliente:** Beca Inmobiliaria. **No se nombra en el landing** (ver sección 5). El producto parte de una versión para inmobiliarias y está pensado para adaptarse a otras industrias.
-- **Estado:** versión 0.1 en construcción («Fundación y Analítica»): convertirlo en un producto que sirva para varios negocios, que se pueda medir y que esté listo para lanzar.
+- **Estado (12 nov 2026):** en producción y con versiones frecuentes (v0.1.18). Sirve a varios negocios; empezó por inmobiliarias y se adapta a otros rubros. La fuente de lo que se puede decir en público es la guía de Rebel en la web (ver «Alineación con la plataforma», abajo).
 
-### Qué hace (lenguaje de cliente; fuente: `README.md` de rebeca-agent)
+### Alineación con la plataforma
+
+La plataforma cambia seguido. **Última revisión: 12 nov 2026, contra la v0.1.18.** Para volver a alinear, leer en `../rebeldev` el `CHANGELOG.md` desde esa versión y revisar lo que toque cada fila; al terminar, actualizar la fecha y la versión de este párrafo.
+
+| Qué dice el landing | Archivo del landing | Fuente en `../rebeldev` |
+|---|---|---|
+| Precios, descuento inicial, recarga mínima, días de prueba | `src/data/precios.ts` | `docs/adr/0024-…` (enmiendas), `docs/adr/0027-…`, `CHANGELOG.md` |
+| Qué hace el asistente y «Y además» | `src/data/rebelbot.ts` | `backend/src/main/resources/guias/rebeldev-en-la-web.md` |
+| Pantallas del panel | `src/data/panel.ts`, `src/components/v1/Panel.astro` | `backend/src/main/resources/guias/panel-del-negocio.md` |
+| Preguntas frecuentes | `src/data/v1.ts` | La guía de Rebel en la web |
+| Rebel en la esquina | `src/data/contacto.ts` (`rebel`), `src/layouts/Base.astro` | `docs/adr/0033-…` |
+| Datos estructurados, `/llms.txt`, `/robots.txt` y `/sitemap.xml` | `src/data/seo.ts`, `src/pages/*.ts` | Se arman solos con los datos de arriba |
+
+- **Solo se publica lo que respalda la guía de Rebel en la web.** No se nombra al proveedor de IA ni se muestran costos o márgenes.
+- **No se promete:** que entiende audios o imágenes que manda el cliente, pago en línea, ni otros canales además de WhatsApp.
+- Lo que se enciende según el negocio (seguimiento, recordatorios, reuniones en Google Calendar, campañas) se marca «Se activa por negocio».
+- **SEO y GEO (12 nov 2026):** URL canónica, etiquetas para redes con `public/og.png`, datos estructurados (empresa, sitio, RebelBot con su precio y preguntas frecuentes) y `/llms.txt` para asistentes de IA. La dirección del sitio está en `astro.config.mjs` (`site`) y es la de Vercel, provisional: al tener dominio se cambia ahí. Los datos de contacto no van en los datos estructurados mientras sean ficticios.
+- **Rebel en la web:** se enciende poniendo la dirección de la plataforma en `contacto.rebel`; antes, el dominio del landing tiene que estar permitido en la consola de la plataforma (Solicitudes → «Rebel en la web»). Con Rebel activo, el botón flotante «Agenda una demo» no se muestra.
+
+### Qué hace (lenguaje de cliente; fuente: `README.md` de rebeldev)
 
 | Capacidad | En palabras simples |
 |---|---|
@@ -161,19 +180,23 @@ Directa, segura y sin jerga innecesaria. «Rebelde en la actitud, premium en la 
 - **Una sola versión (3 nov 2026):** se hicieron siete versiones para debatir (v1 a v6 y la Fina). El equipo eligió la **Versión Fina** y el 3 nov 2026 se borraron las demás, con el selector de versiones: la Fina es la portada (`/`). Las anteriores se recuperan del historial de git (`119a08f`).
 - **Beca Inmobiliaria no se nombra:** ni su nombre, ni su logo, ni capturas del panel, ni el nombre «Rebeca» (lo delata). El producto se describe por lo que hace.
 - **Contacto ficticio por ahora:** correo, WhatsApp y redes con datos de ejemplo que se vean falsos a simple vista (por ejemplo `hola@rebeldev.example` y `+51 900 000 000`). Todos en un solo lugar del código, para cambiarlos de una vez.
-- **Fredy Ramos es el responsable y líder de RebelDEV** y aparece en el landing. Su información está en `../fredy-ramos.md`.
+- **Fredy Ramos es el responsable y líder de RebelDEV** y aparece en el landing. Su información está en `C:\Users\USUARIO\Desktop\fredy-ramos\fredy-ramos.md`.
 - **El agente de WhatsApp es un producto: RebelBot** (nombre provisional). En la Versión Fina aparece dentro de los servicios («Asistentes de WhatsApp»), con su demo en un teléfono.
 
 ### Decidido (3 nov 2026): v1 con producto propio
 
 El equipo ya tiene el producto funcionando y cambió el mensaje. Se armó la **v1** en una ruta aparte (`/v1`). **El 7 nov 2026 el equipo la aprobó: la v1 es la portada (`/`) y la única página; la Fina se recupera del historial de git (`355392a`).** Ese mismo día se armó la **v1.1** con las mejoras que pidió el panel de clientes ficticios (skill `panel-clientes`) y, a pedido del usuario, **reemplazó a la v1: la v1.1 es la portada (`/`) y la única página**. La v1 de antes de esas mejoras (en `/v1`) y la Fina se recuperan del commit `355392a`.
 - **Producto primero:** RebelBot tiene su propia sección (teléfono + panel) justo después de la portada. La fila «Asistentes de WhatsApp» sale de los servicios.
-- **Precios públicos:** las cifras del cotizador «Créditos Rebel» (vista para clientes, implementación incluida) viven en `src/data/precios.ts`: S/ 1.00 + IGV por crédito (1 crédito = 100,000 tokens ≈ 1 conversación), planes Arranque, Crecimiento y Pro, consumo por acción. El cotizador es de otra cuenta de claude.ai; la vista interna (costos y márgenes) nunca va al landing.
-- **Todo incluido:** el cliente paga lo que consume; implementación, soporte y mejoras van por cuenta de RebelDEV. Planes: contrato de 12 meses sin pago inicial; por uso: mes a mes.
+- **Precios públicos (12 nov 2026, reemplaza lo del 3 nov):** solo pago por uso, con saldo prepago. Las cifras viven en `src/data/precios.ts` y salen de la tarifa vigente de la plataforma: 1 crédito = S/ 1.00 + IGV, una conversación de unos 10 mensajes cuesta cerca de 1 crédito, 50 % de descuento los primeros 90 días, recarga desde S/ 10 y 7 días de prueba. Los planes Arranque, Crecimiento y Pro se quitaron: un plan mensual se arma a medida y se ve en la reunión. Costos y márgenes nunca van al landing.
+- **Todo incluido:** el cliente paga lo que consume; implementación, soporte y mejoras van por cuenta de RebelDEV. Sin contrato ni mensualidad.
 - **Garantías:** primera semana gratis en producción. **Ya no hay cuotas.**
 - **Panel:** se muestra **recreado en código con datos ficticios** («Inmobiliaria Demo»). Nunca capturas del panel real: muestra el nombre del cliente, sus proyectos y teléfonos reales.
 - **Consultoría:** «Del caos al sistema» y los servicios quedan bajo «A medida».
 - No se dice «más barato que el mercado» con cifras; el comparador lo transmite («Solo lo que consume tu asistente» frente a «implementación por adelantado y una mensualidad fija»).
+
+### Rechazada (12 nov 2026): v2 en `/v2`
+
+Se probó una v2 con la dirección «un solo motivo» de `design-taste-frontend` (la raya roja como única forma, campos planos de negro, rojo y crema, sin monoespaciada ni líneas). El usuario la rechazó («qué horrible») y pidió borrarla y **mejorar la v1 en su lugar**. No se guardó en git. No volver a proponer un rediseño completo: los cambios van sobre la portada, de a uno.
 
 ### Cuestionario de marca (Fredy, 25 oct 2026)
 
@@ -209,7 +232,7 @@ Las respuestas completas estaban en `referencias/cuestionario-marca.md` (**priva
 
 ### Fredy en el landing
 
-- **Qué sí se puede usar:** nombre, rol en RebelDEV, formación (Ingeniería de Sistemas, UNMSM), trayectoria técnica (desarrollador → arquitecto de software → líder técnico → arquitecto de tecnología → Product Owner), experiencia con chatbots e IA, y sus frases textuales de la sección 3 de `../fredy-ramos.md`.
+- **Qué sí se puede usar:** nombre, rol en RebelDEV, formación (Ingeniería de Sistemas, UNMSM), trayectoria técnica (desarrollador → arquitecto de software → líder técnico → arquitecto de tecnología → Product Owner), experiencia con chatbots e IA, y sus frases textuales de la sección 3 de `C:\Users\USUARIO\Desktop\fredy-ramos\fredy-ramos.md`.
 - **Confirmar antes de usar:** nombrar al **BCP** o su cargo actual allí (lidera RebelDEV en paralelo a ese trabajo), su edad, y cualquier dato de su vida personal o familiar. Mientras no se confirmen, solo pueden ir como opción, marcados para revisar.
 - Nunca inventar ni cambiar citas: se copian tal cual de la entrevista.
 

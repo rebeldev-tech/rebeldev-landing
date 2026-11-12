@@ -1,5 +1,5 @@
 // Pasos de RebelBot y la conversación de ejemplo que acompaña a cada uno.
-// Lo que hace sale de referencias + README de rebeca-agent (resumido en CLAUDE.md, sección 2).
+// Lo que hace sale de lo público de la plataforma (resumido en CLAUDE.md, sección 2).
 // La conversación es ILUSTRATIVA: no es de un cliente real y no nombra a ninguno.
 
 export type Msg =
@@ -52,4 +52,16 @@ export const pasos: Paso[] = [
       { kind: 'agent', text: '¡Hola! Te escribo del equipo de ventas. Sí, se aceptan mascotas.' },
     ],
   },
+];
+
+// Lo demás que ya hace y no entra en los pasos de arriba. porNegocio: se enciende según lo que necesite cada negocio.
+export const extras: { t: string; d: string; porNegocio?: true }[] = [
+  { t: 'Envía fotos y planos', d: 'Manda el material de cada proyecto dentro de la misma conversación.' },
+  { t: 'Lee tu web y propone qué aprender', d: 'Revisa tu página y te sugiere el conocimiento. Nada entra sin tu aprobación.' },
+  { t: 'Lo pruebas antes de abrirlo', d: 'En el simulador del panel conversas con tu asistente sin usar WhatsApp.' },
+  { t: 'Tu equipo, cada uno con su rol', d: 'Asesores, marketing y gerencia entran con su usuario y pueden activar la verificación en dos pasos.' },
+  { t: 'Seguimiento de interesados', d: 'Estado de cada cliente, puntaje de interés y avisos cuando un chat queda sin atender.', porNegocio: true },
+  { t: 'Recordatorios de cita', d: 'Le recuerda la visita a tu cliente un día antes y una hora antes.', porNegocio: true },
+  { t: 'Reuniones en tu calendario', d: 'Agenda reuniones en Google Calendar con su enlace de videollamada.', porNegocio: true },
+  { t: 'Campañas por WhatsApp', d: 'Envía mensajes aprobados por Meta solo a quienes aceptaron recibirlos.', porNegocio: true },
 ];

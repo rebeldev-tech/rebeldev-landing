@@ -266,18 +266,18 @@ const cursor = '<svg class="pn-cursor-svg" viewBox="0 0 16 20"><path d="M1.5 1.5
         <div class="pn-scr pn-cons" data-pn="scr">
           <div class="pn-cab">
             <p class="pn-cab-t">Consumo</p>
-            <p class="pn-cab-s">Todo lo que hace la IA se mide en créditos: 1 crédito son 100,000 tokens procesados.</p>
+            <p class="pn-cab-s">Todo lo que hace la IA se mide en créditos: 1 crédito es 1 sol de tu saldo.</p>
           </div>
           <div class="pn-cons-grid">
             <div class="pn-card pn-cred">
-              <p class="pn-h">Créditos usados en el mes</p>
+              <p class="pn-h">Créditos usados de tu saldo</p>
               <p class="pn-cred-v"><b data-pn="k-num" data-v={consumo.usados}>{miles(consumo.usados)}</b> de {miles(consumo.total)}</p>
               <p class="pn-cred-tk"><span data-pn="k-tokens" data-v={consumo.tokens}>{miles(consumo.tokens)}</span> tokens procesados</p>
               <div class="pn-medidor">
                 <span class="pn-fill" data-pn="k-fill" style={`--p: ${consumo.usados / consumo.total}`}></span>
-                <span class="pn-marca"><small>Te avisamos al 80 %</small></span>
+                <span class="pn-marca"><small>Aquí te avisamos</small></span>
               </div>
-              <p class="pn-aviso" data-pn="k-aviso"><i></i>Llegaste al 80&nbsp;% de tus créditos del mes.</p>
+              <p class="pn-aviso" data-pn="k-aviso"><i></i>Te queda el 20&nbsp;% de tu saldo.</p>
             </div>
             <div class="pn-lado">
               <div class="pn-card pn-usos">

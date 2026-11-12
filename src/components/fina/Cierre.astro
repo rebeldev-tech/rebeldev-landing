@@ -58,8 +58,9 @@ const { titulo, bajada } = Astro.props;
   const canvas = sec.querySelector<HTMLCanvasElement>('[data-ci-canvas]')!;
   const slot = sec.querySelector<HTMLElement>('[data-ci-slot]')!;
 
+  // Three.js pesa: se descarga recién cuando el cierre está a menos de dos pantallas, no al entrar a la página.
   // scatter: 1 = polvo, 0 = </> armado.
-  import('../../scripts/particles')
+  const cargar = () => import('../../scripts/particles')
     .then(({ ParticleMark }) => {
       if (!ParticleMark.supported()) return;
       const pm = new ParticleMark(canvas, slot, { interactive: !reduceMotion && !coarsePointer, still: reduceMotion, formado: true, polvo: 2.2 });
@@ -73,6 +74,13 @@ const { titulo, bajada } = Astro.props;
       pm.start();
     })
     .catch((e) => console.warn('[rebeldev] partículas desactivadas', e));
+
+  const cerca = new IntersectionObserver((entradas) => {
+    if (!entradas.some((e) => e.isIntersecting)) return;
+    cerca.disconnect();
+    cargar();
+  }, { rootMargin: '200% 0px' });
+  cerca.observe(sec);
 
   if (!reduceMotion) {
     gsap.fromTo('[data-ci-text] > *', { autoAlpha: 0, y: 24 }, {

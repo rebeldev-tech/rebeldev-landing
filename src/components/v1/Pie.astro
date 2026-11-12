@@ -62,7 +62,9 @@ const anio = new Date().getFullYear();
   .pie-h { margin: 0 0 1rem; font-size: 0.875rem; color: var(--color-ash-dim); }
   .pie-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
   /* Enlaces: al pasar el ratón se aclaran y les entra la barra roja de la marca, como en el menú y los servicios */
-  .pie-l { display: inline-flex; align-items: baseline; color: var(--color-ash); font-size: 0.975rem; line-height: 1.35; transition: color 0.3s; }
+  /* Un correo o un teléfono largo se parte en vez de salirse de su columna */
+  .pie-col li { min-width: 0; overflow-wrap: anywhere; }
+  .pie-l { display: inline-flex; align-items: baseline; max-width: 100%; color: var(--color-ash); font-size: 0.975rem; line-height: 1.35; transition: color 0.3s; }
   .pie-l::before { content: '/'; display: inline-block; width: 0; overflow: hidden; color: var(--color-red-text); font-weight: 600; transition: width 0.45s var(--ease-out-expo); }
   .pie-l:hover, .pie-l:focus-visible { color: var(--color-bone); }
   .pie-l:hover::before, .pie-l:focus-visible::before { width: 0.7em; }

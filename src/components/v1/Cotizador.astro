@@ -1,32 +1,17 @@
 ---
-// Cotizador «¿Cuántos créditos necesitas?»: dos deslizadores y una casilla; calcula créditos, modalidad y total con IGV.
-// Sin JS: los controles quedan desactivados y se ve el ejemplo (150 + 0 → 157 créditos → S/ 185.64).
-// La regla está dos veces (aquí para el HTML y en el <script>): si cambia, cambiar las dos.
-import { credito, creditosMes, conIgv, soles, planes } from '../../data/precios';
+// Cotizador «¿Cuánto pagarías al mes?»: un deslizador; calcula los créditos y el pago con IGV,
+// con el descuento del precio inicial y a precio estándar.
+// Sin JS: el control queda desactivado y se ve el ejemplo (150 conversaciones).
+import { precioInicial, creditosMes, pagoMes, soles, notaMedida } from '../../data/precios';
 import { contacto } from '../../data/contacto';
 
-// Los deslizadores arrancan en un negocio chico: 150 conversaciones y ningún seguimiento.
+// El deslizador arranca en un negocio chico: 150 conversaciones.
 const C = { min: 0, max: 6000, step: 50, valor: 150 };
-const S = { min: 0, max: 4000, step: 50, valor: 0 };
 const fmt = (n: number) => n.toLocaleString('en-US');
 const pct = (v: number, max: number) => `${(v / max) * 100}%`;
-
-function cotizar(c: number, s: number, crm: boolean) {
-  const exacto = creditosMes(c, s);
-  const cred = Math.round(exacto);
-  if (cred <= credito.topePorUso && !crm) {
-    const a = planes[0];
-    return { cred, modo: 'Por uso, sin contrato', total: conIgv(Math.round(exacto * 100) / 100), linea: `El plan ${a.nombre} te costaría ${soles(conIgv(a.base))} con IGV al mes.`, plan: '', desde: false };
-  }
-  const p = planes.find((x) => x.creditos >= cred && (!crm || x.crm));
-  if (p) return { cred, modo: `Plan ${p.nombre}`, total: conIgv(p.base), linea: `Incluye ${fmt(p.creditos)} créditos al mes.`, plan: p.id, desde: false };
-  const pro = planes[planes.length - 1];
-  return { cred, modo: `${pro.nombre} + recargas: te cotizamos tu volumen`, total: conIgv(pro.base), linea: `${pro.nombre} incluye ${fmt(pro.creditos)} créditos al mes; lo que pases va con recargas.`, plan: pro.id, desde: true };
-}
-const r = cotizar(C.valor, S.valor, false);
 ---
 <div class="cz" data-cz data-reveal data-reveal-delay="0.1">
-  <h3 class="text-d3">¿Cuántos créditos necesitas?</h3>
+  <h3 class="text-d3">¿Cuánto pagarías al mes?</h3>
 
   <div class="cz-field">
     <div class="cz-row">
@@ -37,35 +22,19 @@ const r = cotizar(C.valor, S.valor, false);
       style={`--p:${pct(C.valor, C.max)}`} disabled data-cz-c />
   </div>
 
-  <div class="cz-field">
-    <div class="cz-row">
-      <label for="cz-s">Seguimientos automáticos al mes</label>
-      <output for="cz-s" class="cz-out" data-cz-os>{fmt(S.valor)}</output>
-    </div>
-    <input id="cz-s" name="seguimientos" class="cz-range" type="range" min={S.min} max={S.max} step={S.step} value={S.valor}
-      style={`--p:${pct(S.valor, S.max)}`} disabled data-cz-s />
-  </div>
-
-  <label class="cz-check">
-    <input type="checkbox" name="crm" disabled data-cz-crm />
-    <span>Conectar con tu sistema de ventas (CRM)</span>
-  </label>
-
   <div class="cz-res">
     <dl class="cz-dl">
-      <div class="cz-kv"><dt>Créditos al mes</dt><dd class="cz-cred" data-cz-cred>{fmt(r.cred)}</dd></div>
-      <div class="cz-kv"><dt>Modalidad recomendada</dt><dd data-cz-modo>{r.modo}</dd></div>
-      <div class="cz-total"><dt data-cz-tl>Pagas al mes, con IGV</dt><dd class="cz-big" data-cz-total>{soles(r.total)}</dd></div>
+      <div class="cz-kv"><dt>Créditos al mes, aproximados</dt><dd class="cz-cred" data-cz-cred>{fmt(creditosMes(C.valor))}</dd></div>
+      <div class="cz-kv"><dt>Tus primeros {precioInicial.dias} días, con IGV</dt><dd class="cz-ini" data-cz-ini>{soles(pagoMes(C.valor, true))}</dd></div>
+      <div class="cz-total"><dt>Después, al mes con IGV</dt><dd class="cz-big" data-cz-total>{soles(pagoMes(C.valor))}</dd></div>
     </dl>
-    <p class="cz-line" data-cz-line>{r.linea}</p>
     <p class="sr-only" aria-live="polite" data-cz-live></p>
   </div>
 
   <p class="cz-note">
-    La carga inicial de tu web y documentos cuesta {credito.cargaPor10Paginas} créditos por cada 10 páginas, solo el primer mes.
-    El escaneo para cotizar es gratis.
+    Es una estimación: una conversación corta gasta menos y una larga, más. {notaMedida}
   </p>
-  <a class="btn btn-primary cz-cta" href={contacto.whatsappLink} target="_blank" rel="noopener">Pide tu cotización exacta</a>
+  <a class="btn btn-primary cz-cta" href={contacto.whatsappLink} target="_blank" rel="noopener">Agenda una reunión</a>
 </div>
 
 <style>
@@ -98,99 +67,65 @@ const r = cotizar(C.valor, S.valor, false);
   }
   .cz-range:not(:disabled):active::-webkit-slider-thumb { transform: scale(1.12); }
 
-  .cz-check { display: flex; align-items: center; gap: 0.75rem; min-height: 2.75rem; cursor: pointer; font-size: 0.9375rem; touch-action: manipulation; }
-  .cz-check:has(input:disabled) { cursor: default; }
-  .cz-check input { width: 1.25rem; height: 1.25rem; accent-color: var(--color-red); flex: none; margin: 0; cursor: inherit; }
-
   .cz-res { background: var(--color-ink); border: 1px solid var(--color-line); border-radius: 0.75rem; padding: clamp(1rem, 2.5vw, 1.5rem); }
   .cz-dl { display: grid; gap: 0.75rem; margin: 0; }
   .cz-kv { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.25rem 1rem; }
   .cz-dl dt { color: var(--color-ash); font-size: 0.875rem; }
   .cz-dl dd { margin: 0; font-weight: 600; }
-  .cz-cred { font-family: var(--font-mono); color: var(--color-red-text); font-variant-numeric: tabular-nums; }
+  .cz-cred, .cz-ini { font-family: var(--font-mono); color: var(--color-red-text); font-variant-numeric: tabular-nums; }
   .cz-total { border-top: 1px solid var(--color-line); padding-top: 1rem; margin-top: 0.25rem; }
   .cz-dl .cz-big {
     font-family: var(--font-display); font-weight: 800; font-size: clamp(2.4rem, 5.5vw, 3.6rem);
     line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; margin-top: 0.35rem;
   }
-  .cz-line { color: var(--color-ash); font-size: 0.875rem; margin-top: 0.75rem; min-height: 2.6em; }
   .cz-note { color: var(--color-ash-dim); font-size: 0.8125rem; line-height: 1.5; }
   .cz-cta { justify-self: start; }
 </style>
 
 <script>
   import { gsap, reduceMotion } from '../../scripts/motion';
-  import { credito, creditosMes, conIgv, soles, planes } from '../../data/precios';
+  import { precioInicial, creditosMes, pagoMes, soles } from '../../data/precios';
 
   const fmt = (n: number) => n.toLocaleString('en-US');
-
-  function cotizar(c: number, s: number, crm: boolean) {
-    const exacto = creditosMes(c, s);
-    const cred = Math.round(exacto);
-    if (cred <= credito.topePorUso && !crm) {
-      const a = planes[0];
-      return { cred, modo: 'Por uso, sin contrato', total: conIgv(Math.round(exacto * 100) / 100), linea: `El plan ${a.nombre} te costaría ${soles(conIgv(a.base))} con IGV al mes.`, plan: '', desde: false };
-    }
-    const p = planes.find((x) => x.creditos >= cred && (!crm || x.crm));
-    if (p) return { cred, modo: `Plan ${p.nombre}`, total: conIgv(p.base), linea: `Incluye ${fmt(p.creditos)} créditos al mes.`, plan: p.id, desde: false };
-    const pro = planes[planes.length - 1];
-    return { cred, modo: `${pro.nombre} + recargas: te cotizamos tu volumen`, total: conIgv(pro.base), linea: `${pro.nombre} incluye ${fmt(pro.creditos)} créditos al mes; lo que pases va con recargas.`, plan: pro.id, desde: true };
-  }
 
   document.querySelectorAll<HTMLElement>('[data-cz]').forEach((root) => {
     const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
     const rc = q<HTMLInputElement>('[data-cz-c]');
-    const rs = q<HTMLInputElement>('[data-cz-s]');
-    const crm = q<HTMLInputElement>('[data-cz-crm]');
-    const oc = q('[data-cz-oc]'), os = q('[data-cz-os]');
-    const credEl = q('[data-cz-cred]'), modoEl = q('[data-cz-modo]'), tlEl = q('[data-cz-tl]');
-    const totalEl = q('[data-cz-total]'), lineEl = q('[data-cz-line]'), liveEl = q('[data-cz-live]');
+    const oc = q('[data-cz-oc]');
+    const credEl = q('[data-cz-cred]'), iniEl = q('[data-cz-ini]');
+    const totalEl = q('[data-cz-total]'), liveEl = q('[data-cz-live]');
 
-    const shown = { cred: 0, total: 0 };
+    const shown = { cred: 0, ini: 0, total: 0 };
     const render = () => {
       credEl.textContent = fmt(Math.round(shown.cred));
+      iniEl.textContent = soles(Math.round(shown.ini * 100) / 100);
       totalEl.textContent = soles(Math.round(shown.total * 100) / 100);
     };
     let timer: number | undefined;
 
     function update(animar: boolean) {
-      const c = Number(rc.value), s = Number(rs.value);
+      const c = Number(rc.value);
       oc.textContent = fmt(c);
-      os.textContent = fmt(s);
-      for (const i of [rc, rs]) i.style.setProperty('--p', `${(Number(i.value) / Number(i.max)) * 100}%`);
+      rc.style.setProperty('--p', `${(c / Number(rc.max)) * 100}%`);
 
-      const r = cotizar(c, s, crm.checked);
-      const tl = r.desde ? 'Desde, al mes con IGV' : 'Pagas al mes, con IGV';
-      modoEl.textContent = r.modo;
-      tlEl.textContent = tl;
-      lineEl.textContent = r.linea;
-
+      const r = { cred: creditosMes(c), ini: pagoMes(c, true), total: pagoMes(c) };
       if (animar && !reduceMotion) {
-        gsap.to(shown, { cred: r.cred, total: r.total, duration: 0.4, ease: 'power2.out', overwrite: true, onUpdate: render });
+        gsap.to(shown, { ...r, duration: 0.4, ease: 'power2.out', overwrite: true, onUpdate: render });
       } else {
         gsap.killTweensOf(shown);
-        shown.cred = r.cred; shown.total = r.total; render();
+        Object.assign(shown, r); render();
       }
-
-      // Marca en «Planes mensuales» el plan que sale del cálculo.
-      document.querySelectorAll<HTMLElement>('[data-plan-col]').forEach((el) => {
-        const on = el.dataset.planCol === r.plan;
-        el.classList.toggle('is-rec', on);
-        el.querySelector('[data-plan-tag]')?.toggleAttribute('hidden', !on);
-      });
 
       if (animar) {
         window.clearTimeout(timer);
         timer = window.setTimeout(() => {
-          liveEl.textContent = `${fmt(r.cred)} créditos al mes. ${r.modo}. ${tl}: ${soles(r.total)}.`;
+          liveEl.textContent = `${fmt(r.cred)} créditos al mes. Tus primeros ${precioInicial.dias} días: ${soles(r.ini)}. Después: ${soles(r.total)} al mes, con IGV.`;
         }, 600);
       }
     }
 
-    [rc, rs, crm].forEach((i) => { i.disabled = false; });
+    rc.disabled = false;
     rc.addEventListener('input', () => update(true));
-    rs.addEventListener('input', () => update(true));
-    crm.addEventListener('change', () => update(true));
-    update(false); // por si el navegador restauró otros valores al volver atrás
+    update(false); // por si el navegador restauró otro valor al volver atrás
   });
 </script>

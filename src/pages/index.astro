@@ -16,12 +16,13 @@ import Producto from '../components/v1/Producto.astro';
 import Precios from '../components/v1/Precios.astro';
 import Pie from '../components/v1/Pie.astro';
 import { contacto } from '../data/contacto';
+import { datosEstructurados } from '../data/seo';
 import {
   metaV1, linksV1, heroV1, serviciosV1, aMedida, procesoV1, procesoV1Titulo, estacionesV1, medidorV1,
   comparacionV1, lineasV1, preguntasV1, cierreV1,
 } from '../data/v1';
 ---
-<Base title={metaV1.title} description={metaV1.description}>
+<Base title={metaV1.title} description={metaV1.description} jsonLd={datosEstructurados(Astro.site!)}>
   <Nav links={linksV1} />
 
   <div class="fina">
@@ -51,11 +52,12 @@ import {
     <div class="fina-cursor" data-fina-cursor aria-hidden="true"><span></span></div>
   </div>
 
-  <!-- La demo, siempre a mano: abajo a la derecha, lleva al WhatsApp de RebelBot -->
-  <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary demo-flot" data-demo-flot="cz" aria-label="Agenda una demo por WhatsApp (se abre en otra pestaña)">
+  <!-- La demo, siempre a mano: abajo a la derecha, lleva al WhatsApp de RebelBot.
+       Con Rebel activo no se muestra: Rebel ocupa esa esquina y ya ofrece agendar. -->
+  {!contacto.rebel && <a href={contacto.whatsappLink} target="_blank" rel="noopener" class="btn btn-primary demo-flot" data-demo-flot="cz" aria-label="Agenda una demo por WhatsApp (se abre en otra pestaña)">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5l1.2-3.6A7.8 7.8 0 1 1 8.4 18.6z" /><path d="M9 10.5h6M9 13.5h4" /></svg>
     Agenda una demo
-  </a>
+  </a>}
 </Base>
 
 <style is:global>

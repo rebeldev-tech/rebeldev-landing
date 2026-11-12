@@ -59,7 +59,7 @@ export const pasosPanel: { k: Pantalla; titulo: string; texto: string; enlace?: 
   {
     k: 'consumo',
     titulo: 'Consumo',
-    texto: 'Ves cada crédito que usa, al día, y te avisamos al 80 %.',
+    texto: 'Ves cada uso con su costo en soles, y te avisamos cuando te queda el 20 % de tu saldo.',
     enlace: { t: 'Ver precios', href: '#precios' },
   },
 ];
@@ -156,7 +156,7 @@ export const tablero = {
   serie: [5, 7, 6, 9, 8, 4, 3, 7, 10, 9, 11, 8, 6, 12],
 };
 
-// Del tamaño del plan Arranque (1,000 créditos), con el 80 % usado: coherente con la sección de precios.
+// Un saldo de 1,000 créditos con el 80 % usado: queda el 20 %, que es cuando llega el aviso de saldo bajo.
 export const consumo = {
   usados: 800,
   total: 1000,
@@ -173,5 +173,5 @@ export const consumo = {
   ],
 };
 
-// 4000000 → «4,000,000» (mismo formato que «100,000 tokens» del panel).
+// 4000000 → «4,000,000» (el formato de las cifras del panel).
 export const miles = (n: number) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');

@@ -5,6 +5,9 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
+  // Dirección pública del sitio: la usan la URL canónica, el mapa del sitio, /robots.txt y los datos estructurados.
+  // PROVISIONAL: es la dirección de Vercel. Cuando haya dominio propio, se cambia solo aquí.
+  site: 'https://rebeldev-landing.vercel.app',
   // Las fuentes se descargan al compilar y se sirven desde el propio sitio
   // (más rápido y sin enviar datos de los visitantes a Google).
   fonts: [
