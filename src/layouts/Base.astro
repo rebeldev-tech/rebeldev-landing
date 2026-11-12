@@ -2,11 +2,12 @@
 import { Font } from 'astro:assets';
 import '../styles/global.css';
 import { contacto } from '../data/contacto';
+import RebelChat from '../components/RebelChat.astro';
 import { marca } from '../data/seo';
 
-// jsonLd: datos estructurados de la página (schema.org), si los tiene.
-interface Props { title: string; description: string; jsonLd?: object }
-const { title, description, jsonLd } = Astro.props;
+// jsonLd: datos estructurados de la página (schema.org), si los tiene. noindex: páginas de prueba, fuera de los buscadores.
+interface Props { title: string; description: string; jsonLd?: object; noindex?: boolean }
+const { title, description, jsonLd, noindex = false } = Astro.props;
 const canonica = new URL(Astro.url.pathname, Astro.site);
 const imagen = new URL(marca.imagen, Astro.site);
 // «<» escapado para que ningún texto pueda cerrar la etiqueta <script>.
@@ -24,7 +25,7 @@ const jsonLdTexto = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : '
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <link rel="canonical" href={canonica} />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_PE" />
     <meta property="og:site_name" content={marca.nombre} />
@@ -61,7 +62,7 @@ const jsonLdTexto = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : '
   <body>
     <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-full focus:bg-bone focus:px-4 focus:py-2 focus:text-ink">Ir al contenido</a>
     <slot />
-    {/* Rebel en la web: la plataforma sirve el script y coloca al asistente abajo a la derecha. */}
-    {contacto.rebel && <script is:inline src={`${contacto.rebel}/rebel.js`} async></script>}
+    {/* Rebel, el gatito guía: chat propio del landing; las respuestas vienen de la plataforma por /api/rebel. */}
+    {contacto.rebel && <RebelChat />}
   </body>
 </html>

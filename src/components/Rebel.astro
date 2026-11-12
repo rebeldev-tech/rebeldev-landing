@@ -1,0 +1,163 @@
+---
+// Rebel, el gatito guía de RebelDEV: propuesta mejorada del dibujo que hoy vive en la plataforma (el del chat).
+// Mismo personaje: cuerpo de tinta, pechera y calcetines crema, el mechón rojo (la barra del logo) y los bigotes
+// como los corchetes < >. Cambia: cabeza más grande, ojos con pupila y brillo, mejillas y punta de la cola crema.
+// Los colores son fijos (no siguen el tema), como el teléfono de RebelBot. Es decorativo: quien lo usa le pone nombre.
+// gesto: tranquilo | saludando | pensando | feliz. Se cambia desde fuera con la clase rb--<gesto>.
+// mira: los ojos siguen al puntero.
+interface Props { gesto?: 'tranquilo' | 'saludando' | 'pensando' | 'feliz'; tamano?: number; mira?: boolean; class?: string }
+const { gesto = 'tranquilo', tamano = 160, mira = false, class: clase = '' } = Astro.props;
+
+// La cola: de la cadera hacia arriba, con la punta curvada.
+const COLA = 'M110 148 C140 154 154 132 146 110 C142 100 130 100 128 110';
+---
+<svg
+  class:list={['rb', `rb--${gesto}`, clase]} width={tamano} height={Math.round((tamano * 170) / 160)} viewBox="0 0 160 170"
+  fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-rebel data-mira={mira ? '' : undefined}
+>
+  <ellipse class="rb-sombra" cx="80" cy="161" rx="40" ry="5" />
+  <g class="rb-salto">
+    <g class="rb-cola">
+      <path class="rb-cola-b" d={COLA} stroke-width="16" />
+      <path class="rb-cola-p" d={COLA} stroke-width="11" />
+      <path class="rb-cola-punta" d="M146.5 114 C143.5 100 130 100 128 110" stroke-width="11" />
+    </g>
+    <g class="rb-cuerpo">
+      <path class="rb-torso" d="M46 158 C38 126 50 98 80 96 C110 98 122 126 114 158 Z" />
+      <path class="rb-pechera" d="M63 102 Q80 132 97 102 Q80 111 63 102 Z" />
+      <g class="rb-cabeza">
+        <path class="rb-oreja rb-oreja--izq" d="M34 56 L38 12 L70 34 Z" />
+        <path class="rb-oreja rb-oreja--der" d="M126 56 L122 12 L90 34 Z" />
+        <path class="rb-oreja-in" d="M43 43 L45 25 L58 34 Z M117 43 L115 25 L102 34 Z" />
+        <rect class="rb-cara" x="28" y="28" width="104" height="74" rx="36" />
+        <path class="rb-mechon" d="M88 17 L79 44" stroke-width="8" />
+        <path class="rb-bigotes" d="M26 64 L11 74 L26 84 M134 64 L149 74 L134 84" stroke-width="4.5" />
+        <ellipse class="rb-mejilla" cx="47" cy="83" rx="7" ry="4.5" />
+        <ellipse class="rb-mejilla" cx="113" cy="83" rx="7" ry="4.5" />
+        <g class="rb-ojos">
+          <g class="rb-ojo">
+            <ellipse class="rb-ojo-b" cx="60" cy="64" rx="9.5" ry="12.5" />
+            <g class="rb-pupila"><ellipse cx="60" cy="65" rx="5.5" ry="8.5" /><circle class="rb-brillo" cx="62.5" cy="60.5" r="2.4" /></g>
+          </g>
+          <g class="rb-ojo">
+            <ellipse class="rb-ojo-b" cx="100" cy="64" rx="9.5" ry="12.5" />
+            <g class="rb-pupila"><ellipse cx="100" cy="65" rx="5.5" ry="8.5" /><circle class="rb-brillo" cx="102.5" cy="60.5" r="2.4" /></g>
+          </g>
+        </g>
+        <path class="rb-ojos-feliz" d="M51 68 Q60 55 69 68 M91 68 Q100 55 109 68" stroke-width="4.5" />
+        <path class="rb-nariz" d="M75.5 76 h9 l-4.5 5.5 z" />
+        <path class="rb-boca rb-boca--tranquilo" d="M72 86 Q76 91 80 86 Q84 91 88 86" stroke-width="3" />
+        <path class="rb-boca rb-boca--feliz" d="M71 85 Q80 99 89 85 Z" stroke-width="3" />
+        <path class="rb-boca rb-boca--pensando" d="M75 89 h9" stroke-width="3" />
+      </g>
+      <!-- Después de la cabeza: al saludar, la pata izquierda pasa por delante (del lado sin cola) -->
+      <g class="rb-pata rb-pata--izq">
+        <rect class="rb-pierna" x="62" y="118" width="14" height="40" rx="7" />
+        <ellipse class="rb-calcetin" cx="69" cy="153" rx="7.5" ry="5.5" />
+      </g>
+      <g class="rb-pata rb-pata--der">
+        <rect class="rb-pierna" x="84" y="118" width="14" height="40" rx="7" />
+        <ellipse class="rb-calcetin" cx="91" cy="153" rx="7.5" ry="5.5" />
+      </g>
+    </g>
+  </g>
+  <g class="rb-puntos">
+    <circle cx="134" cy="26" r="4" />
+    <circle cx="146" cy="16" r="4" />
+    <circle cx="156" cy="6" r="3.5" />
+  </g>
+</svg>
+
+<style>
+  .rb { display: block; overflow: visible; max-width: 100%; height: auto; }
+  /* Las piezas giran sobre su articulación en las unidades del dibujo */
+  .rb * { transform-box: view-box; }
+
+  .rb-torso, .rb-cara, .rb-oreja { fill: #1D1824; stroke: #7C757F; stroke-width: 2.5; }
+  .rb-pierna { fill: #1D1824; stroke: #4B4452; stroke-width: 1.8; }
+  .rb-cola-b { stroke: #7C757F; }
+  .rb-cola-p { stroke: #1D1824; }
+  .rb-cola-punta, .rb-ojos-feliz, .rb-boca { stroke: #F4F0E8; }
+  .rb-pechera, .rb-calcetin, .rb-ojo-b { fill: #F4F0E8; }
+  .rb-oreja-in { fill: #6B1A26; }
+  .rb-mechon { stroke: #E4121F; }
+  .rb-bigotes { stroke: #A7A0A8; }
+  .rb-mejilla { fill: #E4121F; opacity: 0.32; }
+  .rb-pupila ellipse { fill: #0B0A0E; }
+  .rb-brillo { fill: #fff; }
+  .rb-nariz { fill: #E4121F; stroke: #E4121F; stroke-width: 1.5; }
+  .rb-boca--feliz { fill: #6B1A26; }
+  .rb-puntos circle { fill: #A7A0A8; }
+  .rb-sombra { fill: rgb(0 0 0 / 0.28); transform-origin: 80px 161px; }
+
+  .rb-cola { transform-origin: 110px 148px; }
+  .rb-cuerpo { transform-origin: 80px 158px; }
+  .rb-cabeza { transform-origin: 80px 98px; transition: transform 0.35s ease; }
+  .rb-oreja--izq { transform-origin: 46px 50px; }
+  .rb-oreja--der { transform-origin: 114px 50px; }
+  .rb-pata--izq { transform-origin: 69px 124px; transition: transform 0.35s ease; }
+  .rb-pata--der { transform-origin: 91px 124px; }
+  .rb-ojo { transform-box: fill-box; transform-origin: center; }
+  .rb-pupila { transform: translate(calc(var(--mx, 0) * 1px), calc(var(--my, 0) * 1px)); transition: transform 0.18s ease-out; }
+
+  /* Cada gesto muestra sus ojos y su boca */
+  .rb-ojos-feliz, .rb-boca--feliz, .rb-boca--pensando, .rb-puntos { display: none; }
+  .rb--feliz .rb-ojos, .rb--saludando .rb-ojos { display: none; }
+  .rb--feliz .rb-ojos-feliz, .rb--saludando .rb-ojos-feliz { display: block; }
+  .rb--feliz .rb-boca--tranquilo, .rb--saludando .rb-boca--tranquilo, .rb--pensando .rb-boca--tranquilo { display: none; }
+  .rb--feliz .rb-boca--feliz, .rb--saludando .rb-boca--feliz, .rb--pensando .rb-boca--pensando, .rb--pensando .rb-puntos { display: block; }
+
+  /* Las poses valen también con «menos movimiento»: ahí quedan quietas */
+  .rb--saludando .rb-pata--izq { transform: rotate(142deg); }
+  .rb--saludando .rb-cabeza { transform: rotate(4deg); }
+  .rb--pensando .rb-cabeza { transform: rotate(-7deg); }
+  .rb--pensando .rb-pupila { transform: translate(2.5px, -3.5px); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* Lo de siempre: respira, mueve la cola, parpadea y a ratos mueve una oreja */
+    .rb-cuerpo { animation: rb-respira 3.2s ease-in-out infinite; }
+    .rb-cola { animation: rb-cola 2.8s ease-in-out infinite alternate; }
+    .rb-ojo { animation: rb-parpadeo 5.5s infinite; }
+    .rb-oreja--der { animation: rb-oreja 7s ease-in-out infinite; }
+
+    .rb--saludando .rb-pata--izq { animation: rb-saludo 1.5s ease-in-out infinite; }
+    .rb--feliz .rb-salto { animation: rb-salto 1.1s ease-in-out infinite; }
+    .rb--feliz .rb-sombra { animation: rb-sombra 1.1s ease-in-out infinite; }
+    .rb--feliz .rb-cola, .rb--saludando .rb-cola { animation-duration: 0.8s; }
+    .rb--pensando .rb-puntos circle { animation: rb-punto 1.4s ease-in-out infinite; }
+    .rb--pensando .rb-puntos circle:nth-child(2) { animation-delay: 0.2s; }
+    .rb--pensando .rb-puntos circle:nth-child(3) { animation-delay: 0.4s; }
+    .rb--pensando .rb-cola { animation-duration: 4.5s; }
+  }
+
+  @keyframes rb-respira { 50% { transform: scale(1.012, 0.985); } }
+  @keyframes rb-cola { from { transform: rotate(-7deg); } to { transform: rotate(9deg); } }
+  @keyframes rb-parpadeo { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(0.08); } }
+  @keyframes rb-oreja { 0%, 88%, 100% { transform: rotate(0); } 92% { transform: rotate(9deg); } 96% { transform: rotate(-3deg); } }
+  @keyframes rb-saludo { 0%, 100% { transform: rotate(150deg); } 50% { transform: rotate(122deg); } }
+  @keyframes rb-salto { 0%, 100% { transform: translateY(0); } 45% { transform: translateY(-12px); } }
+  @keyframes rb-sombra { 0%, 100% { transform: scale(1); opacity: 1; } 45% { transform: scale(0.78); opacity: 0.6; } }
+  @keyframes rb-punto { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+</style>
+
+<script>
+  // Los ojos siguen al puntero: dos variables de CSS en cada dibujo marcado con data-mira, una vez por cuadro.
+  const dibujos = Array.from(document.querySelectorAll<SVGSVGElement>('[data-rebel][data-mira]'));
+  if (dibujos.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const MX = 3.2, MY = 2.6; // hasta dónde se mueven las pupilas, en unidades del dibujo
+    let cuadro = 0;
+    window.addEventListener('pointermove', (e) => {
+      if (cuadro) return;
+      cuadro = requestAnimationFrame(() => {
+        cuadro = 0;
+        dibujos.forEach((el) => {
+          const c = el.getBoundingClientRect();
+          const dx = e.clientX - (c.left + c.width / 2), dy = e.clientY - (c.top + c.height * 0.4);
+          const d = Math.max(1, Math.hypot(dx, dy)), f = Math.min(1, d / 260);
+          el.style.setProperty('--mx', ((dx / d) * f * MX).toFixed(2));
+          el.style.setProperty('--my', ((dy / d) * f * MY).toFixed(2));
+        });
+      });
+    }, { passive: true });
+  }
+</script>

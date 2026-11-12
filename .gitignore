@@ -28,3 +28,6 @@ pnpm-debug.log*
 
 # resultados de la skill panel-clientes (texto de la página, capturas, respuestas e informes)
 .panel-clientes/
+
+# salida del adaptador de Vercel
+.vercel/

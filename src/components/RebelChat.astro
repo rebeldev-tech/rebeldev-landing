@@ -1,0 +1,382 @@
+---
+// El chat de Rebel, propio del landing: el gatito abajo a la derecha (encima de «Agenda una demo») y, al hacer clic,
+// una ventana donde se le pregunta y responde. Las respuestas vienen de la plataforma por /api/rebel (ver
+// src/lib/plataforma.ts); «Déjanos tus datos» va por /api/interesados. Sin JavaScript no se muestra nada.
+import Rebel from './Rebel.astro';
+
+const sugerencias = ['¿Qué hace RebelDEV?', '¿Qué hace por una inmobiliaria?', '¿Cómo empiezo?', '¿Cómo se cobra?'];
+---
+<div class="rc" data-rc hidden>
+  <div class="rc-globo" role="status" hidden data-rc-globo>
+    <p>¡Hola! Soy Rebel. ¿Te cuento cómo RebelDEV atiende y vende por tu negocio en WhatsApp?</p>
+    <div class="rc-globo-b">
+      <button type="button" class="rc-si" data-rc-si>Sí, cuéntame</button>
+      <button type="button" data-rc-no>Ahora no</button>
+    </div>
+  </div>
+
+  <button type="button" class="rc-lanzador" aria-label="Habla con Rebel, el guía de RebelDEV" aria-expanded="false" aria-controls="rc-panel" data-rc-abrir>
+    <Rebel tamano={76} mira />
+  </button>
+
+  <section id="rc-panel" class="rc-panel" role="dialog" aria-label="Rebel, el guía de RebelDEV" hidden data-rc-panel data-lenis-prevent>
+    <header class="rc-cab">
+      <Rebel tamano={46} />
+      <p class="rc-quien"><b>Rebel</b><span data-rc-sub>El guía de RebelDEV</span></p>
+      <button type="button" class="rc-x" aria-label="Cerrar el chat" data-rc-cerrar>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" /></svg>
+      </button>
+    </header>
+
+    <div class="rc-vista rc-chat" data-rc-vista="chat">
+      <div class="rc-msgs" aria-live="polite" data-rc-msgs></div>
+      <div class="rc-sug" data-rc-sug>
+        {sugerencias.map((s) => <button type="button" data-rc-sugerencia>{s}</button>)}
+      </div>
+      <div class="rc-acc">
+        <button type="button" class="rc-accion rc-accion-p" data-rc-datos>Déjanos tus datos</button>
+        <a class="rc-accion" target="_blank" rel="noopener" hidden data-rc-wa>WhatsApp</a>
+        <a class="rc-accion" target="_blank" rel="noopener" hidden data-rc-cuenta>Crear mi cuenta</a>
+      </div>
+      <form class="rc-form" data-rc-form>
+        <input name="pregunta" aria-label="Tu pregunta para Rebel" placeholder="Pregúntale a Rebel…" maxlength="500" autocomplete="off" enterkeyhint="send" />
+        <button type="submit" aria-label="Enviar la pregunta">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h10M8.5 3.5L13 8l-4.5 4.5" /></svg>
+        </button>
+      </form>
+    </div>
+
+    <form class="rc-vista rc-datos" hidden data-rc-vista="datos" data-rc-fdatos>
+      <p class="rc-datos-t" data-rc-reunion>Déjanos tus datos y te escribimos por WhatsApp para coordinar una asesoría gratuita de 30 minutos sobre tu negocio.</p>
+      <label>Tu nombre<input name="nombre" autocomplete="name" required minlength="2" maxlength="80" /></label>
+      <label>Tu empresa<input name="empresa" autocomplete="organization" required minlength="2" maxlength="80" /></label>
+      <label>Tu WhatsApp, con el código de país<input name="whatsapp" type="tel" autocomplete="tel" inputmode="tel" placeholder="51 987 654 321" required maxlength="20" /></label>
+      <label>Correo (opcional)<input name="correo" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="120" /></label>
+      <label>¿Qué te gustaría lograr? (opcional)<textarea name="mensaje" rows="2" maxlength="500" placeholder="Por ejemplo: responder más rápido a mis clientes"></textarea></label>
+      <label class="rc-acepto">
+        <input type="checkbox" name="acepta" required />
+        <span>Acepto que RebelDEV me contacte por WhatsApp o correo sobre este pedido. <a target="_blank" rel="noopener" hidden data-rc-privacidad>Política de privacidad</a></span>
+      </label>
+      <p class="rc-error" role="alert" hidden data-rc-error></p>
+      <div class="rc-datos-b">
+        <button type="button" class="rc-accion" data-rc-volver>Volver al chat</button>
+        <button type="submit" class="rc-accion rc-accion-p" data-rc-enviar-datos>Enviar mis datos</button>
+      </div>
+    </form>
+
+    <div class="rc-vista rc-listo" hidden data-rc-vista="listo">
+      <p class="rc-ok" role="status" data-rc-ok></p>
+      <p>Mientras tanto, puedes seguir preguntándome lo que quieras.</p>
+      <button type="button" class="rc-accion rc-accion-p" data-rc-volver>Volver al chat</button>
+    </div>
+  </section>
+</div>
+
+<style is:global>
+  /* Global: las burbujas las crea el script. Todo va con el prefijo rc-. */
+  .rc [hidden] { display: none !important; }
+  .rc { --rc-abajo: 1rem; --rc-lado: max(1rem, env(safe-area-inset-right)); font-size: 1rem; }
+  /* Con el botón «Agenda una demo» en la página, Rebel va justo encima */
+  html:has([data-demo-flot]) .rc { --rc-abajo: 4.4rem; }
+  @media (min-width: 1024px) {
+    .rc { --rc-lado: 1.75rem; --rc-abajo: 1.75rem; }
+    html:has([data-demo-flot]) .rc { --rc-abajo: 5.6rem; }
+  }
+
+  .rc-lanzador {
+    all: unset; position: fixed; z-index: 45; right: var(--rc-lado); bottom: var(--rc-abajo); width: 4.25rem; cursor: pointer;
+    -webkit-tap-highlight-color: transparent; transition: translate 0.3s var(--ease-out-expo);
+    filter: drop-shadow(0 0.4rem 0.9rem rgb(0 0 0 / 0.45));
+  }
+  .rc-lanzador:hover { translate: 0 -3px; }
+  .rc-lanzador:focus-visible { outline: 2px solid var(--color-red-text); outline-offset: 4px; border-radius: 1rem; }
+  .rc-lanzador .rb { width: 100%; }
+  @media (min-width: 1024px) { .rc-lanzador { width: 4.75rem; } }
+
+  .rc-globo {
+    position: fixed; z-index: 45; right: var(--rc-lado); bottom: calc(var(--rc-abajo) + 5.6rem); width: min(19rem, calc(100vw - 2rem));
+    padding: 1rem 1.1rem; border-radius: 1.1rem 1.1rem 0.3rem 1.1rem; background: var(--color-surface-2); border: 1px solid var(--color-line-strong);
+    box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 0.4); color: var(--color-bone);
+  }
+  .rc-globo p { margin: 0; font-size: 0.9375rem; line-height: 1.45; }
+  .rc-globo-b { display: flex; gap: 0.5rem; margin-top: 0.8rem; }
+  .rc-globo-b button {
+    min-height: 2.5rem; padding: 0 0.95rem; border-radius: 999px; border: 1px solid var(--color-line-strong); background: none; cursor: pointer;
+    font: inherit; font-size: 0.875rem; font-weight: 600; color: var(--color-bone);
+  }
+  .rc-globo-b .rc-si { background: var(--color-red); border-color: var(--color-red); color: #fff; }
+
+  .rc-panel {
+    position: fixed; z-index: 60; right: var(--rc-lado); bottom: max(1rem, env(safe-area-inset-bottom)); display: flex; flex-direction: column;
+    width: min(25rem, calc(100vw - 2rem)); height: min(39rem, calc(100dvh - 2rem)); overflow: hidden;
+    border-radius: 1.25rem; background: var(--color-surface); border: 1px solid var(--color-line-strong); color: var(--color-bone);
+    box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 0.55);
+  }
+  @media (max-width: 479px) {
+    .rc-panel { right: 0.5rem; left: 0.5rem; bottom: 0.5rem; width: auto; height: calc(100dvh - 1rem); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .rc-panel, .rc-globo { animation: rc-entra 0.35s var(--ease-out-expo) both; }
+    @keyframes rc-entra { from { opacity: 0; transform: translateY(0.75rem) scale(0.98); } }
+  }
+
+  .rc-cab { flex: none; display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 0.8rem 0.7rem 1rem; border-bottom: 1px solid var(--color-line); }
+  .rc-cab .rb { flex: none; }
+  .rc-quien { flex: 1; min-width: 0; margin: 0; display: grid; line-height: 1.25; }
+  .rc-quien b { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; letter-spacing: -0.02em; }
+  .rc-quien span { font-size: 0.8125rem; color: var(--color-ash); }
+  .rc-x { all: unset; flex: none; display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 999px; cursor: pointer; color: var(--color-ash); }
+  .rc-x:hover { color: var(--color-bone); background: var(--color-surface-2); }
+  .rc-x:focus-visible { outline: 2px solid var(--color-red-text); outline-offset: -2px; }
+  .rc-x svg, .rc-form svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .rc-vista { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .rc-msgs { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 0.55rem; padding: 1rem; }
+  .rc-b { max-width: 86%; padding: 0.65rem 0.85rem; border-radius: 1rem; font-size: 0.9375rem; line-height: 1.5; overflow-wrap: anywhere; }
+  .rc-b--rebel { align-self: flex-start; border-bottom-left-radius: 0.3rem; background: var(--color-surface-2); }
+  .rc-b--yo { align-self: flex-end; border-bottom-right-radius: 0.3rem; background: var(--color-bone); color: var(--color-ink); }
+  .rc-b.is-pensando { color: var(--color-ash); }
+
+  .rc-sug, .rc-acc { flex: none; display: flex; gap: 0.4rem; padding: 0 1rem 0.6rem; overflow-x: auto; scrollbar-width: none; }
+  .rc-sug::-webkit-scrollbar { display: none; }
+  /* Las acciones no se cortan: si no entran en una fila, bajan */
+  .rc-acc { flex-wrap: wrap; overflow: visible; }
+  .rc-sug button {
+    flex: none; min-height: 2.25rem; padding: 0 0.8rem; border-radius: 999px; border: 1px solid var(--color-line-strong); background: none; cursor: pointer;
+    font: inherit; font-size: 0.8125rem; color: var(--color-ash); white-space: nowrap;
+  }
+  .rc-sug button:hover:not(:disabled) { color: var(--color-bone); border-color: var(--color-ash-dim); }
+  .rc-sug button:disabled { opacity: 0.5; cursor: default; }
+  .rc-accion {
+    flex: none; display: inline-flex; align-items: center; justify-content: center; min-height: 2.5rem; padding: 0 0.95rem; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--color-line-strong); background: none; font: inherit; font-size: 0.875rem; font-weight: 600; color: var(--color-bone);
+    text-decoration: none; white-space: nowrap;
+  }
+  .rc-accion:hover { border-color: var(--color-bone); }
+  .rc-accion-p { background: var(--color-red); border-color: var(--color-red); color: #fff; }
+  .rc-accion-p:hover { background: #F21C2A; border-color: #F21C2A; }
+  .rc-accion:disabled { opacity: 0.5; cursor: default; }
+  .rc-panel :is(button, a, input, textarea):focus-visible { outline: 2px solid var(--color-red-text); outline-offset: 2px; }
+
+  .rc-form { flex: none; display: flex; gap: 0.5rem; padding: 0.7rem 0.8rem; border-top: 1px solid var(--color-line); }
+  .rc-form input, .rc-datos input:not([type='checkbox']), .rc-datos textarea {
+    width: 100%; min-width: 0; padding: 0.65rem 0.85rem; border-radius: 0.75rem; border: 1px solid var(--color-line-strong);
+    background: var(--color-ink); color: var(--color-bone); font: inherit; font-size: 1rem;
+  }
+  .rc-form input { flex: 1; border-radius: 999px; padding-inline: 1rem; }
+  .rc-form input::placeholder, .rc-datos ::placeholder { color: var(--color-ash-dim); }
+  .rc-form button {
+    all: unset; flex: none; display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 999px; cursor: pointer;
+    background: var(--color-red); color: #fff;
+  }
+  .rc-form button:disabled { opacity: 0.5; cursor: default; }
+
+  .rc-datos, .rc-listo { overflow-y: auto; overscroll-behavior: contain; gap: 0.75rem; padding: 1rem; }
+  .rc-datos-t, .rc-listo p { margin: 0; font-size: 0.9375rem; line-height: 1.5; color: var(--color-ash); }
+  .rc-datos label { display: grid; gap: 0.3rem; font-size: 0.875rem; font-weight: 600; }
+  .rc-datos textarea { resize: vertical; }
+  .rc-datos .rc-acepto { display: flex; gap: 0.6rem; align-items: flex-start; font-weight: 400; line-height: 1.45; color: var(--color-ash); }
+  .rc-acepto input { flex: none; width: 1.15rem; height: 1.15rem; margin-top: 0.15rem; accent-color: var(--color-red); }
+  .rc-acepto a { color: var(--color-red-text); }
+  .rc-error { margin: 0; font-size: 0.875rem; color: var(--color-red-text); }
+  .rc-datos-b { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.25rem; }
+  .rc-listo .rc-ok { font-size: 1.0625rem; font-weight: 600; color: var(--color-bone); }
+  .rc-listo .rc-accion { align-self: flex-start; }
+</style>
+
+<script>
+  const raiz = document.querySelector<HTMLElement>('[data-rc]');
+  if (raiz) {
+    const uno = <T extends HTMLElement>(s: string) => raiz.querySelector<T>(s)!;
+    const todos = <T extends HTMLElement>(s: string) => Array.from(raiz.querySelectorAll<T>(s));
+
+    const lanzador = uno<HTMLButtonElement>('[data-rc-abrir]');
+    const globo = uno('[data-rc-globo]');
+    const panel = uno('[data-rc-panel]');
+    const msgs = uno('[data-rc-msgs]');
+    const sug = uno('[data-rc-sug]');
+    const form = uno<HTMLFormElement>('[data-rc-form]');
+    const campo = form.elements.namedItem('pregunta') as HTMLInputElement;
+    const enviar = form.querySelector('button')!;
+    const fdatos = uno<HTMLFormElement>('[data-rc-fdatos]');
+    const error = uno('[data-rc-error]');
+    const sub = uno('[data-rc-sub]');
+    const gatoChico = lanzador.querySelector<SVGSVGElement>('[data-rebel]')!;
+    const gatoDelChat = panel.querySelector<SVGSVGElement>('[data-rebel]')!;
+
+    const SALUDO = '¡Hola! Soy **Rebel**, el gatito guía de RebelDEV. Te cuento en corto qué hacemos por tu negocio y cómo empezar. ¿Qué te gustaría saber?';
+    const FALLO = 'No pude responderte ahora. Inténtalo de nuevo en un momento, o déjanos tus datos y te escribimos.';
+    const SUBTITULOS: Record<string, string> = { chat: 'El guía de RebelDEV', datos: 'Agenda tu asesoría', listo: 'Agenda tu asesoría' };
+    const GLOBO_CERRADO = 'rebel_globo_cerrado';
+    const INVITA_A_LOS_MS = 6000;
+    const TURNOS_RECORDADOS = 6;
+
+    type Turno = { role: 'user' | 'assistant'; content: string };
+    const historial: Turno[] = [];
+    let ocupado = false;
+    let presentado = false;
+    let saludo = 0;
+
+    const gesto = (svg: SVGSVGElement, g: string) => {
+      svg.classList.remove('rb--tranquilo', 'rb--saludando', 'rb--pensando', 'rb--feliz');
+      svg.classList.add(`rb--${g}`);
+    };
+
+    // El texto llega con **negritas** y saltos de línea; se arma con nodos, nunca como HTML.
+    const pintar = (el: HTMLElement, contenido: string) => {
+      el.replaceChildren();
+      contenido.split('\n').map((l) => l.trimEnd()).forEach((linea, i) => {
+        if (i) el.append(document.createElement('br'));
+        linea.split('**').forEach((parte, j) => {
+          if (!parte) return;
+          if (j % 2) { const b = document.createElement('strong'); b.textContent = parte; el.append(b); } else el.append(parte);
+        });
+      });
+    };
+    const burbuja = (quien: 'yo' | 'rebel', contenido: string) => {
+      const el = document.createElement('div');
+      el.className = `rc-b rc-b--${quien}`;
+      pintar(el, contenido);
+      msgs.append(el);
+      msgs.scrollTop = msgs.scrollHeight;
+      return el;
+    };
+    // El detalle de un error de la plataforma: un texto o una lista de {msg}.
+    const detalle = (datos: any, respaldo: string): string => {
+      if (typeof datos?.detail === 'string') return datos.detail;
+      if (Array.isArray(datos?.detail)) return datos.detail.map((d: any) => d?.msg).filter(Boolean).join(' ') || respaldo;
+      return respaldo;
+    };
+    const pedir = async (ruta: string, cuerpo?: unknown) => {
+      const r = await fetch(ruta, cuerpo === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo) });
+      return { ok: r.ok, datos: await r.json().catch(() => null) };
+    };
+
+    const bloquear = (si: boolean) => {
+      ocupado = si;
+      enviar.toggleAttribute('disabled', si);
+      todos<HTMLButtonElement>('[data-rc-sugerencia]').forEach((b) => { b.disabled = si; });
+    };
+
+    async function preguntar(pregunta: string) {
+      pregunta = pregunta.trim();
+      if (!pregunta || ocupado) return;
+      bloquear(true);
+      sug.hidden = true;
+      burbuja('yo', pregunta);
+      const espera = burbuja('rebel', 'Pensando…');
+      espera.classList.add('is-pensando');
+      clearTimeout(saludo);
+      gesto(gatoDelChat, 'pensando');
+      let respuesta = FALLO;
+      try {
+        const { ok, datos } = await pedir('/api/rebel', { pregunta, historial: historial.slice(-TURNOS_RECORDADOS) });
+        if (ok && typeof datos?.respuesta === 'string') {
+          respuesta = datos.respuesta;
+          historial.push({ role: 'user', content: pregunta }, { role: 'assistant', content: respuesta });
+        } else respuesta = detalle(datos, FALLO);
+      } catch { /* sin conexión: queda el mensaje de falla */ }
+      espera.classList.remove('is-pensando');
+      pintar(espera, respuesta);
+      msgs.scrollTop = msgs.scrollHeight;
+      gesto(gatoDelChat, 'tranquilo');
+      bloquear(false);
+    }
+
+    // Lo que la consola de la plataforma tiene encendido: WhatsApp, crear la cuenta, cómo es la reunión.
+    async function presentar() {
+      if (presentado) return;
+      presentado = true;
+      burbuja('rebel', SALUDO);
+      try {
+        const { ok, datos } = await pedir('/api/rebel');
+        if (!ok || !datos) return;
+        const enlace = (sel: string, href: unknown) => {
+          const a = uno<HTMLAnchorElement>(sel);
+          if (typeof href === 'string' && /^https:\/\//.test(href)) { a.href = href; a.hidden = false; }
+        };
+        enlace('[data-rc-wa]', datos.whatsapp);
+        enlace('[data-rc-privacidad]', datos.privacidad);
+        if (datos.registro_abierto === true) enlace('[data-rc-cuenta]', 'https://app.rebeldev.tech/cuenta/registro');
+        if (typeof datos.reunion === 'string' && datos.reunion) {
+          uno('[data-rc-reunion]').textContent = `Déjanos tus datos y te escribimos por WhatsApp para coordinar ${datos.reunion} sobre tu negocio.`;
+        }
+      } catch { /* sin estos datos el chat funciona igual */ }
+    }
+
+    const ver = (vista: string) => {
+      todos('[data-rc-vista]').forEach((v) => { v.hidden = v.dataset.rcVista !== vista; });
+      sub.textContent = SUBTITULOS[vista];
+    };
+
+    function abrir() {
+      globo.hidden = true;
+      lanzador.hidden = true;
+      lanzador.setAttribute('aria-expanded', 'true');
+      panel.hidden = false;
+      ver('chat');
+      void presentar();
+      gesto(gatoDelChat, 'saludando');
+      saludo = window.setTimeout(() => gesto(gatoDelChat, 'tranquilo'), 2600);
+      campo.focus({ preventScroll: true });
+    }
+    function cerrar() {
+      panel.hidden = true;
+      lanzador.hidden = false;
+      lanzador.setAttribute('aria-expanded', 'false');
+      gesto(gatoChico, 'tranquilo');
+      lanzador.focus({ preventScroll: true });
+    }
+
+    lanzador.addEventListener('click', abrir);
+    uno('[data-rc-cerrar]').addEventListener('click', cerrar);
+    panel.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrar(); });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (ocupado) return;
+      const pregunta = campo.value;
+      campo.value = '';
+      void preguntar(pregunta);
+    });
+    todos<HTMLButtonElement>('[data-rc-sugerencia]').forEach((b) => b.addEventListener('click', () => void preguntar(b.textContent ?? '')));
+    uno('[data-rc-datos]').addEventListener('click', () => { error.hidden = true; ver('datos'); });
+    todos('[data-rc-volver]').forEach((b) => b.addEventListener('click', () => { ver('chat'); campo.focus({ preventScroll: true }); }));
+
+    fdatos.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const boton = uno<HTMLButtonElement>('[data-rc-enviar-datos]');
+      const c = new FormData(fdatos);
+      const t = (n: string) => String(c.get(n) ?? '').trim();
+      boton.disabled = true;
+      error.hidden = true;
+      const FALLA_DATOS = 'No pudimos enviar tus datos. Inténtalo de nuevo en un momento.';
+      try {
+        const { ok, datos } = await pedir('/api/interesados', {
+          nombre: t('nombre'), empresa: t('empresa'), whatsapp: t('whatsapp'), correo: t('correo'), mensaje: t('mensaje'), acepta: c.get('acepta') === 'on',
+        });
+        if (ok) {
+          uno('[data-rc-ok]').textContent = typeof datos?.mensaje === 'string' ? datos.mensaje : '¡Listo! Te escribimos pronto.';
+          fdatos.reset();
+          ver('listo');
+        } else { error.textContent = detalle(datos, FALLA_DATOS); error.hidden = false; }
+      } catch { error.textContent = FALLA_DATOS; error.hidden = false; }
+      boton.disabled = false;
+    });
+
+    // A los pocos segundos, Rebel saluda e invita a conversar (una vez por visita, si no se le dijo «Ahora no»).
+    const globoCerrado = () => { try { return sessionStorage.getItem(GLOBO_CERRADO) === '1'; } catch { return false; } };
+    window.setTimeout(() => {
+      if (!panel.hidden || presentado || globoCerrado()) return;
+      globo.hidden = false;
+      gesto(gatoChico, 'saludando');
+    }, INVITA_A_LOS_MS);
+    uno('[data-rc-si]').addEventListener('click', abrir);
+    uno('[data-rc-no]').addEventListener('click', () => {
+      try { sessionStorage.setItem(GLOBO_CERRADO, '1'); } catch { /* sin almacenamiento, el globo vuelve a salir */ }
+      globo.hidden = true;
+      gesto(gatoChico, 'tranquilo');
+    });
+
+    raiz.hidden = false;
+  }
+</script>

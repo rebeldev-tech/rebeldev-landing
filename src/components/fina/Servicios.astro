@@ -1,6 +1,7 @@
 ---
 // Servicios en índice: un clic abre debajo una demo de 4 pasos. El panel queda fijo y, al bajar,
 // cada paso reemplaza al anterior en el mismo lugar mientras la escena avanza.
+// libre: la demo se abre en su lugar, sin fijar la pantalla, y los pasos avanzan con los botones.
 import Glifo from '../Glifo.astro';
 import Medida from './demos/Medida.astro';
 import Auto from './demos/Auto.astro';
@@ -13,8 +14,8 @@ import { contacto } from '../../data/contacto';
 
 // items: los servicios a medida (los asistentes de WhatsApp tienen su propia sección, Producto). g elige el glifo y la demo.
 // Al abrir un servicio, la página baja hasta que su demo ocupa la pantalla, con el contenido centrado.
-interface Props { items: { g: string; t: string; d: string }[] }
-const { items } = Astro.props;
+interface Props { items: { g: string; t: string; d: string }[]; libre?: boolean }
+const { items, libre = false } = Astro.props;
 
 const componentes: Record<string, any> = { medida: Medida, auto: Auto, web: Web, api: Api, int: Integraciones, ux: Ux };
 const filas = items.map((s) => ({
@@ -24,7 +25,7 @@ const filas = items.map((s) => ({
   Escena: componentes[s.g],
 }));
 ---
-<section id="servicios" class="wrap fina-sec sv" aria-labelledby="sv-title" data-sv>
+<section id="servicios" class:list={['wrap fina-sec sv', { 'sv-libre': libre }]} aria-labelledby="sv-title" data-sv data-libre={libre ? '' : undefined}>
   <h2 id="sv-title" class="text-d2 max-w-[18ch]">Lo que construimos, pieza por pieza.</h2>
   <p class="sv-hint text-note text-ash" data-sv-hint></p>
 
@@ -53,6 +54,12 @@ const filas = items.map((s) => ({
                   ))}
                 </ol>
                 <div class="sv-prog" aria-hidden="true">{f.pasos.map(() => <i data-sv-barra></i>)}</div>
+                {libre && (
+                  <div class="sv-nav">
+                    <button type="button" class="sv-nav-b" data-sv-ant aria-label="Paso anterior"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" /></svg></button>
+                    <button type="button" class="sv-nav-b sv-nav-sig" data-sv-sig>Siguiente paso<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" /></svg></button>
+                  </div>
+                )}
               </div>
               <div class="sv-escena"><Escena /></div>
             </div>
@@ -144,6 +151,23 @@ const filas = items.map((s) => ({
   .sv-prog i.is-hecho { background: var(--color-ash-dim); }
   .sv-prog i.is-on { background: var(--color-red); }
 
+  /* Libre: la demo se abre en su lugar y no fija la pantalla; los pasos se pasan con los botones */
+  .sv-libre.is-live .sv-track { height: auto; }
+  .sv-libre.is-live .sv-panel-in { position: static; height: auto; padding-block: 1.5rem clamp(2.5rem, 5vw, 4rem); }
+  .sv-nav { display: none; gap: 0.5rem; margin: 1.25rem 0 0 calc(1ch + 0.75rem); }
+  .sv-libre.is-live .sv-nav { display: flex; }
+  .sv-nav-b {
+    display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; padding: 0 1.1rem; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--color-line-strong); background: none; font: inherit; font-size: 0.9375rem; font-weight: 600; color: var(--color-bone);
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s, opacity 0.3s;
+  }
+  .sv-nav-b svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .sv-nav-b:not(.sv-nav-sig) { padding: 0; width: 2.75rem; justify-content: center; }
+  .sv-nav-sig { background: var(--color-bone); border-color: var(--color-bone); color: var(--color-ink); }
+  .sv-nav-b:hover:not(:disabled) { border-color: var(--color-ash-dim); }
+  .sv-nav-b:disabled { opacity: 0.35; cursor: default; }
+  .sv-nav-b:focus-visible { outline: 2px solid var(--color-red-text); outline-offset: 2px; }
+
   @media (min-width: 1024px) {
     .sv-panel-in { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); column-gap: clamp(2.5rem, 5vw, 5rem); align-items: center; }
     .sv-escena { justify-self: end; }
@@ -153,6 +177,7 @@ const filas = items.map((s) => ({
     .sv.is-live .sv-panel-in { align-content: start; gap: 1.25rem; padding-top: 4.75rem; }
     /* --copia: alto del texto de esta demo (lo mide el script). La escena se achica lo justo para que el texto entre en la pantalla. */
     .sv.is-live .sv-escena { max-width: min(26rem, max(12rem, calc(100svh - var(--copia, 20rem) - 7.5rem))); }
+    .sv-libre.is-live .sv-panel-in { padding-top: 1rem; }
   }
   /* En pantallas bajas no entran: se ocultan a la vista, pero el lector de pantalla los sigue leyendo */
   @media (max-width: 1023px) and (max-height: 640px) {
@@ -196,12 +221,13 @@ const filas = items.map((s) => ({
   import { escenas } from '../../scripts/fina/escenas';
   import { montarPasos } from '../../scripts/fina/pasos';
 
-  type Demo = { iniciar(): void; parar(): void };
+  type Demo = { iniciar(): void; parar(): void; ir(i: number): void; actual(): number };
   type Fila = { el: HTMLElement; g: string; head: HTMLElement; btn: HTMLButtonElement; panel: HTMLElement; escena: HTMLElement; pasos: HTMLElement[]; demo: Demo | null };
 
   const sec = document.querySelector<HTMLElement>('[data-sv]')!;
   const float = sec.querySelector<HTMLElement>('[data-sv-float]')!;
   const hint = sec.querySelector<HTMLElement>('[data-sv-hint]')!;
+  const libre = 'libre' in sec.dataset;
 
   const filas: Fila[] = Array.from(sec.querySelectorAll<HTMLElement>('[data-sv-row][data-g]'), (el) => ({
     el,
@@ -220,12 +246,23 @@ const filas = items.map((s) => ({
 
   // Cada paso lleva la escena hasta su etiqueta (p1–p4); el paso sale del avance dentro del tramo.
   function crearDemo(f: Fila): Demo {
-    return montarPasos({
+    const ant = f.el.querySelector<HTMLButtonElement>('[data-sv-ant]');
+    const sig = f.el.querySelector<HTMLButtonElement>('[data-sv-sig]');
+    const demo = montarPasos({
       track: f.el.querySelector<HTMLElement>('[data-sv-track]')!,
       pasos: f.pasos,
       barras: Array.from(f.el.querySelectorAll<HTMLElement>('[data-sv-barra]')),
       tl: escenas[f.g]?.(f.escena) ?? null,
+      porClic: libre,
+      // En el último paso, «Siguiente» vuelve a empezar.
+      alCambiar: (i) => {
+        if (ant) ant.disabled = i === 0;
+        if (sig) sig.firstChild!.textContent = i === f.pasos.length - 1 ? 'Ver de nuevo' : 'Siguiente paso';
+      },
     });
+    ant?.addEventListener('click', () => demo.ir(demo.actual() - 1));
+    sig?.addEventListener('click', () => demo.ir(demo.actual() === f.pasos.length - 1 ? 0 : demo.actual() + 1));
+    return demo;
   }
 
   let abierta: Fila | null = null;
@@ -244,8 +281,9 @@ const filas = items.map((s) => ({
     (f.demo ??= crearDemo(f)).iniciar();
     ScrollTrigger.refresh();
     // Baja al inicio del tramo: ahí el panel queda fijo y ocupa la pantalla, con la demo centrada y en su primer paso.
-    const destino = f.el.querySelector<HTMLElement>('[data-sv-track]')!;
-    if (lenis) lenis.scrollTo(destino, { offset: 0, duration: reduceMotion ? 0 : 0.6 });
+    // Libre: basta con que la cabecera del servicio quede bajo la barra, con la demo a la vista.
+    const destino = libre ? f.head : f.el.querySelector<HTMLElement>('[data-sv-track]')!;
+    if (lenis) lenis.scrollTo(destino, { offset: libre ? -72 : 0, duration: reduceMotion ? 0 : 0.6 });
     else destino.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
     // Sin esperas: el panel aparece ya abierto y el desplazamiento arranca en el mismo clic; la demo entra con un fundido.
     if (!reduceMotion) gsap.fromTo(f.el.querySelector('.sv-panel-in'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, ease: 'power2.out', clearProps: 'opacity,visibility' });

@@ -1,0 +1,131 @@
+---
+// /mascota: Rebel, el gatito guía, con la propuesta mejorada de su dibujo (src/components/Rebel.astro) y sus gestos.
+// Es una página de prueba para que el equipo la apruebe: fuera de los buscadores y del mapa del sitio.
+// El chat es el de toda la web (src/components/RebelChat.astro, que Base.astro pone abajo a la derecha).
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+import Rebel from '../components/Rebel.astro';
+
+const gestos = [
+  { k: 'tranquilo', t: 'Tranquilo', d: 'Así te espera: respira, mueve la cola y te sigue con la mirada.' },
+  { k: 'saludando', t: 'Saluda', d: 'Cuando llegas a la web, levanta la pata y te invita a conversar.' },
+  { k: 'pensando', t: 'Piensa', d: 'Mientras busca la respuesta a tu pregunta.' },
+  { k: 'feliz', t: 'Celebra', d: 'Cuando algo sale bien. Tócalo y lo verás.' },
+] as const;
+const temas = ['Qué hace RebelBot por tu negocio', 'Cuánto cuesta y cómo se paga', 'Cómo es empezar y cuánto demora'];
+---
+<Base title="Rebel, el guía de RebelDEV" description="Rebel es el gatito que te guía en la web de RebelDEV: pregúntale por RebelBot, los precios o cómo empezar." noindex>
+  <header class="wrap mc-barra">
+    <a href="/" class="text-[1.35rem] text-bone" aria-label="RebelDEV, ir al inicio"><Logo /></a>
+    <a href="/" class="btn btn-ghost !px-4 !py-2.5 text-[0.95rem]">Volver al inicio</a>
+  </header>
+
+  <main id="contenido" class="wrap mc">
+    <section class="mc-hero" aria-labelledby="mc-title">
+      <div class="mc-texto">
+        <h1 id="mc-title" class="text-d1">Rebel, tu guía en RebelDEV.</h1>
+        <p class="mt-6 max-w-[46ch] text-lead text-ash">Pregúntale lo que quieras. Te responde al momento, a cualquier hora, y si prefieres hablar con una persona te deja el camino listo.</p>
+        <ul class="mc-temas">
+          {temas.map((t) => <li>{t}</li>)}
+        </ul>
+        <p class="mc-donde text-body">
+          Lo encuentras abajo a la derecha, en toda la web. Haz clic en él para conversar.
+        </p>
+      </div>
+
+      <div class="mc-escena">
+        <button type="button" class="mc-gato" aria-label="Rebel, el gatito de RebelDEV. Tócalo para verlo celebrar." data-mc-gato>
+          <Rebel tamano={340} mira />
+        </button>
+        <div class="mc-gestos" role="group" aria-label="Gestos de Rebel">
+          {gestos.map((g, i) => <button type="button" class="mc-gesto" aria-pressed={i === 0 ? 'true' : 'false'} data-mc-gesto={g.k} data-d={g.d}>{g.t}</button>)}
+        </div>
+        <p class="mc-nota text-body text-ash" aria-live="polite" data-mc-nota>{gestos[0].d}</p>
+      </div>
+    </section>
+
+    <section class="mc-tam" aria-labelledby="mc-tam-t">
+      <h2 id="mc-tam-t" class="text-d3">Se lee bien en cualquier tamaño</h2>
+      <div class="mc-fila">
+        {[{ n: 56, t: 'En el chat' }, { n: 84, t: 'En la esquina de la web' }, { n: 150, t: 'En grande' }].map((s) => (
+          <figure class="mc-fig">
+            <div class="mc-fig-d"><Rebel tamano={s.n} gesto={s.n === 84 ? 'saludando' : 'tranquilo'} /></div>
+            <figcaption class="text-note text-ash">{s.t}</figcaption>
+          </figure>
+        ))}
+        <figure class="mc-fig mc-fig-claro">
+          <div class="mc-fig-d"><Rebel tamano={150} gesto="feliz" /></div>
+          <figcaption class="text-note">Sobre fondo claro</figcaption>
+        </figure>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .mc-barra { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1.25rem; }
+  .mc { padding-block: clamp(2rem, 6vw, 5rem) clamp(4rem, 8vw, 7rem); }
+  .mc-hero { display: grid; gap: clamp(2.5rem, 6vw, 5rem); align-items: center; }
+  @media (min-width: 960px) { .mc-hero { grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); } }
+  .mc-texto { min-width: 0; }
+  .mc-temas { list-style: none; margin: 2rem 0 0; padding: 0; max-width: 30rem; border-bottom: 1px solid var(--color-line); }
+  .mc-temas li { padding-block: 0.85rem; border-top: 1px solid var(--color-line); font-weight: 600; color: var(--color-bone); }
+  .mc-temas li::before { content: '/'; margin-right: 0.7rem; font-weight: 800; color: var(--color-red-text); }
+  .mc-donde { margin: 1.75rem 0 0; max-width: 42ch; color: var(--color-ash); }
+
+  .mc-escena { display: grid; justify-items: center; gap: 1.25rem; min-width: 0; }
+  .mc-gato {
+    all: unset; display: grid; place-items: end center; width: min(100%, 26rem); aspect-ratio: 1; cursor: pointer; border-radius: 2rem;
+    background: var(--color-surface); -webkit-tap-highlight-color: transparent;
+  }
+  .mc-gato:focus-visible { outline: 2px solid var(--color-red-text); outline-offset: 4px; }
+  .mc-gato :global(.rb) { width: 78%; margin-bottom: 7%; }
+  .mc-gestos { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; }
+  .mc-gesto {
+    min-height: 2.75rem; padding: 0 1.1rem; border-radius: 999px; border: 1px solid var(--color-line-strong); background: none; cursor: pointer;
+    font: inherit; font-size: 0.9375rem; font-weight: 600; color: var(--color-ash);
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+  }
+  .mc-gesto:hover { color: var(--color-bone); border-color: var(--color-ash-dim); }
+  .mc-gesto[aria-pressed='true'] { background: var(--color-bone); border-color: var(--color-bone); color: var(--color-ink); }
+  .mc-gesto:focus-visible { outline: 2px solid var(--color-red-text); outline-offset: 2px; }
+  .mc-nota { margin: 0; min-height: 3.4em; max-width: 34ch; text-align: center; }
+
+  .mc-tam { margin-top: clamp(4rem, 9vw, 7rem); padding-top: clamp(2rem, 4vw, 3rem); border-top: 1px solid var(--color-line); }
+  .mc-tam h2 { margin: 0; }
+  .mc-fila { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.75rem; }
+  @media (min-width: 800px) { .mc-fila { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .mc-fig { margin: 0; display: grid; gap: 0.75rem; min-width: 0; }
+  .mc-fig-d { display: grid; place-items: center; height: 13rem; border-radius: 1.25rem; background: var(--color-surface); }
+  /* Colores fijos: muestra a Rebel sobre crema, sea cual sea el tema */
+  .mc-fig-claro .mc-fig-d { background: #F4F0E8; }
+</style>
+
+<script>
+  const gato = document.querySelector<HTMLElement>('[data-mc-gato]');
+  const dibujo = gato?.querySelector<SVGSVGElement>('[data-rebel]');
+  const nota = document.querySelector<HTMLElement>('[data-mc-nota]');
+  const botones = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-mc-gesto]'));
+
+  if (gato && dibujo) {
+    let elegido = 'tranquilo';
+    let vuelta = 0;
+    const poner = (g: string) => {
+      dibujo.classList.remove('rb--tranquilo', 'rb--saludando', 'rb--pensando', 'rb--feliz');
+      dibujo.classList.add(`rb--${g}`);
+    };
+    botones.forEach((b) => b.addEventListener('click', () => {
+      clearTimeout(vuelta);
+      elegido = b.dataset.mcGesto!;
+      poner(elegido);
+      botones.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+      if (nota) nota.textContent = b.dataset.d ?? '';
+    }));
+    // Al tocarlo celebra un momento y vuelve al gesto elegido.
+    gato.addEventListener('click', () => {
+      clearTimeout(vuelta);
+      poner('feliz');
+      vuelta = window.setTimeout(() => poner(elegido), 1800);
+    });
+  }
+</script>

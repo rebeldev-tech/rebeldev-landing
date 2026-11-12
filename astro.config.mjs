@@ -2,12 +2,16 @@
 import { defineConfig, fontProviders } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
+import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
   // Dirección pública del sitio: la usan la URL canónica, el mapa del sitio, /robots.txt y los datos estructurados.
-  // PROVISIONAL: es la dirección de Vercel. Cuando haya dominio propio, se cambia solo aquí.
-  site: 'https://rebeldev-landing.vercel.app',
+  // Si cambia el dominio, se cambia solo aquí.
+  site: 'https://rebeldev.tech',
+  // El sitio sigue siendo estático. El adaptador solo sirve las rutas de src/pages/api/ (el chat de Rebel),
+  // que corren en el servidor de Vercel.
+  adapter: vercel(),
   // Las fuentes se descargan al compilar y se sirven desde el propio sitio
   // (más rápido y sin enviar datos de los visitantes a Google).
   fonts: [

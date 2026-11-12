@@ -3,19 +3,21 @@
 // pasos y estaciones van en el mismo orden: cada paso con su dibujo (escena) y sus textos (marcas).
 // medidor: lo que dice el riel antes y después del paso que se paga. pr-repite: al pasar el ratón por una estación
 // cuya animación ya terminó, se vuelve a reproducir (ver el script).
+// libre: sin ruta horizontal ni pantalla fija; los pasos van en cuadrícula y cada dibujo se arma al entrar.
 interface Props {
   titulo: string;
   pasos: { t: string; d: string }[];
   estaciones: { escena: string; marcas: string[] }[];
   medidor: { antes: string; despues: string };
+  libre?: boolean;
 }
-const { titulo, pasos: proceso, estaciones, medidor } = Astro.props;
+const { titulo, pasos: proceso, estaciones, medidor, libre = false } = Astro.props;
 
 const CLAVE = 5;
 const LV = ['L', 'M', 'M', 'J', 'V'];
 const LD = [...LV, 'S', 'D'];
 ---
-<section id="proceso" class="pr pr-repite" aria-labelledby="pr-title" data-pr>
+<section id="proceso" class:list={['pr pr-repite', { 'pr-libre': libre }]} aria-labelledby="pr-title" data-pr data-libre={libre ? '' : undefined}>
   <div class="wrap pr-head">
     <h2 id="pr-title" class="text-d2 max-w-[22ch]">{titulo}</h2>
   </div>
@@ -216,6 +218,14 @@ const LD = [...LV, 'S', 'D'];
 
   .pr-hud { display: none; }
 
+  /* Libre: los ocho pasos en dos filas de cuatro, sin fijar la pantalla */
+  @media (min-width: 1100px) {
+    .pr-libre .pr-track { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3rem 1.5rem; }
+    .pr-libre .pr-key { grid-column: auto; padding: 1rem; margin: -1rem; }
+    .pr-libre .pr-key .pr-t { font-size: clamp(1.3rem, 1.9vw, 1.6rem); line-height: 1.2; letter-spacing: -0.02em; }
+    .pr-libre .pr-d { font-size: 1rem; }
+  }
+
   /* El dibujo se aclara un poco al pasar el ratón, para que se note que reacciona */
   .pr-repite .pr-pic { transition: background-color 0.3s; }
   @media (hover: hover) {
@@ -270,6 +280,7 @@ const LD = [...LV, 'S', 'D'];
   const ticks = Array.from(sec.querySelectorAll<HTMLElement>('[data-pr-tick]'));
   const pay = sec.querySelector<HTMLElement>('[data-pr-pay]')!;
   const PAGA = 6; // estación 7: la semana a prueba ya terminó
+  const libre = 'libre' in sec.dataset;
 
   type Q = (a: string) => Element[];
   const escenas: Record<string, (q: Q) => gsap.core.Timeline> = {
@@ -341,7 +352,7 @@ const LD = [...LV, 'S', 'D'];
   if (!reduceMotion) {
     document.fonts.ready.then(() => {
       gsap.matchMedia().add({ desk: '(min-width: 1024px)', mob: '(max-width: 1023px)' }, (ctx) => {
-        if (ctx.conditions!.mob) {
+        if (ctx.conditions!.mob || libre) {
           stations.forEach((st) => {
             const tl = sceneTl(st);
             if (tl) ScrollTrigger.create({ trigger: st, start: 'top 80%', once: true, onEnter: () => tl.play() });
